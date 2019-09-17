@@ -19,7 +19,7 @@ export class AppComponent {
     //   this.router.navigate(["/"]);
     // }
   }
-  ngOnDestroy() {
+  ngOnDestroy() { 
     sessionStorage.setItem('aaa', '离开项目')
   }
 }
