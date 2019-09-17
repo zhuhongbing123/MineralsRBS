@@ -1,0 +1,25 @@
+<p-table [columns]="loginLogTitle" [value]="loginLogValue"  [scrollable]="true" >
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            
+            <th *ngFor="let col of columns">
+                {{col.header}}
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+  
+            <td *ngFor="let col of columns" class="area-table-td">
+             <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+             <span *ngIf = "col.field == 'operation' && !evacuateAreaPermission.hand" class="area-table-operation"  (click)="evacuate(rowData)"> 撤离</span>
+             <span *ngIf = "col.field == 'operation'" class="area-table-operation" (click)="showArea(rowData)"> 查看</span>
+            </td>
+            
+        </tr>
+    </ng-template>
+
+    
+
+</p-table>
+<p-paginator [hidden]="!loginLogTotal" [rows]="LIMIT_LOGIN" [totalRecords]="loginLogTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'camera')"></p-paginator>

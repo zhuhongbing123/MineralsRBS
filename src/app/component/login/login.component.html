@@ -1,0 +1,31 @@
+<div class="logincontent">
+
+    <div class="loginBox">
+      <p class="loginsize">矿业局管理系统</p>
+      <div class="Boxcontent">
+        
+        <div style="margin: auto;">
+          <p class="title-login">登录</p>
+          <div class="usernameBox">
+            <img src="./assets/img/yonghu.png" style="width:20px;height:20px;margin: 5px 10px 0 10px;" />
+            <input class="usernameBox_iput" [(ngModel)]="username" type="text" 
+              placeholder="请输入用户名" (keyup.enter)="keyUpSearch()" />
+          </div>
+          <div class="passwordBox">
+            <img src="./assets/img/mima.png" style="width:20px;height:20px;margin: 5px 10px 0 10px;" />
+            <input [(ngModel)]="password" class="passwordBox_iput" type="password" 
+              placeholder="请输入密码" (keyup.enter)="keyUpSearch()" />
+          </div>
+          <button class="submitBox" type="button" (click)="onSubmit('login')">
+            登录
+          </button>
+          <button class="submitBox" type="button" (click)="onSubmit('register')">
+            注册
+          </button>
+        </div>
+      </div>
+    </div>
+
+</div>
+<!-- 警示信息提示 -->
+<p-toast [style]="{marginTop: '80px'}" position="top-center" key="tc" baseZIndex=9999></p-toast>

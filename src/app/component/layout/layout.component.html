@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <base href="/">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+
+</head>
+
+<body>
+  <div class="layout-wrapper" (click)="onLayoutClick()" [ngClass]="{'menu-layout-static': !isOverlay(),
+                'menu-layout-overlay': isOverlay(),
+                'layout-menu-overlay-active': overlayMenuActive,
+                'menu-layout-horizontal': isHorizontal(),
+                'menu-layout-slim': isSlim(),
+                'layout-menu-static-inactive': staticMenuDesktopInactive,
+                'layout-menu-static-active': staticMenuMobileActive}">
+
+    <topbar></topbar>
+
+    <div class="layout-menu-container" [ngClass]="{'layout-menu-dark':darkMenu}" (click)="onMenuClick($event)">
+      <p-scrollPanel #layoutMenuScroller [style]="{height: '100%' }">
+        <div class="menu-scroll-content">
+          <profile *ngIf="profileMode=='inline'&&!isHorizontal()"></profile>
+          <menu  [reset]="resetMenu" style="padding-left: 0px;"></menu>
+        </div>
+      </p-scrollPanel>
+    </div>
+
+    <div class="layout-main" id="layout-main">
+      <router-outlet></router-outlet>
+    </div>
+
+    <div class="layout-mask"></div>
+    <!-- <app-footer></app-footer> -->
+  </div>
+</body>
+
+</html>
+<p-toast [style]="{marginTop: '80px'}" position="top-right" key="tr">
+  <ng-template let-message pTemplate="message">
+    <div style="text-align: center">
+      <p><i class="pi pi-exclamation-triangle" style="font-size:20px"></i>{{message.summary}}</p>
+      <p>{{message.detail}}</p>
+    </div>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-6 ">
+        <span (click)="view(message)" [hidden]='message.data.show1' class="hoverColor">视频</span> <span
+          (click)="local(message)" class="hoverColor">定位</span>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+<div class="dialog-class">
+  <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+</div>
