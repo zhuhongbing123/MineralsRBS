@@ -2,13 +2,14 @@ import { Component } from '@angular/core';
 import { LayoutComponent } from './layout.component';
 import { LoginComponent } from '../login/login.component';
 import { ConfirmationService } from 'primeng/api';
+import { LoginService } from '../login/login.service';
 
 @Component({
   selector: 'topbar',
   template: `
         <div class="topbar clearfix">
             <div class="topbar-left">
-               矿业管理系统 
+            矿业权管理系统 
             </div>
 
             <div class="topbar-right">
@@ -67,9 +68,9 @@ import { ConfirmationService } from 'primeng/api';
                         <ul class="layout-menu fadeInDown">
                            
                             <li role="menuitem">
-                                <a  (click)="logout()">
+                                <a>
                                     <i class="fa fa-fw fa-picture-o"></i>
-                                    <span>注销</span>
+                                    <p (click)="logout()">注销注销</p>
                                 </a>
                             </li>
                         </ul>
@@ -96,10 +97,11 @@ export class TopBarComponent {
 
    public loginName =   sessionStorage.getItem('name');
   constructor(public app: LayoutComponent,
+    public loginService: LoginService
   ) { }
   /* 注销 */
   logout() {
-    this.app.onLogout();
+    this.loginService.logout();
   }
 
 }

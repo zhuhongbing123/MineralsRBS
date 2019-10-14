@@ -4,18 +4,21 @@ import * as CryptoJS from 'crypto-js';
 import {HttpParams} from '@angular/common/http';
 import { HttpUtil } from '../../common/util/http-util';
 import { HttpUrl } from '../../common/util/http-url';
+import { ConfirmationService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class LoginService {
     private baseUrl: string;//通用的URL地址
-  constructor(private httpUtil: HttpUtil) {
+  constructor(private httpUtil: HttpUtil,
+              ) {
     this.baseUrl = HttpUrl.apiBaseUrl;
   }
 
   getTokenKey() {
     const url =this.baseUrl +  'account/login?tokenKey=get';
     // 先向后台申请加密tokenKey tokenKey=get
-    return this.httpUtil.get(url);
+    return this.httpUtil.getLogin(url);
   }
 
   login(appId: string, password: string, tokenKey: string, userKey: string) {
@@ -39,11 +42,12 @@ export class LoginService {
       'timestamp': new Date().toUTCString()
     };
 
-    return this.httpUtil.post(url, body);
+    return this.httpUtil.postLogin(url, body);
   }
 
   logout() {
     const url = 'user/exit';
-    return this.httpUtil.post(url);
+    return this.httpUtil.postLogin(url);
   }
+  
 }

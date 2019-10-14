@@ -1,0 +1,19 @@
+.api-editor-input{
+    margin-top:10px;
+    >div{
+        margin-top:10px;
+    }
+    >label{
+        display: inline-block;
+        max-width: 100%;
+        margin-bottom: 5px;
+        font-weight: 700;
+        font-size: 14px;
+    }
+}
+.operation-icon{
+    font-size: 14px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: #ffffff;
+}

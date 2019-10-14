@@ -1,0 +1,25 @@
+<p>api操作日志</p>
+<div class="p-table">
+        <p-table [columns]="operationLogTitle" [value]="operationLogValue"  [scrollable]="true" >
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+              
+                        <td *ngFor="let col of columns" class="area-table-td">
+                            <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                            <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
+                        </td>
+                        
+                    </tr>
+                </ng-template>
+        </p-table>
+</div>
+
+<p-paginator [hidden]="!operationLogTotal" [rows]="LIMIT_LOGIN" [totalRecords]="operationLogTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>

@@ -18,7 +18,7 @@ export class RegisterService {
     getTokenKey() {
         const url = this.baseUrl+'account/login?tokenKey=get';
         // 先向后台申请加密tokenKey tokenKey=get
-        return this.httpUtil.get(url);
+        return this.httpUtil.getLogin(url);
     }
 
     register(uid: string, username: string, password: string, tokenKey: string, userKey: string) {
@@ -45,7 +45,7 @@ export class RegisterService {
           'timestamp': new Date().toUTCString()
         };
     
-        return this.httpUtil.post(url, body);
+        return this.httpUtil.postLogin(url, body);
       }
 
      

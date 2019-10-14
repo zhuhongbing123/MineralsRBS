@@ -1,0 +1,75 @@
+<div class="search">
+        <div style="color:#fff">API管理</div>
+        <button pButton type="button" label="新增" (click)="setApi('add')"></button>
+        <p-dropdown [options]="apiClassify" [(ngModel)]="selectApiClassify" (onChange)="selectClassify()" placeholder="资源类别" [virtualScroll]="true"  [filter]="false"></p-dropdown>
+</div>
+<div class="p-table">
+    <p-table [columns]="apiTableTitle" [value]="apiTableValue">
+      <ng-template pTemplate="header" let-columns>
+          <tr>
+              <th *ngFor="let col of columns">
+                  {{col.header}}
+              </th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+              <td *ngFor="let col of columns">
+                  <span *ngIf = "col.field !== 'operation' && col.field !== 'link'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                  <span  *ngIf = "col.field == 'operation'"  (click)="setApi('modify',rowData)" class="operation-icon"> 修改</span>
+                  <span  *ngIf = "col.field == 'operation'"  (click)="setApi('delete',rowData)" class="operation-icon">删除 </span>
+              </td>
+          </tr>
+      </ng-template>
+    </p-table>
+    <p-paginator [hidden]="!apiTotal" [rows]="LIMIT_LOGIN" [totalRecords]="apiTotal"  [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+</div>
+
+<!-- 编辑api -->
+<div class="dialog-class">
+        <p-dialog header="{{roleOpreationHeader}}" [(visible)]="apiEditorDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+                <form>
+                        <div class="form-group has-feedback">
+                          <label class="control-label">编码</label>
+                          <input [(ngModel)]="apiEditor.code" type="text" name="code" class="form-control">
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label">名称</label>
+                            <input [(ngModel)]="apiEditor.name" type="text" name="name" class="form-control">
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label">URI</label>
+                            <input [(ngModel)]="apiEditor.uri" type="text" name="uri" class="form-control">
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label class="control-label">API类别</label>
+                            <select [(ngModel)]="apiEditor.classify" name="classify" class="form-control">
+                                    <option *ngFor="let item of apiClassify" value="{{item.value}}">{{item.label}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group has-feedback">
+                                <label class="control-label">类型</label>
+                                <select [(ngModel)]="apiEditor.type" name="type" class="form-control">
+                                        <option *ngFor="let item of apiType" value="{{item.value}}">{{item.label}}</option>
+                                </select>
+                        </div>
+                        <div class="form-group has-feedback">
+                                <label class="control-label">访问方式</label>
+                                <select [(ngModel)]="apiEditor.method" name="method" class="form-control">
+                                        <option *ngFor="let item of accessMethod" value="{{item.value}}">{{item.label}}</option>
+                                </select>
+                        </div>
+                        <div class="form-group has-feedback">
+                                <label class="control-label">状态</label>
+                                <select [(ngModel)]="apiEditor.status" name="status" class="form-control">
+                                        <option *ngFor="let item of apiStatus" value="{{item.value}}">{{item.label}}</option>
+                                </select>
+                        </div>
+                </form>
+               
+                <p-footer>
+                    <button type="button" pButton icon="pi pi-check" (click)="saveAPI()" label="保存"></button>
+                    <button type="button" pButton icon="pi pi-close" (click)="apiEditorDisplay=false" label="取消" class="ui-button-secondary"></button>
+                </p-footer>
+        </p-dialog>
+</div>

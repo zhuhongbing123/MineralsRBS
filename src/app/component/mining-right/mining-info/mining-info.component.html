@@ -1,0 +1,457 @@
+<div [hidden]="miningInfoTableDisplay">
+  <div style="clear: both;" class="p-table">
+      <p-table [columns]="miningInfoTitle" [value]="miningInfoValue"  [rows]="10">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns">
+                    {{col.header}}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+                <td *ngFor="let col of columns">
+                    <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                    <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="goDetails(rowData)">详情</span>
+                    <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('delete',rowData)">删除</span>
+                </td>
+            </tr>
+        </ng-template>
+      </p-table>
+      <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+  </div>
+</div>
+
+<div [hidden]="!miningInfoTableDisplay">
+    <p-tabMenu [model]="miningItems" [activeItem]="miningItems[0]"  (click)="menuClick($event)"></p-tabMenu>
+
+    <!-- 项目详情 -->
+    <div [hidden]="!projectDetailDisplay" style="border: 1px solid #66afe9;background: radial-gradient(#49779ff5 100%, #f2f1ed 20%) !important;padding: 10px;">
+          
+        <div class="p-table">
+            <table  class="table table-bordered" style=" color: #fff;">
+                <tbody>
+                    <tr>
+                        <td>项目名称</td>
+                        <td>{{miningProject.projectName}}</td>
+                    </tr>
+                    <tr>
+                        <td>采矿权首立时间</td>
+                        <td>{{miningProject.miningStartTime}}</td>
+                    </tr>
+                    <tr>
+                        <td>区域地质背景</td>
+                        <td>{{miningProject.areaGeologicBackground}}</td>
+                    </tr>
+                    <tr>
+                        <td>地球物理及地球化学特征</td>
+                        <td>{{miningProject.geophysicalGeochemical}}</td>
+                    </tr>
+                    <tr>
+                        <td>矿区地质背景:地层</td>
+                        <td>{{miningProject.mineralGeologicalStratum}}</td>
+                    </tr>
+                    <tr>
+                        <td>矿区地质背景:构造</td>
+                        <td>{{miningProject.mineralGeologicalStructure}}</td>
+                    </tr>
+                    <tr>
+                        <td>矿区地质背景:岩浆层</td>
+                        <td>{{miningProject.mineralGeologicalMagmatite}}</td>
+                    </tr>
+                    <tr>
+                        <td>成矿带归属</td>
+                        <td>{{miningProject.mineralBeltOwner}}</td>
+                    </tr>
+                    <tr>
+                        <td>成矿地质背景</td>
+                        <td>{{miningProject.mineralBeltGeologic}}</td>
+                    </tr>
+                    <tr>
+                        <td>围岩及蚀变</td>
+                        <td>{{miningProject.rockAlteration}}</td>
+                    </tr>
+                    <tr>
+                        <td>矿（化）体特征</td>
+                        <td>{{miningProject.mineralCharacteristics}}</td>
+                    </tr>
+                    <tr>
+                        <td>主要成果</td>
+                        <td>{{miningProject.majorAchievement}}</td>
+                    </tr>
+                    <tr>
+                        <td>初步认识</td>
+                        <td>{{miningProject.preliminaryUnderstanding}}</td>
+                    </tr>
+                    <tr>
+                        <td>存在的问题及下一步工作建议</td>
+                        <td>{{miningProject.remarks}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" pButton (click)="modifyProject()" label="编辑"></button>
+            <button style="margin-left:20px" type="button" pButton  (click)="miningInfoTableDisplay=false" label="返回" class="ui-button-secondary"></button>
+        </div>
+    </div>
+
+    <!--  勘查详情-->
+    <div style="clear: both;" class="p-table" [hidden]="!stageDetailDisplay">
+        <button pButton type="button" label="新增" (click)="setMining('addStage')"></button>
+        <p-table [columns]="stageDetailTitle" [value]="stageDetailValue" [paginator]="true" [rows]="10">
+          <ng-template pTemplate="header" let-columns>
+              <tr>
+                  <th *ngFor="let col of columns">
+                      {{col.header}}
+                  </th>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+              <tr>
+                  <td *ngFor="let col of columns">
+                      <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                      <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('modifyStage',rowData)">修改</span>
+                      <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('deleteStage',rowData)">删除</span>
+                  </td>
+              </tr>
+          </ng-template>
+        </p-table>
+    </div>
+
+    <!-- 年度监测报告 -->
+    <div  style="clear: both;" class="p-table" [hidden]="!monitoringDetailDisplay">
+        <div [hidden]="reportFileDisplay">
+            <button pButton type="button" label="新增" (click)="setMining('addMonitoring')"></button>
+            <p-table [columns]="monitoringTitle" [value]="monitoringValue" [paginator]="true" [rows]="10">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns">
+                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)">删除</span>
+                    </td>
+                </tr>
+            </ng-template>
+            </p-table>
+        </div>
+        <div [hidden]="!reportFileDisplay">
+                <button  pButton type="button" label="返回列表" (click)="reportFileDisplay = false"></button>
+                <div>
+                    <img src="./assets/img/pdf.jpg" style="height: 100px; width: 100px;">
+                    <div>
+                        <button  pButton type="button" label="查看" (click)="lookPDF()"></button>
+                        <button  pButton type="button" label="下载" ></button>
+                    </div> 
+                </div>
+                <button pButton type="button" (click)="excelChange()" label="查看Excel"></button>
+
+                <p-sidebar [(visible)]="pdfDisplay" [fullScreen]="true" [baseZIndex]="10000">
+                    <h1 style="font-weight:normal">Full Screen Sidebar</h1>
+                    <div id="example-pdf">
+            
+                    </div>
+                    <div  id="result" style="width: 100em;overflow: auto;height: 40em;"></div>
+                   
+                    <button (click)="export()">Export!</button>
+                    <button pButton type="button" (click)="pdfDisplay = false" label="返回" ></button>
+                </p-sidebar>
+        </div>
+    </div>
+  <!-- 采矿权报告 -->
+  <div  style="clear: both;" class="p-table" [hidden]="!reportDetailDisplay">
+    <div [hidden]="reportFileDisplay">
+        <button pButton type="button" label="新增" (click)="setMining('addReport')"></button>
+        <p-table [columns]="reportClassifyTitle" [value]="reportClassifyValue" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns">
+                    {{col.header}}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+                <td *ngFor="let col of columns">
+                    <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                    <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('modifyReport',rowData)">修改</span>
+                    <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('viewReport',rowData)">查看文件</span>
+                    <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('deleteReport',rowData)">删除</span>
+                </td>
+            </tr>
+        </ng-template>
+        </p-table>
+    </div>
+    <div [hidden]="!reportFileDisplay">
+            <button  pButton type="button" label="返回列表" (click)="reportFileDisplay = false"></button>
+            <div>
+                <img src="./assets/img/pdf.jpg" style="height: 100px; width: 100px;">
+                <div>
+                    <button  pButton type="button" label="查看" (click)="lookPDF()"></button>
+                    <button  pButton type="button" label="下载" ></button>
+                </div> 
+            </div>
+            <button pButton type="button" (click)="excelChange()" label="查看Excel"></button>
+
+            <p-sidebar [(visible)]="pdfDisplay" [fullScreen]="true" [baseZIndex]="10000">
+                <h1 style="font-weight:normal">Full Screen Sidebar</h1>
+                <div id="example-pdf">
+        
+                </div>
+                <div  id="result" style="width: 100em;overflow: auto;height: 40em;"></div>
+              
+                <button (click)="export()">Export!</button>
+                <button pButton type="button" (click)="pdfDisplay = false" label="返回" ></button>
+            </p-sidebar>
+    </div>
+  </div>
+</div>
+
+<div class="dialog-class">
+    <!-- 采矿权项目修改弹出框 -->
+    <p-dialog header="采矿权项目" [(visible)]="miningDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+            <form>
+                <div class="form-group has-feedback">
+                    <label class="control-label">项目名称</label>
+                    <input  type="text"   [(ngModel)]="miningProject.projectName" name="projectName"  class="form-control">
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">采矿权首立时间</label>
+                    <div>
+                        <p-calendar [showIcon]="true" [(ngModel)]="miningStartTime" name="explorationStartTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+                    </div>    
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">区域地质背景</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.areaGeologicBackground" name="areaGeologicBackground"></textarea>
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">地球物理及地球化学特性</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.geophysicalGeochemical" name="geophysicalGeochemical"></textarea>
+                    </div>    
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">矿区地质背景:地层</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.mineralGeologicalStratum" name="mineralGeologicalStratum"></textarea>
+                    </div>    
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">矿区地质背景:构造</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.mineralGeologicalStructure" name="mineralGeologicalStructure"></textarea>
+                    </div>    
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">矿区地质背景:岩浆岩</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.mineralGeologicalMagmatite" name="mineralGeologicalMagmatite"></textarea>
+                    </div>    
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">成矿带归属</label>
+                    <input type="text" name="uri" class="form-control" [(ngModel)]="miningProject.mineralBeltOwner" name="mineralBeltOwner">
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">成矿带地质背景</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.mineralBeltGeologic" name="mineralBeltGeologic"></textarea>
+                    </div>    
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">围岩及蚀变</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.rockAlteration" name="rockAlteration"></textarea>
+                    </div>    
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">矿(化)体特征</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.mineralCharacteristics" name="mineralCharacteristics"></textarea>
+                    </div>    
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">主要成果</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.majorAchievement" name="majorAchievement"></textarea>
+                    </div>    
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">初步认识</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.preliminaryUnderstanding" name="preliminaryUnderstanding"></textarea>
+                    </div>    
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">存在的问题以及下一步工作</label>
+                    <div>
+                        <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningProject.remarks" name="remarks"></textarea>
+                    </div>    
+                </div>
+            </form>
+            <p-footer>
+                <button type="button" pButton (click)="saveMiningProject('save')" label="保存"></button>
+                <button type="button" pButton icon="pi pi-close" (click)="saveMiningProject('cancel')" label="取消" class="ui-button-secondary"></button>
+            </p-footer>
+    </p-dialog>
+
+    <!-- 排查阶段弹出框 -->
+    <p-dialog header="探矿权排查阶段" [(visible)]="stageDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+        <form>
+            <div class="form-group has-feedback">
+                <label class="control-label">矿权人</label>
+                <div class="search">
+                    <p-dropdown [options]="mineralOwner" name="ownerId" [(ngModel)]="miningStage.ownerId" placeholder="请选择一个矿权人" filter="true">
+                        <ng-template let-car pTemplate="item">
+                            <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+                                <div style="font-size:14px;float:right;margin-top:4px">{{car.label}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">开始时间</label>
+                <div>
+                    <p-calendar [showIcon]="true" [(ngModel)]="stageStartTime" name="investigationStartTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+                </div>    
+            </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">结束时间</label>
+                <div>
+                    <p-calendar [showIcon]="true" [(ngModel)]="stageEndTime" name="investigationEndTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+                </div>    
+            </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">矿权范围</label>
+                <div>
+                    <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStage.projectArea" name="projectArea"></textarea>
+                </div>    
+            </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">开采矿种</label>
+                <div>
+                    <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStage.miningMineralType" name="investigationOrganization"></textarea>
+                </div>    
+            </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">生产规模</label>
+                <div>
+                    <input type="text" name="investigationCategory" class="form-control" [(ngModel)]="miningStage.miningProductionScale">
+                </div>    
+            </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">开采面积</label>
+                <div>
+                    <input type="text" name="miningArea" class="form-control" [(ngModel)]="miningStage.miningArea">
+                </div>    
+            </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">开采工作投入量</label>
+                <div>
+                    <input type="text" name="miningWorkload" class="form-control" [(ngModel)]="miningStage.miningWorkload">
+                </div>    
+            </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">开采投入金额</label>
+                <div>
+                    <input type="text" name="miningInvestment" class="form-control" [(ngModel)]="miningStage.miningInvestment">
+                </div>    
+            </div>
+            
+        </form>     
+        <p-footer>
+            <button type="button" pButton (click)="saveMiningStage()" label="保存"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="stageDisplay = false" label="取消" class="ui-button-secondary"></button>
+        </p-footer>   
+    </p-dialog>
+
+    <!-- 年度监测报告弹出框 -->
+    <p-dialog header="年度监测报告" [(visible)]="monitoringDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+        
+        <div class="form-group has-feedback">
+            <label class="control-label">监测报告年份</label>
+            <div>
+                <p-calendar [showIcon]="true" [(ngModel)]="miningMonitoring.validationYear" name="reportTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+            </div>    
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label">年度动用资源量</label>
+            <div>
+              <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningMonitoring.resourceUsed" name="resourceUsed"></textarea>
+          </div>  
+        </div>    
+        <div class="form-group has-feedback">
+            <label class="control-label">年末保有资源量</label>
+            <div>
+                <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningMonitoring.resourceMaintained" name="resourceMaintained"></textarea>
+            </div>    
+        </div>
+        <div class="form-group has-feedback">
+          <label class="control-label">执行情况</label>
+          <div>
+              <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningMonitoring.executionStatus" name="executionStatus"></textarea>
+          </div>    
+        </div>
+        <div class="form-group has-feedback">
+          <label class="control-label">监测过程发现的其它问题</label>
+          <div>
+              <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningMonitoring.problemFound" name="problemFound"></textarea>
+          </div>    
+        </div>
+        <p-footer>
+            <button type="button" pButton (click)="saveExplorationReport()" label="保存"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="stageDisplay = false" label="取消" class="ui-button-secondary"></button>
+        </p-footer>  
+    </p-dialog>
+    <!-- 采矿权报告弹出框 -->
+    <p-dialog header="探矿权报告" [(visible)]="reportDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+      <div class="form-group has-feedback">
+          <label class="control-label">报告分类</label>
+          <div class="search">
+              <p-dropdown [options]="reportCategory" name="reportCategoryId" [(ngModel)]="explorationReport.reportCategoryId" placeholder="请选择报告分类" filter="true">
+                  <ng-template let-car pTemplate="item">
+                      <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+                          <div style="font-size:14px;float:right;margin-top:4px">{{car.label}}</div>
+                      </div>
+                  </ng-template>
+              </p-dropdown>
+          </div>
+      </div>    
+      <div class="form-group has-feedback">
+          <label class="control-label">报告日期</label>
+          <div>
+              <p-calendar [showIcon]="true" [(ngModel)]="explorationReport.reportTime" name="reportTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+          </div>    
+      </div>
+      <div class="form-group has-feedback">
+          <label class="control-label">报告文件路径</label>
+          <p-fileUpload name="demo[]" url="./upload.php" (onUpload)="onUpload($event)"
+              multiple="multiple" accept="image/*" maxFileSize="1000000">
+              <!-- <ng-template pTemplate="content">
+                  <ul *ngIf="uploadedFiles.length">
+                      <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                  </ul>
+              </ng-template> -->
+          </p-fileUpload>
+      </div>    
+      <div class="form-group has-feedback">
+          <label class="control-label">文件描述详情</label>
+          <div>
+              <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="explorationReport.reportDescription" name="projectArea"></textarea>
+          </div>    
+      </div>
+      <p-footer>
+          <button type="button" pButton (click)="saveMiningReport()" label="保存"></button>
+          <button type="button" pButton icon="pi pi-close" (click)="stageDisplay = false" label="取消" class="ui-button-secondary"></button>
+      </p-footer>  
+    </p-dialog>
+</div>

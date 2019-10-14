@@ -27,7 +27,8 @@ export const routes: Routes = [
     children: [
         { path: '', redirectTo: 'explorationRight', pathMatch: 'full' },
         { path: 'explorationRight', loadChildren: '../exploration-right/exploration-right.module#ExplorationRightModule' },// 懒加载模块
-        { path: 'log-page', loadChildren: '../log-page/log-page.module#LogPageModule' },// 懒加载模块
+        { path: 'miningRight', loadChildren: '../mining-right/mining-right.module#MiningRightModule' },
+        { path: 'systemConfig', loadChildren: '../system-config/system-config.module#SystemConfigModule' }
     ]
     },
     { path: '**', component: LoginComponent }

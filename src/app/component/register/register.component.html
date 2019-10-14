@@ -1,5 +1,5 @@
 <div class="logincontent">
-  <form [formGroup]="formMoudel">
+
     <div class="loginBox">
       <p class="loginsize">矿业局管理系统</p>
       <div class="Boxcontent">
@@ -7,18 +7,18 @@
           <p class="title-login">注册</p>
           <div class="usernameBox">
               <img src="./assets/img/yonghu.png" style="width:20px;height:20px;margin: 0px 10px 0 10px;" />
-              <input class="usernameBox_iput" [(ngModel)]="uid" type="text" formControlName="username"
+              <input class="usernameBox_iput" [(ngModel)]="uid" type="text" 
                 placeholder="账户名称" (keyup.enter)="keyUpSearch()" />
             </div>
           <div class="usernameBox">
             <img src="./assets/img/yonghu.png" style="width:20px;height:20px;margin: 0px 10px 0 10px;" />
-            <input class="usernameBox_iput" [(ngModel)]="username" type="text" formControlName="username"
+            <input class="usernameBox_iput" [(ngModel)]="username" type="text" 
               placeholder="用户名" (keyup.enter)="keyUpSearch()" />
           </div>
 
           <div class="passwordBox">
             <img src="./assets/img/mima.png" style="width:20px;height:20px;margin: 0px 10px 0 10px;" />
-            <input [(ngModel)]="password" class="passwordBox_iput" type="password" formControlName="password"
+            <input [(ngModel)]="password" class="passwordBox_iput" type="password" 
               placeholder="密码" (keyup.enter)="keyUpSearch()" />
           </div>
 
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-  </form>
+
 </div>
 <!-- 警示信息提示 -->
 <p-toast [style]="{marginTop: '80px'}" position="top-center" key="tc" baseZIndex=9999></p-toast>

@@ -1,0 +1,84 @@
+<div style="color:#fff;font-size: 20px;margin-bottom: 10px;">菜单管理</div>
+<div>
+  <button pButton type="button" label="新增" (click)="setMenu('add','')"></button>
+</div>
+<!-- 左侧菜单 -->
+<div style="float:left">
+  <p-panelMenu [model]="menuTree" [style]="{'width':'300px'}" (click)="getSelectedMenu($event)"></p-panelMenu>
+  <div>选中菜单：<span style="font-weight: bold;color: #fff">{{selectedMenu}}</span></div>
+ 
+
+</div>
+ <!-- 右侧列表 -->
+<div [hidden]="!selectedMenu" class="p-table" style="float:left;width: 850px;margin-left: 50px">
+    <p-table [columns]="menuTableTitle" [value]="menuTableValue">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns">
+                    {{col.header}}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+                <td *ngFor="let col of columns">
+                    <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                    <span *ngIf = "col.field == 'operation'"  (click)="setMenu('modify',rowData)" class="operation-icon">修改</span>
+                    <span *ngIf = "col.field == 'operation'"  (click)="setMenu('delete',rowData)" class="operation-icon">删除</span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<div class="dialog-class">
+    <p-dialog header="{{modalName}}" [(visible)]="setMenuDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+        <form>
+          <div class="form-group has-feedback">
+            <label class="control-label">编码</label>
+            <input [(ngModel)]="menu.code" type="text" name="code" class="form-control">
+          </div>
+          <div class="form-group has-feedback">
+            <label class="control-label">名称</label>
+            <input [(ngModel)]="menu.name" type="text" name="name" class="form-control">
+          </div>
+          <div class="form-group has-feedback">
+            <label class="control-label">URI</label>
+            <input [(ngModel)]="menu.uri" type="text" name="uri" class="form-control">
+          </div>
+          <div class="form-group has-feedback">
+            <label class="control-label">父菜单</label>
+            <select [(ngModel)]="menu.parentId" name="parentId" class="form-control">
+              <option value="-1">--置顶--</option>
+              <option *ngFor="let item of menuList" value="{{item.id}}">{{item.name}}</option>
+            </select>
+          </div>
+          <div class="form-group has-feedback">
+            <label class="control-label">类型</label>
+            <select [(ngModel)]="menu.type" name="type" class="form-control">
+              <option value="1">--菜单--</option>
+            </select>
+          </div>
+          <div class="form-group has-feedback">
+            <label class="control-label">图标</label>
+            <a><i class="{{menu?.icon}}" style="color:#fff;margin-left: 10px;"></i></a>
+            <select [(ngModel)]="menu.icon" name="icon" class="form-control">
+              <!--这里遍历菜单图标库-->
+              <option *ngFor="let item of appMenuIcon" value="{{item}}">
+                {{item}}
+              </option>
+            </select>
+          </div>
+          <div class="form-group has-feedback">
+            <label class="control-label">状态</label>
+            <select [(ngModel)]="menu.status" name="status" class="form-control">
+              <option value="1">正常</option>
+              <option value="9">禁用</option>
+            </select>
+          </div>
+        </form>
+        <p-footer>
+          <button type="button" pButton icon="pi pi-check" (click)="saveMenu()" label="保存"></button>
+          <button type="button" pButton icon="pi pi-close" (click)="setMenuDisplay=false" label="取消" class="ui-button-secondary"></button>
+        </p-footer>
+    </p-dialog>
+</div>

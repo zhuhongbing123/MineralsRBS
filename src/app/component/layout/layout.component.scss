@@ -1,0 +1,26 @@
+.layout-menu-container {
+    background-color: #1e3c72;
+    background-image: -webkit-gradient(linear, left top, right top, from(#1e3c72), to(#2a4f91));
+    background-image: -webkit-linear-gradient(to right, #1e3c72, #2a4f91);
+    background-image: -moz-linear-gradient(to right, #1e3c72, #2a4f91);
+    background-image: -ms-linear-gradient(to right, #1e3c72, #2a4f91);
+    background-image: -o-linear-gradient(to right, #1e3c72, #2a4f91);
+    background-image: linear-gradient(to right, #1e3c72, #2a4f91);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr="#1e3c72", endColorStr="#2a4f91", gradientType="1");
+  }
+  li.active-menuitem > a{
+    border-left-color: #CEDAF0;
+    color: #CEDAF0;
+    background-color: #091429 !important;
+  }
+  li a:hover{
+    background-color: #152A50 !important;
+  }
+
+
+  .layout-wrapper .layout-menu-container.layout-menu-dark ul.layout-menu li a i{
+    color: #ffffff;
+  }
+  .layout-wrapper .layout-menu li a{
+    color: #ffffff !important;
+  }

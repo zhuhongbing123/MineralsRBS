@@ -1,0 +1,124 @@
+<div [hidden]="!roleTableDisplay" class="p-table">
+  <div class="search">
+      <div style="color:#fff">角色详情</div>
+      <button pButton type="button" label="新增" (click)="setRole('add')"></button>
+  </div>
+  <p-table [columns]="roleTitle" [value]="roleValue">
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th *ngFor="let col of columns">
+                {{col.header}}
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+            <td *ngFor="let col of columns">
+                <span *ngIf = "col.field !== 'operation' && col.field !== 'link'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                <span *ngIf = "col.field == 'operation'"  (click)="setRole('modify',rowData)" class="operation-icon">修改 </span>
+                <span *ngIf = "col.field == 'operation'"  (click)="setRole('delete',rowData)" class="operation-icon"> 删除</span>
+                <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'授权API')" class="operation-icon">授权API</span>
+                <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'授权菜单')" class="operation-icon">授权菜单</span>
+                <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'关联用户')" class="operation-icon">关联用户</span>
+            </td>
+        </tr>
+    </ng-template>
+  </p-table>
+  <p-paginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+</div>
+
+
+<div class="dialog-class">
+    <!-- 角色关联模块弹出框 -->
+    <p-dialog header="{{clickRoleName}}--{{selectedLinkModule}}" [(visible)]="linkTableDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+            <div class="p-table">
+                    
+                    <div style="clear:both">
+                        <button pButton type="button" label="新增" (click)="setLink('add')"></button>
+                    </div>
+                    <div style="float:left;height: 400px;">
+                        <p-table [columns]="addLinkTitle" [value]="linkTableValue"  [scrollable]="true">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th *ngFor="let col of columns">
+                                    {{col.header}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr>
+                                <td *ngFor="let col of columns">
+                                    <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                                    <button pButton type="button" *ngIf = "col.field == 'operation'"  (click)="setLink('delete',rowData)" label="删除"> </button>
+                                </td>
+                                
+                            </tr>
+                        </ng-template>
+                        </p-table>
+                        <p-paginator [hidden]="!linkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'link')"></p-paginator>
+                    </div>
+            </div>
+    </p-dialog>
+
+
+    <!-- 编辑角色 -->
+    <p-dialog header="{{roleOpreationHeader}}" [(visible)]="roleOpreationDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+            <form>
+                    <div class="form-group has-feedback">
+                      <label class="control-label">编码</label>
+                      <input [(ngModel)]="roleCode" type="text" name="code" class="form-control">
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="control-label">名称</label>
+                        <input [(ngModel)]="roleName" type="text" name="roleName" class="form-control">
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="control-label">状态</label>
+
+                        <select [(ngModel)]="selectedroleStatus" name="status" class="form-control">
+                                <option *ngFor="let item of roleStatus" value="{{item.value}}">{{item.label}}</option>
+                        </select>
+                    </div>
+
+
+            </form>        
+
+    
+            <p-footer>
+                <button type="button" pButton icon="pi pi-check" (click)="saveRole()" label="保存"></button>
+                <button type="button" pButton icon="pi pi-close" (click)="roleOpreationDisplay=false" label="取消" class="ui-button-secondary"></button>
+            </p-footer>
+    </p-dialog>
+    <!-- 添加角色关联模块 -->
+    <p-dialog header="{{addLinkHeader}}" [(visible)]="addLinkDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+        <div class="p-table" style="height:500px">
+            <p-table [columns]="addLinkTitle" [value]="addLinkValue" [(selection)]="selectedAddLink">
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3em"></th>
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableRadioButton [value]="rowData"></p-tableRadioButton>
+                        </td>
+                        <td *ngFor="let col of columns">
+                            {{rowData[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <p-paginator [hidden]="!addLinkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="addLinkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'add')"></p-paginator>
+        </div>
+
+        <p-footer>
+            <button type="button" pButton icon="pi pi-check" (click)="saveAddLink()" label="保存"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="addLinkDisplay=false" label="取消" class="ui-button-secondary"></button>
+        </p-footer>
+    </p-dialog>
+
+</div>

@@ -4,11 +4,14 @@ import { CommonModule } from '@angular/common';
 import { ExplorationRightComponent } from './exploration-right.component';
 import { RouterModule } from '@angular/router';
 import { ExplorationRightRoutes } from '../routers/exploration-right.route';
-import { ExplorationInfoComponent } from './exploration-info/exploration-info.component';
-import { CheckboxModule, InputTextModule, ButtonModule, BreadcrumbModule, DialogModule, SidebarModule } from 'primeng/primeng';
+
+import { CheckboxModule, InputTextModule, ButtonModule, BreadcrumbModule, DialogModule, SidebarModule, TabMenuModule, PaginatorModule, CalendarModule, InputTextareaModule, DropdownModule, FileUploadModule } from 'primeng/primeng';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from "primeng/table";
 import { CarService } from '../../demo/service/carservice';
+import { ExplorationFileComponent } from './exploration-file/exploration-file.component';
+import { ExplorationInfoComponent } from './exploration-info/exploration-info.component';
+
 
 @NgModule({
   imports: [
@@ -20,10 +23,20 @@ import { CarService } from '../../demo/service/carservice';
     TableModule,
     ButtonModule,
     DialogModule,
-    SidebarModule
-
+    SidebarModule,
+    TabMenuModule,
+    PaginatorModule,
+    CalendarModule,
+    InputTextareaModule,
+    DropdownModule,
+    FileUploadModule
   ],
   providers: [CarService],
-  declarations: [ExplorationRightComponent, ExplorationInfoComponent]
+  declarations: [
+    ExplorationRightComponent, 
+    ExplorationFileComponent, 
+    ExplorationInfoComponent
+  ],
+  exports:[ExplorationFileComponent]
 })
 export class ExplorationRightModule { }

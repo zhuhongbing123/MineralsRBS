@@ -1613,7 +1613,7 @@ body a {
 .layout-wrapper .layout-menu li a {
   display: block;
   padding: 10px 15px;
-  color: #212529;
+  color: #ffffff;
   width: 100%;
   -moz-transition: background-color 0.3s, border-left-color 0.3s;
   -o-transition: background-color 0.3s, border-left-color 0.3s;
@@ -1623,7 +1623,7 @@ body a {
   border-left: 4px solid transparent;
 }
 .layout-wrapper .layout-menu li a i {
-  color: #777777;
+  color: #ffffff;
 }
 .layout-wrapper .layout-menu li a i:first-child {
   display: inline-block;
@@ -1645,7 +1645,7 @@ body a {
   display: none;
 }
 .layout-wrapper .layout-menu li a:hover {
-  background-color: #f4f4f4;
+  background-color:  #a7bde4;
 }
 .layout-wrapper .layout-menu li a span {
   display: inline-block;
@@ -1668,18 +1668,18 @@ body a {
   margin-top: 2px;
 }
 .layout-wrapper .layout-menu li a.active-menuitem-routerlink {
-  color: #1e3c72;
+  color: #ffffff;
 }
 .layout-wrapper .layout-menu li a.active-menuitem-routerlink i:first-child {
-  color: #1e3c72;
+  color: #f5f5f5;
 }
 .layout-wrapper .layout-menu li.active-menuitem > a {
-  color: #1e3c72;
-  background-color: #e8e8e8;
-  border-left-color: #1e3c72;
+    border-left-color: #CEDAF0;
+    color: #CEDAF0;
+    background-color: #091429;
 }
 .layout-wrapper .layout-menu li.active-menuitem > a i:first-child {
-  color: #1e3c72;
+  color: #CEDAF0;
 }
 .layout-wrapper .layout-menu li.active-menuitem > a i.menuitem-toggle-icon {
   -webkit-transform: rotate(-180deg);

@@ -1,6 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {TerminalService} from 'primeng/components/terminal/terminalservice';
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
+
 
 @Component({
     templateUrl: './miscdemo.component.html',

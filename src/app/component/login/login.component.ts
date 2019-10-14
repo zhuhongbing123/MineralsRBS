@@ -52,6 +52,7 @@ export class LoginComponent implements OnInit {
               // 认证成功返回jwt
               if (data2.meta.code === 1003 && data2.data.jwt != null) {
                 localStorage.setItem('token', data2.data.jwt);
+                localStorage.setItem('uid', this.username);
                 login$.unsubscribe();
                 this.router.navigate(['/menu']);
               } else {
@@ -87,5 +88,23 @@ export class LoginComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  logout() {
+    const url = 'user/exit';
+    this.confirmationService.confirm({
+      message: "注销后，需要重新登录，是否继续?",
+      header: "注销",
+      icon: "pi pi-info-circle",
+      accept: () => {
+        this.httpUtil.logOut(url).then(value => {
+          if (value.code === 200) {
+            this.router.navigate(["/"]);
+          }
+        });
+      },
+      reject: () => { }
+    });
+    return this.httpUtil.postLogin(url);
   }
 }

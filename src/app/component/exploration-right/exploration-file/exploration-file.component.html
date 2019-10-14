@@ -1,0 +1,61 @@
+
+<div [hidden]="detailsDisplay" style="color:#fff">
+  <div>所有分类</div>
+  <button pButton type="button" label="新增" (click)="setReport('add')"></button>
+ <!--  <div class="classify-style">
+    <div class="classify-one"><p-checkbox name="group1" value="矿权人信息" label="矿权人信息" [(ngModel)]="selectedCities" inputId="ny"></p-checkbox></div>
+    <div class="classify-one"><p-checkbox name="group2" value="联系方式" label="联系方式" [(ngModel)]="selectedCities" inputId="ny"></p-checkbox></div>
+    <div class="classify-one"><p-checkbox name="group3" value="面积" label="面积" [(ngModel)]="selectedCities" inputId="ny"></p-checkbox></div>
+    <div class="classify-one"><p-checkbox name="group4" value="勘查阶段" label="勘查阶段" [(ngModel)]="selectedCities" inputId="ny"></p-checkbox></div>
+    <div class="classify-one"><p-checkbox name="group5" value="时限" label="时限" [(ngModel)]="selectedCities" inputId="ny"></p-checkbox></div>
+    <div class="classify-one"><p-checkbox name="group6" value="矿种" label="矿种" [(ngModel)]="selectedCities" inputId="ny"></p-checkbox></div>
+    <div class="classify-one"><p-checkbox name="group7" value="坐标范围(坐标系)" label="坐标范围(坐标系)" [(ngModel)]="selectedCities" inputId="ny"></p-checkbox></div>
+    <div class="classify-one"><p-checkbox name="group8" value="时间" label="时间" [(ngModel)]="selectedCities" inputId="ny"></p-checkbox></div>
+    <div style="clear:both"></div>
+  </div> -->
+ 
+  <!-- <div class="ui-g-12 ui-md-4">
+    <div class="ui-inputgroup">
+        <input type="text" pInputText placeholder="输入要搜索的文件名">   
+        <button pButton type="button" label="搜索"></button>       
+    </div>
+  </div> -->
+  <div style="clear: both;"  class="p-table">
+      <p-table [columns]="explorationInfoTitle" [value]="explorationValue" >
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns">
+                    {{col.header}}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+                <td *ngFor="let col of columns">
+                    <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                    <span   *ngIf = "col.field == 'operation'"   class="operation-icon" (click)="setReport('modify',rowData)">修改</span>
+                    <span  *ngIf = "col.field == 'operation'"    class="operation-icon" (click)="setReport('delete',rowData)">删除</span>
+                </td>
+            </tr>
+        </ng-template>
+      </p-table>
+      <p-paginator [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+  </div>
+</div>
+<div class="dialog-class">
+    <!-- 报告分类弹出框 -->
+    <p-dialog header="报告分类" [(visible)]="setReporteDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+            <form>
+                    <div class="form-group has-feedback">
+                      <label class="control-label">报告分类名称</label>
+                      <input [(ngModel)]="reportCategoryName" type="text" name="code" class="form-control">
+                    </div>
+            </form>     
+            <p-footer>
+                    <button type="button" pButton  (click)="saveReport()" label="保存"></button>
+                    <button type="button" pButton  (click)="setReporteDisplay=false" label="取消" class="ui-button-secondary"></button>
+            </p-footer>   
+    </p-dialog>
+</div>    
+
+

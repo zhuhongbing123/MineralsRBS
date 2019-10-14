@@ -1,1 +1,115 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+    background: url('../src/assets/img/BgBanner.png') !important;
+}
+.search {
+    //下拉框样式
+    .ui-dropdown-label {
+      background: #467e9b !important;
+      color: #fff !important;
+    }
+    .ui-dropdown-list {
+        background: #467e9b !important;
+        color: #fff !important;
+    }
+
+    .ui-dropdown-trigger {
+    background: #467e9b !important;
+    color: #fff !important;
+    }
+}  
+/* 表格样式 */
+.p-table{
+    .ui-table .ui-table-tbody > tr > td{
+        text-align: center;
+        word-wrap: break-word;
+        word-break: normal;
+    }
+    .ui-table .ui-table-thead > tr > th{
+        text-align: center;
+    }
+    .ui-tabview-panels {
+        background: radial-gradient(#385f7fed 14%, #5f90bbf5 100%, #f2f1ed 20%) !important;
+      }
+    
+      .ui-paginator {
+        padding: 10px 0 !important;
+        background: radial-gradient(#385f7fed 14%, #5f90bbf5 100%, #f2f1ed 20%) !important;
+      }
+    
+      .ui-dropdown-panel .ui-dropdown-items {
+        color: white !important;
+      }
+    
+      .ui-table .ui-table-thead>tr>th {
+        color: #fff !important;
+        font-size: 16px;
+        text-align: center;
+        background: #3a607fed;
+      }
+    
+      .ui-table .ui-table-tbody>tr,
+      .ui-table .ui-table-tbody>tr:nth-child(even) {
+        background: radial-gradient(#49779ff5 100%, #f2f1ed 20%) !important;
+        text-align: center;
+        color: #fff !important;
+      }
+    
+      .ui-table .ui-table-summary {
+        color: #fff !important;
+        background: radial-gradient(#385f7fed 14%, #5f90bbf5 100%, #f2f1ed 20%) !important;
+      }
+    
+      .ui-table .ui-table-caption {
+        color: #fff !important;
+        background: radial-gradient(#385f7fed 14%, #5f90bbf5 100%, #f2f1ed 20%) !important;
+      }
+    
+      .ui-tabview.ui-tabview-top .ui-tabview-nav li:hover {
+        background-color: #4a789f !important;
+      }
+    
+      .ui-tabview.ui-tabview-top .ui-tabview-nav li {
+        background-color: #4a789f !important;
+      }
+    
+      .ui-tabview.ui-tabview-top .ui-tabview-nav li a {
+        color: white !important;
+      }
+    
+      .ui-tabview.ui-tabview-top .ui-tabview-nav li.ui-state-active {
+        background-color: #007ad9 !important;
+      }
+    
+      .ui-accordion .ui-accordion-content {
+        background-color: #4a789f !important;
+      }
+}
+/* 弹出框和提示框 */
+
+.dialog-class {
+
+    .ui-dialog .ui-dialog-content,
+    .ui-dialog .ui-dialog-titlebar,
+    .ui-dialog .ui-dialog-footer {
+      background: #4a789f !important;
+      color: white !important;
+    }
+    .ui-calendar.ui-calendar-w-btn .ui-inputtext{
+      background: #467e9b;
+      color: white;
+    }
+    .ui-widget, body .ui-widget .ui-widget,
+    .ui-inputtext:enabled:focus:not(.ui-state-error),
+    .ui-inputtext:enabled:hover:not(.ui-state-error){
+      background: #467e9b;
+      color: white;
+    }
+}
+
+  /* 输入框样式 */
+.form-control {
+    background-color: #467E9B !important;
+    color: white !important;
+    width: 60% !important;
+}

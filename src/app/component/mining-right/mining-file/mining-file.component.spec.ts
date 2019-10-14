@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LogPageComponent } from './log-page.component';
+import { MiningFileComponent } from './mining-file.component';
 
-describe('LogPageComponent', () => {
-  let component: LogPageComponent;
-  let fixture: ComponentFixture<LogPageComponent>;
+describe('MiningFileComponent', () => {
+  let component: MiningFileComponent;
+  let fixture: ComponentFixture<MiningFileComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LogPageComponent ]
+      declarations: [ MiningFileComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LogPageComponent);
+    fixture = TestBed.createComponent(MiningFileComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

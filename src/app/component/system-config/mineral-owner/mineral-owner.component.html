@@ -1,0 +1,38 @@
+<div  class="p-table">
+  <button pButton type="button" label="新增" (click)="setOwner('add')"></button>
+  <p-table [columns]="mineralOwnerTitle" [value]="mineralOwnerValue"  [rows]="10">
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th *ngFor="let col of columns">
+                {{col.header}}
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+            <td *ngFor="let col of columns">
+                <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setOwner('modify',rowData)">修改</span>
+                <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setOwner('delete',rowData)">删除</span>
+            </td>
+        </tr>
+    </ng-template>
+  </p-table>
+  <p-paginator [hidden]="!ownerTotal" [rows]="LIMIT_LOGIN" [totalRecords]="ownerTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+</div>
+
+<div class="dialog-class">
+    <!-- 矿权人增加、修改弹出框 -->
+    <p-dialog header="矿权人" [(visible)]="ownerDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+            <form>
+                <div class="form-group has-feedback">
+                    <label class="control-label">矿权人名称</label>
+                    <input  type="text"   [(ngModel)]="mineralOwner.ownerName" name="ownerName"  class="form-control">
+                </div>
+            </form>
+            <p-footer>
+                <button type="button" pButton  (click)="saveOwner()" label="保存"></button>
+                <button type="button" pButton  (click)="ownerDisplay=false" label="取消" class="ui-button-secondary"></button>
+             </p-footer>   
+    </p-dialog>
+</div>                

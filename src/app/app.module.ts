@@ -15,6 +15,8 @@ import {HashLocationStrategy,LocationStrategy} from '@angular/common';
 import { CountryService } from './demo/service/countryservice';
 import { HttpUtil } from './common/util/http-util';
 import { RegisterModule } from './component/register/register.module';
+import { HttpInterceptorProviders } from './component/interceptor/http-interceptor-providers';
+
 @NgModule({
     imports: [
         BrowserModule,
@@ -37,6 +39,7 @@ import { RegisterModule } from './component/register/register.module';
         CountryService,
         MessageService,
         ConfirmationService,
+        HttpInterceptorProviders
         
     ],
     bootstrap: [AppComponent]

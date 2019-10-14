@@ -13,20 +13,20 @@ export class HttpUtil {
     constructor( private http: HttpClient,private router: Router) {
         this.baseUrl = HttpUrl.apiBaseUrl;
     }
-    public get(url: string): Observable<ResponseVO> {
+    public getLogin(url: string): Observable<ResponseVO> {
         const uri = url;
         return this.http.get<ResponseVO>(uri).pipe(
           //catchError(this.handleError())
         );
     }
-    public post(url: string, body?: any | null): Observable<ResponseVO> {
+    public postLogin(url: string, body?: any | null): Observable<ResponseVO> {
         const uri =  url;
         return this.http.post<ResponseVO>(uri, body).pipe(
             //catchError(this.handleError)
         );
 
     }
-    public getID(url){
+    public get(url){
         return this.http
       .get(
         this.baseUrl + url
@@ -44,7 +44,64 @@ export class HttpUtil {
         return error;
       });
     }
+    public post(url, body) {
+      return this.http
+        .post(
+          // this.https + url + "?access_token=12312312321313",
+          this.baseUrl + url,
+          body
+        )
+        .toPromise()
+        .then(res => {
+          if (res["code"] === 401) {
+            this.router.navigateByUrl("");
+          } else {
+            return res;
+          }
+        })
+        .catch(error => {
+          // this.router.navigateByUrl("");
+          return error;
+        });
+    }
 
+    public delete(url) {
+      return this.http
+        .delete(
+          this.baseUrl + url
+        )
+        .toPromise()
+        .then(res => {
+          if (res["code"] === 401) {
+            this.router.navigateByUrl("");
+          } else {
+            return res;
+          }
+        })
+        .catch(error => {
+          // this.router.navigateByUrl("");
+          return error;
+        });
+    }
+    public put(url, body) {
+      return this.http
+        .put(
+          this.baseUrl + url ,
+          body
+        )
+        .toPromise()
+        .then(res => {
+          if (res["code"] === 401) {
+            this.router.navigateByUrl("");
+          } else {
+            return res;
+          }
+        })
+        .catch(error => {
+          // this.router.navigateByUrl("");
+          return error;
+        });
+    }
     handleError(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
           console.error('http出错:', error.error.message);
@@ -55,4 +112,6 @@ export class HttpUtil {
         //return new ErrorObservable('亲请检查网络');
     
     }
+
+    
 }

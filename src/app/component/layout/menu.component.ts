@@ -4,6 +4,7 @@ import { MenuItem } from 'primeng/primeng';
 
 import { RouterLink, Router } from '@angular/router';
 import { LayoutComponent } from './layout.component';
+import { HttpUtil } from '../../common/util/http-util';
 
 @Component({
   selector: 'menu',
@@ -24,11 +25,14 @@ export class MenuComponent implements OnInit {
   layout = 'blue';
 
   version = 'v3';
-
-  constructor(public app: LayoutComponent, private router: Router) { }
+  menuList = [];//左侧菜单
+  menuTree = [];
+  constructor(public app: LayoutComponent, 
+              private router: Router,
+              private httpUtil: HttpUtil) { }
 
   ngOnInit() {
-    
+   // this.getMenuValue();
     this.models = [
      
       {
@@ -37,15 +41,29 @@ export class MenuComponent implements OnInit {
       {
         label: '探矿权', icon: 'fa fa-fw  fa-tags',
         items: [
+          { label: '探矿权文件分类', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/explorationRight/explorationFile'] },
           { label: '探矿权信息', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/explorationRight/explorationInfo'] }
         ]
       },
       {
         label: '采矿权', icon: 'fa fa-fw  fa-tags',
-
+        items: [
+          { label: '采矿权文件分类', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/miningRight/miningFile'] },
+          { label: '采矿权信息', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/miningRight/miningInfo'] }
+        ]
       },
       {
-        label: '日志记录', icon: 'fa fa-fw  fa-tags', routerLink: ['/layout/log-page/log']
+        label: '系统配置', icon: 'fa fa-fw  fa-tags', 
+        items: [
+          { label: '角色管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/roleManage'] },
+          { label: '用户管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/userManage'] },
+          { label: '矿权人管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/mineralOwner'] },
+          { label: 'API授权管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/apiManage'] },
+          { label: '菜单管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/menuManage'] },
+          { label: '登录日志', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/loginLog'] },
+          { label: '操作日志', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/operationLog'] }
+          
+        ]
 
       }
     ];
@@ -88,6 +106,40 @@ export class MenuComponent implements OnInit {
       }
     })
     this.model = this.models
+  }
+
+  /* 获取左侧菜单数据 */
+  getMenuValue(){
+    this.httpUtil.get('resource/menus').then(value=>{
+      if (value.meta.code === 6666) {
+        let data = value.data.menuTree;
+        this.getMenuTree(data);
+        //this.model = this.getMenuList(this.menuList,-1)
+      }
+    })
+  }
+  getMenuTree(data){
+    data.forEach(menu => {
+      this.menuList.push(menu);
+      if (menu.children != null || menu.children === '') {
+        this.getMenuTree(menu.children);
+      }
+    });
+  }
+
+  getMenuList(data,pid){
+    var  temp,result=[];
+    for(var i in data){
+        if(data[i].parentId==pid){
+          result.push(data[i]);
+          data[i]['label']=data[i].name
+            temp = this.getMenuList(data,data[i].id);           
+            if(temp.length>0){
+                data[i].items=temp;
+            }           
+        }       
+    }
+    return result;
   }
 
   changeTheme(theme: string) {
