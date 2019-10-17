@@ -47,7 +47,8 @@
                             "node_modules/@fullcalendar/interaction/main.js",
                             "node_modules/quill/dist/quill.js",
                             "node_modules/xlsx/dist/xlsx.full.min.js",
-                            "src/assets/js/pdfobject.min.js"
+                            "src/assets/js/pdfobject.min.js",
+                            "src/assets/js/export.js"
                         ]
                     },
                     "configurations": {

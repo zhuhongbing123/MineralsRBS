@@ -1,59 +1,63 @@
+<div>系统配置 > 角色管理</div>
+
 <div [hidden]="!roleTableDisplay" class="p-table">
-  <div class="search">
-      <div style="color:#fff">角色详情</div>
-      <button pButton type="button" label="新增" (click)="setRole('add')"></button>
-  </div>
-  <p-table [columns]="roleTitle" [value]="roleValue">
-    <ng-template pTemplate="header" let-columns>
-        <tr>
-            <th *ngFor="let col of columns">
-                {{col.header}}
-            </th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
-            <td *ngFor="let col of columns">
-                <span *ngIf = "col.field !== 'operation' && col.field !== 'link'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                <span *ngIf = "col.field == 'operation'"  (click)="setRole('modify',rowData)" class="operation-icon">修改 </span>
-                <span *ngIf = "col.field == 'operation'"  (click)="setRole('delete',rowData)" class="operation-icon"> 删除</span>
-                <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'授权API')" class="operation-icon">授权API</span>
-                <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'授权菜单')" class="operation-icon">授权菜单</span>
-                <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'关联用户')" class="operation-icon">关联用户</span>
-            </td>
-        </tr>
-    </ng-template>
-  </p-table>
-  <p-paginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+
+    <div class="ui-g-12 ui-md-4">
+            <button pButton type="button" label="新增" (click)="setRole('add')"></button>
+    </div>
+    <div style="clear: both;"> 
+        <p-table [columns]="roleTitle" [value]="roleValue">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns">
+                        <span *ngIf = "col.field !== 'operation' && col.field !== 'link'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        <span *ngIf = "col.field == 'operation'"  (click)="setRole('modify',rowData)" class="operation-icon">修改 </span>
+                        <span *ngIf = "col.field == 'operation'"  (click)="setRole('delete',rowData)" class="operation-icon"> 删除</span>
+                        <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'授权API')" class="operation-icon">授权API</span>
+                        <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'授权菜单')" class="operation-icon">授权菜单</span>
+                        <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'关联用户')" class="operation-icon">关联用户</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-paginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal" [rowsPerPageOptions]="[10,20,30]"></p-paginator>
+    </div>    
 </div>
 
 
 <div class="dialog-class">
     <!-- 角色关联模块弹出框 -->
-    <p-dialog header="{{clickRoleName}}--{{selectedLinkModule}}" [(visible)]="linkTableDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
-            <div class="p-table">
+    <p-dialog header="{{clickRoleName}}--{{selectedLinkModule}}" [(visible)]="linkTableDisplay" [modal]="true" [responsive]="true" [style]="{width: '1000px'}">
+            <div class="p-table" >
                     
-                    <div style="clear:both">
+                    <div style="clear:both" class="ui-g-12 ui-md-4">
                         <button pButton type="button" label="新增" (click)="setLink('add')"></button>
                     </div>
-                    <div style="float:left;height: 400px;">
+                    <div style="float:left;height: 600px;">
                         <p-table [columns]="addLinkTitle" [value]="linkTableValue"  [scrollable]="true">
-                        <ng-template pTemplate="header" let-columns>
-                            <tr>
-                                <th *ngFor="let col of columns">
-                                    {{col.header}}
-                                </th>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-rowData let-columns="columns">
-                            <tr>
-                                <td *ngFor="let col of columns">
-                                    <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                                    <button pButton type="button" *ngIf = "col.field == 'operation'"  (click)="setLink('delete',rowData)" label="删除"> </button>
-                                </td>
-                                
-                            </tr>
-                        </ng-template>
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns">
+                                        {{col.header}}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr>
+                                    <td *ngFor="let col of columns">
+                                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                                        <button pButton type="button" *ngIf = "col.field == 'operation'"  (click)="setLink('delete',rowData)" label="删除"> </button>
+                                    </td>
+                                    
+                                </tr>
+                            </ng-template>
                         </p-table>
                         <p-paginator [hidden]="!linkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'link')"></p-paginator>
                     </div>
@@ -62,7 +66,7 @@
 
 
     <!-- 编辑角色 -->
-    <p-dialog header="{{roleOpreationHeader}}" [(visible)]="roleOpreationDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+    <p-dialog header="{{roleOpreationHeader}}" [(visible)]="roleOpreationDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
             <form>
                     <div class="form-group has-feedback">
                       <label class="control-label">编码</label>
@@ -90,8 +94,8 @@
             </p-footer>
     </p-dialog>
     <!-- 添加角色关联模块 -->
-    <p-dialog header="{{addLinkHeader}}" [(visible)]="addLinkDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
-        <div class="p-table" style="height:500px">
+    <p-dialog header="{{addLinkHeader}}" [(visible)]="addLinkDisplay" [modal]="true" [responsive]="true" [style]="{width: '1000px'}">
+        <div class="p-table" style="height:600px">
             <p-table [columns]="addLinkTitle" [value]="addLinkValue" [(selection)]="selectedAddLink">
                 <ng-template pTemplate="header" let-columns>
                     <tr>

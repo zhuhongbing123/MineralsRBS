@@ -1,24 +1,28 @@
 <div  class="p-table">
-  <button pButton type="button" label="新增" (click)="setOwner('add')"></button>
-  <p-table [columns]="mineralOwnerTitle" [value]="mineralOwnerValue"  [rows]="10">
-    <ng-template pTemplate="header" let-columns>
-        <tr>
-            <th *ngFor="let col of columns">
-                {{col.header}}
-            </th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
-            <td *ngFor="let col of columns">
-                <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setOwner('modify',rowData)">修改</span>
-                <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setOwner('delete',rowData)">删除</span>
-            </td>
-        </tr>
-    </ng-template>
-  </p-table>
-  <p-paginator [hidden]="!ownerTotal" [rows]="LIMIT_LOGIN" [totalRecords]="ownerTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+    <div class="ui-g-12 ui-md-4">
+        <button pButton type="button" label="新增" (click)="setOwner('add')"></button>
+    </div>
+    <div style="clear:both">
+        <p-table [columns]="mineralOwnerTitle" [value]="mineralOwnerValue"  [rows]="10">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns">
+                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setOwner('modify',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setOwner('delete',rowData)">删除</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-paginator [hidden]="!ownerTotal" [rows]="LIMIT_LOGIN" [totalRecords]="ownerTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+    </div> 
 </div>
 
 <div class="dialog-class">

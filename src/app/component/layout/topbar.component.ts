@@ -68,9 +68,9 @@ import { LoginService } from '../login/login.service';
                         <ul class="layout-menu fadeInDown">
                            
                             <li role="menuitem">
-                                <a>
-                                    <i class="fa fa-fw fa-picture-o"></i>
-                                    <p (click)="logout()">注销注销</p>
+                                <a (click)="logout()" class="logout">
+                                    <i class="fa fa-fw fa-sign-out" style="float:left"></i>
+                                    <p style="float:left">注销</p>
                                 </a>
                             </li>
                         </ul>
@@ -90,6 +90,12 @@ import { LoginService } from '../login/login.service';
         .version{
           font-size:12px; 
           line-height:20px;
+        }
+        .layout-menu{
+            background-color: #5e94c2 !important;
+        }
+        .logout{
+            cursor: pointer;
         }
     `],
 })

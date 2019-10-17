@@ -18,7 +18,7 @@
             </tr>
         </ng-template>
       </p-table>
-      <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+      <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'project')"></p-paginator>
   </div>
 </div>
 
@@ -96,32 +96,11 @@
 
     <!--  勘查详情-->
     <div style="clear: both;" class="p-table" [hidden]="!stageDetailDisplay">
-        <button pButton type="button" label="新增" (click)="setMining('addStage')"></button>
-        <p-table [columns]="stageDetailTitle" [value]="stageDetailValue" [paginator]="true" [rows]="10">
-          <ng-template pTemplate="header" let-columns>
-              <tr>
-                  <th *ngFor="let col of columns">
-                      {{col.header}}
-                  </th>
-              </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-rowData let-columns="columns">
-              <tr>
-                  <td *ngFor="let col of columns">
-                      <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                      <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('modifyStage',rowData)">修改</span>
-                      <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('deleteStage',rowData)">删除</span>
-                  </td>
-              </tr>
-          </ng-template>
-        </p-table>
-    </div>
-
-    <!-- 年度监测报告 -->
-    <div  style="clear: both;" class="p-table" [hidden]="!monitoringDetailDisplay">
-        <div [hidden]="reportFileDisplay">
-            <button pButton type="button" label="新增" (click)="setMining('addMonitoring')"></button>
-            <p-table [columns]="monitoringTitle" [value]="monitoringValue" [paginator]="true" [rows]="10">
+        <div class="ui-g-12 ui-md-4">
+            <button pButton type="button" label="新增" (click)="setMining('addStage')"></button>
+        </div>
+        <div style="clear:both">
+            <p-table [columns]="stageDetailTitle" [value]="stageDetailValue" [rows]="10">
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th *ngFor="let col of columns">
@@ -133,12 +112,43 @@
                 <tr>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)">修改</span>
-                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)">删除</span>
+                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('modifyStage',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('deleteStage',rowData)">删除</span>
                     </td>
                 </tr>
             </ng-template>
             </p-table>
+            <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'stage')"></p-paginator>
+        </div>    
+    </div>
+
+    <!-- 年度监测报告 -->
+    <div  style="clear: both;" class="p-table" [hidden]="!monitoringDetailDisplay">
+        <div [hidden]="reportFileDisplay">
+            <div class="ui-g-12 ui-md-4">
+                <button pButton type="button" label="新增" (click)="setMining('addMonitoring')"></button>
+            </div>
+            <div style="clear:both">
+                <p-table [columns]="monitoringTitle" [value]="monitoringValue"  [rows]="10">
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td *ngFor="let col of columns">
+                            <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                            <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)">修改</span>
+                            <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)">删除</span>
+                        </td>
+                    </tr>
+                </ng-template>
+                </p-table>
+                <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'monitoring')"></p-paginator>
+            </div>    
         </div>
         <div [hidden]="!reportFileDisplay">
                 <button  pButton type="button" label="返回列表" (click)="reportFileDisplay = false"></button>
@@ -158,7 +168,7 @@
                     </div>
                     <div  id="result" style="width: 100em;overflow: auto;height: 40em;"></div>
                    
-                    <button (click)="export()">Export!</button>
+                    <button >Export!</button>
                     <button pButton type="button" (click)="pdfDisplay = false" label="返回" ></button>
                 </p-sidebar>
         </div>
@@ -166,26 +176,31 @@
   <!-- 采矿权报告 -->
   <div  style="clear: both;" class="p-table" [hidden]="!reportDetailDisplay">
     <div [hidden]="reportFileDisplay">
-        <button pButton type="button" label="新增" (click)="setMining('addReport')"></button>
-        <p-table [columns]="reportClassifyTitle" [value]="reportClassifyValue" [paginator]="true" [rows]="10">
-        <ng-template pTemplate="header" let-columns>
-            <tr>
-                <th *ngFor="let col of columns">
-                    {{col.header}}
-                </th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-rowData let-columns="columns">
-            <tr>
-                <td *ngFor="let col of columns">
-                    <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                    <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('modifyReport',rowData)">修改</span>
-                    <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('viewReport',rowData)">查看文件</span>
-                    <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('deleteReport',rowData)">删除</span>
-                </td>
-            </tr>
-        </ng-template>
-        </p-table>
+        <div class="ui-g-12 ui-md-4">
+            <button pButton type="button" label="新增" (click)="setMining('addReport')"></button>
+        </div>
+        <div style="clear:both">
+            <p-table [columns]="reportClassifyTitle" [value]="reportClassifyValue"  [rows]="10">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns">
+                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('modifyReport',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('viewReport',rowData)">查看文件</span>
+                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('deleteReport',rowData)">删除</span>
+                    </td>
+                </tr>
+            </ng-template>
+            </p-table>
+            <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'report')"></p-paginator>
+        </div>    
     </div>
     <div [hidden]="!reportFileDisplay">
             <button  pButton type="button" label="返回列表" (click)="reportFileDisplay = false"></button>
@@ -205,16 +220,16 @@
                 </div>
                 <div  id="result" style="width: 100em;overflow: auto;height: 40em;"></div>
               
-                <button (click)="export()">Export!</button>
+                <button >Export!</button>
                 <button pButton type="button" (click)="pdfDisplay = false" label="返回" ></button>
             </p-sidebar>
     </div>
   </div>
 </div>
 
-<div class="dialog-class">
+<div class="dialog-class textarea-style">
     <!-- 采矿权项目修改弹出框 -->
-    <p-dialog header="采矿权项目" [(visible)]="miningDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+    <p-dialog header="{{miningTitle}}" [(visible)]="miningDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
             <form>
                 <div class="form-group has-feedback">
                     <label class="control-label">项目名称</label>
@@ -304,7 +319,7 @@
     </p-dialog>
 
     <!-- 排查阶段弹出框 -->
-    <p-dialog header="探矿权排查阶段" [(visible)]="stageDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+    <p-dialog header="{{miningTitle}}" [(visible)]="stageDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
         <form>
             <div class="form-group has-feedback">
                 <label class="control-label">矿权人</label>
@@ -375,7 +390,7 @@
     </p-dialog>
 
     <!-- 年度监测报告弹出框 -->
-    <p-dialog header="年度监测报告" [(visible)]="monitoringDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+    <p-dialog header="{{miningTitle}}" [(visible)]="monitoringDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
         
         <div class="form-group has-feedback">
             <label class="control-label">监测报告年份</label>
@@ -408,12 +423,12 @@
           </div>    
         </div>
         <p-footer>
-            <button type="button" pButton (click)="saveExplorationReport()" label="保存"></button>
-            <button type="button" pButton icon="pi pi-close" (click)="stageDisplay = false" label="取消" class="ui-button-secondary"></button>
+            <button type="button" pButton (click)="saveMiningMonitoring()" label="保存"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="monitoringDisplay = false" label="取消" class="ui-button-secondary"></button>
         </p-footer>  
     </p-dialog>
     <!-- 采矿权报告弹出框 -->
-    <p-dialog header="探矿权报告" [(visible)]="reportDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+    <p-dialog header="{{miningTitle}}" [(visible)]="reportDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
       <div class="form-group has-feedback">
           <label class="control-label">报告分类</label>
           <div class="search">
@@ -434,7 +449,7 @@
       </div>
       <div class="form-group has-feedback">
           <label class="control-label">报告文件路径</label>
-          <p-fileUpload name="demo[]" url="./upload.php" (onUpload)="onUpload($event)"
+          <p-fileUpload name="demo[]" url="./upload.php" 
               multiple="multiple" accept="image/*" maxFileSize="1000000">
               <!-- <ng-template pTemplate="content">
                   <ul *ngIf="uploadedFiles.length">
@@ -451,7 +466,7 @@
       </div>
       <p-footer>
           <button type="button" pButton (click)="saveMiningReport()" label="保存"></button>
-          <button type="button" pButton icon="pi pi-close" (click)="stageDisplay = false" label="取消" class="ui-button-secondary"></button>
+          <button type="button" pButton icon="pi pi-close" (click)="reportDisplay = false" label="取消" class="ui-button-secondary"></button>
       </p-footer>  
     </p-dialog>
 </div>

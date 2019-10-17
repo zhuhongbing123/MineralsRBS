@@ -23,6 +23,7 @@ export class UserManagementComponent implements OnInit {
   public selectUser;//已选择用户
   pageSize = 10;//列表每页数量
   pageNumber = 1;//列表第几页
+  userTitle;//弹出框标题
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService) { }
@@ -99,7 +100,7 @@ export class UserManagementComponent implements OnInit {
     this.selectUser = value;
     if(type =='delete'){
       this.confirmationService.confirm({
-        message: '确认删除该用户的角色吗?',
+        message: '确认删除该用户('+value.username+')的角色('+value.role+')吗?',
         header: '删除角色',
         icon: 'pi pi-exclamation-triangle',
         acceptLabel:'确定',
@@ -117,6 +118,7 @@ export class UserManagementComponent implements OnInit {
         }
       });
     }else{
+      this.userTitle = '用户角色管理('+value.username+')';
       this.userRoleDisplay = true;
       this.selectedRole = '';
     }

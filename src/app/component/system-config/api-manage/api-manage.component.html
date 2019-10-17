@@ -1,9 +1,9 @@
-<div class="search">
-        <div style="color:#fff">API管理</div>
-        <button pButton type="button" label="新增" (click)="setApi('add')"></button>
-        <p-dropdown [options]="apiClassify" [(ngModel)]="selectApiClassify" (onChange)="selectClassify()" placeholder="资源类别" [virtualScroll]="true"  [filter]="false"></p-dropdown>
+<p>系统配置 > API管理</p>
+<div class="search ui-g-12 ui-md-4">
+        <button pButton type="button" label="新增" (click)="setApi('add','')"></button>
+        <p-dropdown [options]="apiClassify" [(ngModel)]="selectApiClassify" (onChange)="selectClassify()" placeholder="资源类别" [virtualScroll]="true"  [filter]="true"></p-dropdown>
 </div>
-<div class="p-table">
+<div class="p-table" style="clear:both">
     <p-table [columns]="apiTableTitle" [value]="apiTableValue">
       <ng-template pTemplate="header" let-columns>
           <tr>
@@ -27,7 +27,7 @@
 
 <!-- 编辑api -->
 <div class="dialog-class">
-        <p-dialog header="{{roleOpreationHeader}}" [(visible)]="apiEditorDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+        <p-dialog header="{{apiTitle}}" [(visible)]="apiEditorDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
                 <form>
                         <div class="form-group has-feedback">
                           <label class="control-label">编码</label>

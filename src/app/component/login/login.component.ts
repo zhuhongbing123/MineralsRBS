@@ -10,7 +10,7 @@ import {
   FormControl,
   ValidationErrors
 } from '@angular/forms';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { LoginService } from './login.service';
 
 @Component({
@@ -90,21 +90,4 @@ export class LoginComponent implements OnInit {
     return true;
   }
 
-  logout() {
-    const url = 'user/exit';
-    this.confirmationService.confirm({
-      message: "注销后，需要重新登录，是否继续?",
-      header: "注销",
-      icon: "pi pi-info-circle",
-      accept: () => {
-        this.httpUtil.logOut(url).then(value => {
-          if (value.code === 200) {
-            this.router.navigate(["/"]);
-          }
-        });
-      },
-      reject: () => { }
-    });
-    return this.httpUtil.postLogin(url);
-  }
 }

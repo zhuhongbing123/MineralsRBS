@@ -19,6 +19,7 @@ export class ExplorationFileComponent implements OnInit {
   LIMIT_LOGIN = 10;//列表每页显示数量
   reportType;//报告分类操作类型
   reportValue;//报告分类操作数据(单独操作的数据)
+  reportTitle;//弹出框标题
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService) { }
@@ -62,22 +63,24 @@ export class ExplorationFileComponent implements OnInit {
   }
 
   /* 编辑报告分类 */
-  setReport(type,value){
+  setReport(type,value?){
     
     this.reportCategoryName = '';
     this.reportType = type;
     this.reportValue = value;
     if(type ==='add'){
       this.setReporteDisplay  = true;
+      this.reportTitle = '新增分类';
     }
     if(type==='modify'){
       this.setReporteDisplay  = true;
       this.reportCategoryName = value.reportCategory; 
+      this.reportTitle = '修改分类('+value.reportCategory+')';
     }
     if(type == 'delete'){
       this.confirmationService.confirm({
-        message: '确认删除该角色吗?',
-        header: '删除角色',
+        message: '确认删除该分类('+value.reportCategory+')吗?',
+        header: '删除分类',
         icon: 'pi pi-exclamation-triangle',
         acceptLabel:'确定',
         rejectLabel:'取消',

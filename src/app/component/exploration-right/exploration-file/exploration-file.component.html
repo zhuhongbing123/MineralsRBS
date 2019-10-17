@@ -1,7 +1,9 @@
 
-<div [hidden]="detailsDisplay" style="color:#fff">
-  <div>所有分类</div>
-  <button pButton type="button" label="新增" (click)="setReport('add')"></button>
+<div style="color:#fff">
+  <p>探矿权 > 探矿权文件分类</p>
+  <div class="ui-g-12 ui-md-4">
+    <button pButton type="button" label="新增" (click)="setReport('add','')"></button>
+  </div>
  <!--  <div class="classify-style">
     <div class="classify-one"><p-checkbox name="group1" value="矿权人信息" label="矿权人信息" [(ngModel)]="selectedCities" inputId="ny"></p-checkbox></div>
     <div class="classify-one"><p-checkbox name="group2" value="联系方式" label="联系方式" [(ngModel)]="selectedCities" inputId="ny"></p-checkbox></div>
@@ -44,7 +46,7 @@
 </div>
 <div class="dialog-class">
     <!-- 报告分类弹出框 -->
-    <p-dialog header="报告分类" [(visible)]="setReporteDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+    <p-dialog header="{{reportTitle}}" [(visible)]="setReporteDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
             <form>
                     <div class="form-group has-feedback">
                       <label class="control-label">报告分类名称</label>

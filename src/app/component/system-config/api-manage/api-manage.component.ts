@@ -36,6 +36,7 @@ export class ApiManageComponent implements OnInit {
   public selectApiClassify;//已选择的资源类别
   public selectApiValue;//当前操作的api数据
   public saveType;//保存类型
+  apiTitle;//弹出框标题
   constructor(private httpUtil: HttpUtil,
               private messageService:MessageService,
               private confirmationService: ConfirmationService) { }
@@ -51,6 +52,7 @@ export class ApiManageComponent implements OnInit {
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
       { field: 'uri', header: 'URI' },
+      { field: 'classify', header: '分类'},
       { field: 'method', header: '访问方式' },
       { field: 'status', header: '状态' },
       { field: 'operation', header: '操作' }
@@ -77,7 +79,7 @@ export class ApiManageComponent implements OnInit {
 
   /* 获取API分类 */
   getApiClassify(){
-      this.httpUtil.get('resource/api/-1/1/10').then(value=>{
+      this.httpUtil.get('resource/api/-1/1/10000').then(value=>{
         if (value.meta.code === 6666) {
           let data = value.data.data;
           for(let i in data){
@@ -110,6 +112,11 @@ export class ApiManageComponent implements OnInit {
           if(data[i].status==9){
             data[i].status = '禁用'
           }
+          for(let j in this.apiClassify){
+              if(data[i].parentId ==this.apiClassify[j].value){
+                data[i]['classify'] = this.apiClassify[j].label;
+              }
+          }
         }
         this.apiTableValue = data;
       }
@@ -133,13 +140,14 @@ export class ApiManageComponent implements OnInit {
         this.apiEditor.type = '2';
         this.apiEditor.method = 'post';
         this.apiEditor.status = '1';
+        this.apiTitle = '添加API';
         this.apiEditorDisplay = true;
         return;
       }
       if(type==='delete'){
         this.confirmationService.confirm({
-          message: '确认删除该角色吗?',
-          header: '删除角色',
+          message: '确认删除该API('+value.name+')吗?',
+          header: '删除API',
           icon: 'pi pi-exclamation-triangle',
           acceptLabel:'确定',
           rejectLabel:'取消',
@@ -166,6 +174,7 @@ export class ApiManageComponent implements OnInit {
         this.apiEditor.type = value.type;
         this.apiEditor.method = value.method;
         this.apiEditor.status = value.status=='正常'?'1':'9';
+        this.apiTitle = '修改API('+value.name+')';
       }
   }
 

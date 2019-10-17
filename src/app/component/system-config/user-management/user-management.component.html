@@ -1,6 +1,4 @@
-<div style="color:#fff">
-    角色管理
-</div>
+<div class="ui-g-12 ui-md-4">系统配置 > 用户管理</div>
 <div class="p-table">
   <p-table [columns]="userTableTitle" [value]="userTableValue">
     <ng-template pTemplate="header" let-columns>
@@ -15,7 +13,7 @@
             <td *ngFor="let col of columns">
                 <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                 <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
-                <span *ngIf = "col.field == 'operation'"  (click)="setUserRole(rowData,'modify')" class="operation-icon"> 角色</span>
+                <span *ngIf = "col.field == 'operation'"  (click)="setUserRole(rowData,'modify')" class="operation-icon"> 角色管理</span>
                 <span *ngIf = "col.field == 'operation'"  (click)="setUserRole(rowData,'delete')" class="operation-icon"> 删除角色</span>
             </td>
         </tr>
@@ -26,7 +24,7 @@
 
 <!-- 角色操作弹出框 -->
 <div class="dialog-class">
-        <p-dialog header="用户角色" [(visible)]="userRoleDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+        <p-dialog header="{{userTitle}}" [(visible)]="userRoleDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
             <div class="p-table">
                 <p-table [columns]="roleTitle" [value]="roleValue"  [(selection)]="selectedRole">
                   <ng-template pTemplate="header" let-columns>

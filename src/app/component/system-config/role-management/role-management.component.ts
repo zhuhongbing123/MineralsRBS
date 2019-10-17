@@ -5,7 +5,7 @@ import { MessageService, ConfirmationService, Message } from 'primeng/api';
 @Component({
   selector: 'app-role-management',
   templateUrl: './role-management.component.html',
-  styleUrls: ['./role-management.component.css']
+  styleUrls: ['./role-management.component.scss']
 })
 export class RoleManagementComponent implements OnInit {
   msgs: Message[] = [];
@@ -112,11 +112,12 @@ export class RoleManagementComponent implements OnInit {
     let page = event.page+1;
     let rows = event.rows;
     let url;
-    if(type=='add'){
+    url = this.addLinkUrl+'-/'+this.selectedRole.id;
+    /* if(type=='add'){
       url = this.addLinkUrl+'-/'+this.selectedRole.id;
     }else if(type=='link'){
       url = 'role/menu/'+this.selectedRole.id;
-    }
+    } */
     
     this.httpUtil.get(url+'/'+page+'/'+rows).then(value=>{
       if (value.meta.code === 6666) {
@@ -182,14 +183,14 @@ export class RoleManagementComponent implements OnInit {
     this.selectedRole = value;
     if(this.selectedRole){
       if(type=='modify'){
-        this.roleOpreationHeader = '修改角色';
+        this.roleOpreationHeader = '修改角色('+value.name+')';
         this.roleOpreationDisplay = true;
         this.roleCode = this.selectedRole.code;
         this.roleName = this.selectedRole.name;
         this.selectedroleStatus = this.selectedRole.status;
       }else{
         this.confirmationService.confirm({
-          message: '确认删除该角色吗?',
+          message: '确认删除该角色('+value.name+')吗?',
           header: '删除角色',
           icon: 'pi pi-exclamation-triangle',
           acceptLabel:'确定',

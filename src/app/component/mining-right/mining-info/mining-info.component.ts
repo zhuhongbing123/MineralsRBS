@@ -48,6 +48,7 @@ export class MiningInfoComponent implements OnInit {
   reportDisplay = false;//采矿权报告弹出框是否显示
   modifyReport = false;//是否修改报告文件
   pdfDisplay = false;//查看PDF文件
+  miningTitle;//弹出框标题
 
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
@@ -123,9 +124,9 @@ export class MiningInfoComponent implements OnInit {
     });
   }
 
-  /* 获取勘查阶段详情 */
+  /* 获取排查阶段详情 */
   getStageInfo(){
-    /* 获取采矿权勘查阶段详情 */
+    /* 获取采矿权排查阶段详情 */
     this.httpUtil.get('mineral-mining-stage/project/'+this.miningProject.id).then(value=>{
       if (value.meta.code === 6666) {
         let data = value.data.stageInfos;
@@ -235,6 +236,7 @@ export class MiningInfoComponent implements OnInit {
   /* 编辑项目详情 */
   modifyProject(){
     this.miningDisplay = true;
+    this.miningTitle = '编辑项目';
     this.oldProjectInfo = JSON.parse(JSON.stringify(this.miningProject));
     this.miningStartTime = new Date(this.miningProject.miningStartTime);
   }
@@ -316,12 +318,14 @@ export class MiningInfoComponent implements OnInit {
       this.miningStage = new MiningStage();
       this.stageEndTime = '';
       this.stageStartTime = '';
+      this.miningTitle = '增加排查阶段';
       return;
     }
     //修改排查详情
     if(type==='modifyStage'){
       this.stageDisplay = true;
       this.modifyStage = true;
+      this.miningTitle = '修改排查阶段';
       this.miningStage = JSON.parse(JSON.stringify(value));  
       this.stageStartTime = new Date(value.investigationStartTime);
       this.stageEndTime = new Date(value.investigationEndTime);
@@ -359,6 +363,7 @@ export class MiningInfoComponent implements OnInit {
     /* 年度监测报告增加 */
     if(type =='addMonitoring'){
         this.monitoringDisplay = true;
+        this.miningTitle = '增加监测报告';
         this.miningMonitoring = new MiningMonitoring();
         this.modifyMonitoring = false;
         return;
@@ -366,6 +371,7 @@ export class MiningInfoComponent implements OnInit {
     /* 年度监测报告修改 */
     if(type =='modifyMonitoring'){
       this.monitoringDisplay = true;
+      this.miningTitle = '修改监测报告';
       this.miningMonitoring = new MiningMonitoring();
       this.modifyMonitoring = false;
       return;
@@ -376,6 +382,7 @@ export class MiningInfoComponent implements OnInit {
     /* 报告文件的增加 */
     if(type==='addReport'){
       this.reportDisplay = true;
+      this.miningTitle = '增加报告文件';
       this.explorationReport = new ExplorationReport();
       this.modifyReport = false;
       return;
@@ -384,6 +391,7 @@ export class MiningInfoComponent implements OnInit {
     if(type==='modifyReport'){
       this.modifyReport = true;
       this.reportDisplay = true;
+      this.miningTitle = '修改报告文件('+value.reportCategoryId+')';
       this.explorationReport = JSON.parse(JSON.stringify(value));
       this.explorationReport.reportTime = new Date(this.explorationReport.reportTime);
       for(let i in this.reportCategory){
@@ -491,6 +499,29 @@ export class MiningInfoComponent implements OnInit {
     }
   }
 
+  /* 保存年度监测报告 */
+  saveMiningMonitoring(){
+   let monitoringInfo = {
+      "executionStatus": this.miningMonitoring.executionStatus,
+      "id": this.miningMonitoring.id,
+      "problemFound": this.miningMonitoring.problemFound,
+      "projectId": this.miningProject.id,
+      "resourceMaintained": this.miningMonitoring.resourceMaintained,
+      "resourceUsed": this.miningMonitoring.resourceUsed,
+      "validationYear": this.miningMonitoring.validationYear.getTime()/1000
+    }
+
+    if(this.modifyMonitoring){
+      this.httpUtil.put('mineral-project-validation', monitoringInfo).then(value=>{
+
+      })
+    }else{
+      this.httpUtil.post('mineral-project-validation', monitoringInfo).then(value=>{
+
+      })
+    }
+  }
+
   //查看PDF
   public lookPDF(){
     PDFObject.embed("./assets/js/房源表.pdf","#example-pdf");
@@ -555,5 +586,26 @@ export class MiningInfoComponent implements OnInit {
       });
       html += '</table>';
       return html;
+  }
+
+  pageChange(event,type){
+    this.startPage = event.page+1;//列表开始的页数
+    this.limit = event.rows;//列表每页的行数
+    switch(type){
+      case 'project':
+        this.getMiningInfo();
+        break;
+      case 'stage':
+        this.getStageInfo()
+        break;
+      case 'monitoring'://年度监测
+        
+        this.getMonitoring();
+        break; 
+      case 'report'://矿权报告
+        this.getReportClassify();
+        break;
+    }
+    
   }
 }

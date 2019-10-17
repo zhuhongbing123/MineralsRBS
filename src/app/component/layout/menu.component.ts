@@ -53,13 +53,15 @@ export class MenuComponent implements OnInit {
         ]
       },
       {
+        label: '矿权人管理', icon: 'fa fa-fw  fa-tags',routerLink: ['/layout/systemConfig/mineralOwner'] 
+      },
+      {
         label: '系统配置', icon: 'fa fa-fw  fa-tags', 
         items: [
           { label: '角色管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/roleManage'] },
           { label: '用户管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/userManage'] },
-          { label: '矿权人管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/mineralOwner'] },
           { label: 'API授权管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/apiManage'] },
-          { label: '菜单管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/menuManage'] },
+          /* { label: '菜单管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/menuManage'] }, */
           { label: '登录日志', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/loginLog'] },
           { label: '操作日志', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/operationLog'] }
           

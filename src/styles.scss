@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 body {
     background: url('../src/assets/img/BgBanner.png') !important;
+    color: white !important;
 }
 .search {
     //下拉框样式
@@ -99,14 +100,17 @@ body {
       background: #467e9b;
       color: white;
     }
-    .ui-widget, body .ui-widget .ui-widget,
+    
+}
+/* 文本框样式 */
+.textarea-style{
+  .ui-widget, body .ui-widget .ui-widget,
     .ui-inputtext:enabled:focus:not(.ui-state-error),
     .ui-inputtext:enabled:hover:not(.ui-state-error){
       background: #467e9b;
       color: white;
     }
 }
-
   /* 输入框样式 */
 .form-control {
     background-color: #467E9B !important;

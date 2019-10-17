@@ -3,7 +3,7 @@ import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
 import { HttpUtil } from '../../../common/util/http-util';
 import { ExplorationProject,ExplorationStage,ExplorationReport } from '../../../common/util/app-config';
 import * as XLSX from 'xlsx';
-declare let PDFObject;
+declare let PDFObject,openDownloadDialog,sheet2blob;
 @Component({
   selector: 'app-exploration-info',
   templateUrl: './exploration-info.component.html',
@@ -46,7 +46,7 @@ export class ExplorationInfoComponent implements OnInit {
   reportFileDisplay = false;//查看探矿权报告文件
   modifyReport = false;//是否修改报告文件
   pdfDisplay = false;//显示pdf预览
-
+  explorationTitle;//弹出框标题
 
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
@@ -239,12 +239,14 @@ export class ExplorationInfoComponent implements OnInit {
       this.explorationStage = new ExplorationStage();
       this.stageEndTime = '';
       this.stageStartTime = '';
+      this.explorationTitle = '增加勘查阶段';
       return;
     }
     //修改勘查详情
     if(type==='modifyStage'){
       this.stageDisplay = true;
       this.modifyStage = true;
+      this.explorationTitle = '修改勘查阶段';
       this.explorationStage = JSON.parse(JSON.stringify(value));  
       this.stageStartTime = new Date(value.investigationStartTime);
       this.stageEndTime = new Date(value.investigationEndTime);
@@ -284,12 +286,14 @@ export class ExplorationInfoComponent implements OnInit {
       this.reportDisplay = true;
       this.explorationReport = new ExplorationReport();
       this.modifyReport = false;
+      this.explorationTitle = '增加探矿权文件';
       return;
     }
     /* 报告文件修改 */
     if(type==='modifyReport'){
       this.modifyReport = true;
       this.reportDisplay = true;
+      this.explorationTitle = '修改探矿权文件('+value.reportCategoryId+')';
       this.explorationReport = JSON.parse(JSON.stringify(value));
       this.explorationReport.reportTime = new Date(this.explorationReport.reportTime);
       for(let i in this.reportCategory){
@@ -302,6 +306,7 @@ export class ExplorationInfoComponent implements OnInit {
     /* 查看报告文件 */
     if(type==='viewReport'){
       this.reportFileDisplay = true;
+      this.httpUtil.get('mineral-project-report/file');
       return;
     }
     /* 报告文件的删除 */
@@ -334,7 +339,7 @@ export class ExplorationInfoComponent implements OnInit {
       this.explorationtDisplay = true;
     }else{
       this.confirmationService.confirm({
-        message: '确认删除该项目吗?',
+        message: '确认删除该项目('+value.projectName+')吗?',
         header: '删除项目',
         icon: 'pi pi-exclamation-triangle',
         acceptLabel:'确定',
@@ -445,10 +450,21 @@ export class ExplorationInfoComponent implements OnInit {
       }
   }
 
-  pageChange(event){
+  pageChange(event,type){
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
-    this.getExplorationInfo();
+    switch(type){
+      case 'project':
+        this.getExplorationInfo();
+        break;
+      case 'stage':
+        this.getStageInfo()
+        break;
+      case 'report':
+        this.getReportClassify();
+        break; 
+    }
+    
   }
 
   /* 保存探矿权报告 */
@@ -487,7 +503,7 @@ export class ExplorationInfoComponent implements OnInit {
 
   //查看PDF
   public lookPDF(){
-    PDFObject.embed("./assets/js/房源表.pdf","#example-pdf");
+    PDFObject.embed("http://47.108.91.193:8080/upload/ionic_in_action.pdf","#example-pdf");
     document.getElementById('result').innerHTML ='';
     this.pdfDisplay =true;
     
@@ -515,13 +531,21 @@ export class ExplorationInfoComponent implements OnInit {
    
     for(let i in sheetNames){
       var worksheet = workbook.Sheets[sheetNames[i]];
-      var csv = XLSX.utils.sheet_to_csv(worksheet);
-      document.getElementById('result').innerHTML += this.csv2table(csv,sheetNames[i]);
+      var csv = XLSX.utils.sheet_to_html(worksheet);
      
+      document.getElementById('result').innerHTML = csv;
+
+      //设置表格样式
+      let table = document.getElementsByTagName('table');
+      for(let i=0; i< table.length;i++){
+        table[i].className = 'table table-bordered'
+      }
     }
+    
     this.pdfDisplay = true;
     document.getElementById('example-pdf').innerHTML ='';
   }
+  
   
   csv2table(csv,title){
       var html = "<div>"+title+"</div><table class='table table-bordered'>";
@@ -549,5 +573,12 @@ export class ExplorationInfoComponent implements OnInit {
       });
       html += '</table>';
       return html;
+  }
+
+
+  btn_export() {
+    var table1 = document.querySelector("#result");
+    var sheet = XLSX.utils.table_to_sheet(table1);//将一个table对象转换成一个sheet对象
+    openDownloadDialog(sheet2blob(sheet),'下载.xlsx');
   }
 }

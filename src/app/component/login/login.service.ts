@@ -4,14 +4,15 @@ import * as CryptoJS from 'crypto-js';
 import {HttpParams} from '@angular/common/http';
 import { HttpUtil } from '../../common/util/http-util';
 import { HttpUrl } from '../../common/util/http-url';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 
 @Injectable()
 export class LoginService {
     private baseUrl: string;//通用的URL地址
   constructor(private httpUtil: HttpUtil,
-              ) {
+              private confirmationService: ConfirmationService,
+              private router: Router) {
     this.baseUrl = HttpUrl.apiBaseUrl;
   }
 
@@ -46,7 +47,30 @@ export class LoginService {
   }
 
   logout() {
-    const url = 'user/exit';
+    this.confirmationService.confirm({
+      message: "注销后，需要重新登录，是否继续?",
+      header: "注销",
+      icon: "pi pi-info-circle",
+
+      accept: () => {
+        localStorage.clear();
+        this.logOut().subscribe(value=>{
+          if (value.meta.code === 6666) {
+            // 本地消除存储用户信息
+            
+            this.router.navigateByUrl('/login');
+          
+          }
+        })
+      },
+      reject: () => {
+      
+      }
+      });
+
+  }
+  logOut() {
+    const url = this.baseUrl + 'user/exit';
     return this.httpUtil.postLogin(url);
   }
   

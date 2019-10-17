@@ -8,18 +8,18 @@
           <div class="usernameBox">
               <img src="./assets/img/yonghu.png" style="width:20px;height:20px;margin: 0px 10px 0 10px;" />
               <input class="usernameBox_iput" [(ngModel)]="uid" type="text" 
-                placeholder="账户名称" (keyup.enter)="keyUpSearch()" />
+                placeholder="账户名称" />
             </div>
           <div class="usernameBox">
             <img src="./assets/img/yonghu.png" style="width:20px;height:20px;margin: 0px 10px 0 10px;" />
             <input class="usernameBox_iput" [(ngModel)]="username" type="text" 
-              placeholder="用户名" (keyup.enter)="keyUpSearch()" />
+              placeholder="用户名"  />
           </div>
 
           <div class="passwordBox">
             <img src="./assets/img/mima.png" style="width:20px;height:20px;margin: 0px 10px 0 10px;" />
             <input [(ngModel)]="password" class="passwordBox_iput" type="password" 
-              placeholder="密码" (keyup.enter)="keyUpSearch()" />
+              placeholder="密码"/>
           </div>
 
           <button class="submitBox" pButton type="button" (click)="onSubmit('register')">

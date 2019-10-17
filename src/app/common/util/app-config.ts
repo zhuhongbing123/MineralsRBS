@@ -94,7 +94,7 @@ export class MiningStage{
   "miningWorkload": string;//开采投入工作量
   "miningInvestment": number;//开采投入金额
 }
-
+/* 采矿权年度监测报告 */
 export class MiningMonitoring{
   "id": number;
   "projectId": number;//矿权项目ID
