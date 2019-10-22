@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
 import { HttpUtil } from '../../../common/util/http-util';
 import { ExplorationProject,ExplorationStage,ExplorationReport } from '../../../common/util/app-config';
-import * as XLSX from 'xlsx';
-declare let PDFObject,openDownloadDialog,sheet2blob;
+
+import { ExplorationInfoService } from './exploration-info.service';
+
 @Component({
   selector: 'app-exploration-info',
   templateUrl: './exploration-info.component.html',
@@ -47,10 +48,20 @@ export class ExplorationInfoComponent implements OnInit {
   modifyReport = false;//是否修改报告文件
   pdfDisplay = false;//显示pdf预览
   explorationTitle;//弹出框标题
+  itemsExcel: MenuItem[];
+  fileTree = [];//报告文件树形结构数据
+  selectedFile = {
+    label:'',
+    filePath:'',
+    children:[]
+  };//弹出框选择的文件 
+  viewFileDisplay = false;//预览页面是否显示
+  fileType;//文件类型
 
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
-              private confirmationService: ConfirmationService) { }
+              private confirmationService: ConfirmationService,
+              private explorationInfoService: ExplorationInfoService) { }
 
   ngOnInit() {
     this.setTableValue();
@@ -94,7 +105,8 @@ export class ExplorationInfoComponent implements OnInit {
       { field: 'creationTime', header: '报告上传日期' },
       { field: 'updateTime', header: '报告更新日期' },
       { field: 'operation', header: '操作' }
-    ]
+    ];
+    
     this.getExplorationInfo();
     this.getMineralOwner();
     this.getReportCategory();
@@ -117,6 +129,7 @@ export class ExplorationInfoComponent implements OnInit {
     
     
   }
+
   /*  获取矿权人*/
   getMineralOwner(){
     this.httpUtil.get('mineral-owner/list/1/10000').then(value=>{
@@ -193,6 +206,22 @@ export class ExplorationInfoComponent implements OnInit {
       }
     })
   }
+
+  /* 将报告文件整理成树形结构 */
+  getFileInfo(data,pid){
+    var result = [] , temp;
+    for(var i in data){
+        if(data[i].pid==pid){
+            result.push(data[i]);
+            temp = this.getFileInfo(data,data[i].id);           
+            if(temp.length>0){
+                data[i].children=temp;
+            }           
+        }       
+    }
+    return result;
+    
+  }
   /* 查看项目详情 */
   goDetails(data){
     this.explorationInfoTableDisplay = true;
@@ -209,13 +238,16 @@ export class ExplorationInfoComponent implements OnInit {
         this.reportDetailDisplay = false;
         this.stageDetailDisplay = false;
         this.reportFileDisplay = false;
+        this.explorationInfoService.getReportFile(false);
       }else if(event.path[0].innerText ==='勘查阶段详情'){
         this.stageDetailDisplay = true;
         this.projectDetailDisplay = false;
         this.reportDetailDisplay = false;
         this.reportFileDisplay = false;
+        this.explorationInfoService.getReportFile(false);
       }else if(event.path[0].innerText ==='探矿权报告'){
         this.reportDetailDisplay = true
+        this.explorationInfoService.getReportFile(true);
         this.projectDetailDisplay = false;
         this.stageDetailDisplay = false;
       }
@@ -305,8 +337,45 @@ export class ExplorationInfoComponent implements OnInit {
     }
     /* 查看报告文件 */
     if(type==='viewReport'){
+      /* 获取文件 */
+      value.reportFilePath;
       this.reportFileDisplay = true;
-      this.httpUtil.get('mineral-project-report/file');
+      this.selectedFile = {
+        label:'',
+        filePath:'',
+        children:[]
+      };
+      this.fileTree = [];
+      this.httpUtil.post('mineral-project-report/file',{
+        filePath:'00.行业规范'
+      }).then(value=>{
+        if (value.meta.code === 6666) {
+            let data = value.data.fileList;
+            let fileInfo = [];
+            for(let i in data){
+            let dataList= data[i].replace(/^\/|\/$/g, "").split('/');
+            if(dataList.length==1){
+        
+              this.fileTree.push({
+                label: dataList[dataList.length-1],
+                ExpandedIcon: 'fa fa-folder-open',
+                children:[]  
+              })
+            }else{
+              fileInfo.push({
+                id:dataList[dataList.length-1],
+                pid: dataList[dataList.length-2],
+                filePath: data[i],
+                label:dataList[dataList.length-1]
+              })
+            }
+            
+            }
+
+            this.fileTree[0].children=this.getFileInfo(fileInfo,this.fileTree[0].label);
+    
+        }
+      })
       return;
     }
     /* 报告文件的删除 */
@@ -467,118 +536,5 @@ export class ExplorationInfoComponent implements OnInit {
     
   }
 
-  /* 保存探矿权报告 */
-  saveExplorationReport(){
-    let reportInfo = {
-      "id":this.explorationReport.id,
-      "creationTime": new Date().getTime()/1000,
-      "projectId": this.explorationProject.id,
-      "reportCategoryId": this.explorationReport.reportCategoryId,
-      "reportDescription": this.explorationReport.reportDescription,
-      "reportFilePath": "string",
-      "reportTime":  this.explorationReport.reportTime.getTime()/1000,
-      "reportUploader": "string",
-      "updateTime": new Date().getTime()/1000
-    };
-    if(this.modifyReport){
-      reportInfo.creationTime = new Date(this.explorationReport.creationTime).getTime()/1000;
-      this.httpUtil.put('mineral-project-report',reportInfo).then(value=>{
-        if (value.meta.code === 6666) {
-          this.reportDisplay =false;
-          this.getReportClassify();
-          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
-        }
-      })
-    }else{
-      this.httpUtil.post('mineral-project-report',reportInfo).then(value=>{
-        if (value.meta.code === 6666) {
-          this.reportDisplay =false;
-          this.getReportClassify();
-          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
-        }
-      })
-    }
-    
-  }
-
-  //查看PDF
-  public lookPDF(){
-    PDFObject.embed("http://47.108.91.193:8080/upload/ionic_in_action.pdf","#example-pdf");
-    document.getElementById('result').innerHTML ='';
-    this.pdfDisplay =true;
-    
-  }
-
-  /* ecxcel文件预览 */
   
-  excelChange(){
-    var xhr = new XMLHttpRequest();
-    xhr.open('get', './assets/js/矿权排查表王文义(1)(1).xlsx', true);
-    xhr.responseType = 'arraybuffer';
-    let that =this;
-    xhr.onload = function(e) {
-        if(xhr.status == 200) {
-            var data = new Uint8Array(xhr.response)
-            var workbook = XLSX.read(data, {type: 'array'});
-            that.outputWorkbook(workbook)
-           // if(callback) callback(workbook);
-        }
-    };
-    xhr.send();
-  }
-  outputWorkbook(workbook) {
-    var sheetNames = workbook.SheetNames; // 工作表名称集合
-   
-    for(let i in sheetNames){
-      var worksheet = workbook.Sheets[sheetNames[i]];
-      var csv = XLSX.utils.sheet_to_html(worksheet);
-     
-      document.getElementById('result').innerHTML = csv;
-
-      //设置表格样式
-      let table = document.getElementsByTagName('table');
-      for(let i=0; i< table.length;i++){
-        table[i].className = 'table table-bordered'
-      }
-    }
-    
-    this.pdfDisplay = true;
-    document.getElementById('example-pdf').innerHTML ='';
-  }
-  
-  
-  csv2table(csv,title){
-      var html = "<div>"+title+"</div><table class='table table-bordered'>";
-      var rows = csv.split('\n');
-      rows.pop(); // 最后一行没用的
-  /*     this.thead = rows[0];
-      this.data = rows.slice(1);
-      this.pdfDisplay = true; */
-      
-      rows.forEach(function(row, idx) {
-          var columns = row.split(',');
-          columns.unshift(idx+1); // 添加行索引
-          if(idx == 0) { // 添加列索引
-              html += '<thead><tr>';
-              for(var i=0; i<columns.length; i++) {
-                  html += '<th>' + (i==0?'':String.fromCharCode(65+i-1)) + '</th>';
-              }
-              html += '</tr></thead>';
-          }
-          html += '<tbody><tr>';
-          columns.forEach(function(column) {
-              html += '<td>'+column+'</td>';
-          });
-          html += '</tr></tbody>';
-      });
-      html += '</table>';
-      return html;
-  }
-
-
-  btn_export() {
-    var table1 = document.querySelector("#result");
-    var sheet = XLSX.utils.table_to_sheet(table1);//将一个table对象转换成一个sheet对象
-    openDownloadDialog(sheet2blob(sheet),'下载.xlsx');
-  }
 }

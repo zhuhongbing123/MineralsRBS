@@ -1,11 +1,15 @@
 // 将一个sheet转成最终的excel文件的blob对象，然后利用URL.createObjectURL下载
 function sheet2blob(sheet, sheetName) {
-    sheetName = sheetName || 'sheet1';
     var workbook = {
-        SheetNames: [sheetName],
+        SheetNames: [],
         Sheets: {}
     };
-    workbook.Sheets[sheetName] = sheet; // 生成excel的配置项
+	for(let i in sheetName){
+		workbook.SheetNames.push(sheetName[i]);
+	}
+	for(let i in sheet){
+		 workbook.Sheets[sheetName[i]] = sheet[i];// 生成excel的配置项
+	}
 
     var wopts = {
         bookType: 'xlsx', // 要生成的文件类型

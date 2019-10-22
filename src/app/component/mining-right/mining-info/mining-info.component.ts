@@ -3,6 +3,7 @@ import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
 import { HttpUtil } from '../../../common/util/http-util';
 import { ExplorationProject,MiningMonitoring,ExplorationReport, MiningStage } from '../../../common/util/app-config';
 import * as XLSX from 'xlsx';
+import { ExplorationInfoService } from '../../exploration-right/exploration-info/exploration-info.service';
 declare let PDFObject;
 @Component({
   selector: 'app-mining-info',
@@ -52,7 +53,8 @@ export class MiningInfoComponent implements OnInit {
 
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService) { }
+    private confirmationService: ConfirmationService,
+    private explorationInfoService: ExplorationInfoService) { }
 
   ngOnInit() {
     this.setTableValue();
@@ -289,23 +291,27 @@ export class MiningInfoComponent implements OnInit {
       this.stageDetailDisplay = false;
       this.reportFileDisplay = false;
       this.reportDetailDisplay = false;
+      this.explorationInfoService.getReportFile(false);
     }else if(event.path[0].innerText ==='排查阶段详情'){
       this.stageDetailDisplay = true;
       this.projectDetailDisplay = false;
       this.monitoringDetailDisplay = false;
       this.reportFileDisplay = false;
       this.reportDetailDisplay = false;
+      this.explorationInfoService.getReportFile(false);
     }else if(event.path[0].innerText ==='年度监测报告'){
       this.monitoringDetailDisplay = true;
       this.projectDetailDisplay = false;
       this.stageDetailDisplay = false;
       this.reportDetailDisplay = false;
+      this.explorationInfoService.getReportFile(false);
     }else if(event.path[0].innerText ==='采矿权报告'){
       this.stageDetailDisplay = false;
       this.projectDetailDisplay = false;
       this.monitoringDetailDisplay = false;
       this.reportFileDisplay = false;
       this.reportDetailDisplay = true;
+      this.explorationInfoService.getReportFile(true);
     }
   }
 

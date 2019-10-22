@@ -133,57 +133,7 @@
     </div>
 
     <!-- 矿权报告 -->
-    <div  style="clear: both;" class="p-table" [hidden]="!reportDetailDisplay">
-        <div [hidden]="reportFileDisplay">
-            <div class="ui-g-12 ui-md-4">
-                <button pButton type="button" label="新增" (click)="setExplorationt('addReport')"></button>
-            </div>
-            <div style="clear:both">
-                <p-table [columns]="reportClassifyTitle" [value]="reportClassifyValue" [rows]="10">
-                <ng-template pTemplate="header" let-columns>
-                    <tr>
-                        <th *ngFor="let col of columns">
-                            {{col.header}}
-                        </th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-rowData let-columns="columns">
-                    <tr>
-                        <td *ngFor="let col of columns">
-                            <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                            <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setExplorationt('modifyReport',rowData)">修改</span>
-                            <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setExplorationt('viewReport',rowData)">查看文件</span>
-                            <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setExplorationt('deleteReport',rowData)">删除</span>
-                        </td>
-                    </tr>
-                </ng-template>
-                </p-table>
-                <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'report')"></p-paginator>
-            </div>
-        </div>
-        <div [hidden]="!reportFileDisplay">
-                <button  pButton type="button" label="返回列表" (click)="reportFileDisplay = false"></button>
-                <div>
-                    <img src="./assets/img/pdf.jpg" style="height: 100px; width: 100px;">
-                    <div>
-                        <button  pButton type="button" label="查看" (click)="lookPDF()"></button>
-                        <button  pButton type="button" label="下载" ></button>
-                    </div> 
-                </div>
-                <button pButton type="button" (click)="excelChange()" label="查看Excel"></button>
-
-                <p-sidebar [(visible)]="pdfDisplay" [fullScreen]="true" [baseZIndex]="10000">
-                    <h1 style="font-weight:normal">Full Screen Sidebar</h1>
-                    <div id="example-pdf">
-            
-                    </div>
-                    <div  id="result" style="width: 100em;overflow: auto;height: 40em;"></div>
-                   
-                    <button (click)="btn_export()">Export!</button>
-                    <button pButton type="button" (click)="pdfDisplay = false" label="返回" ></button>
-                </p-sidebar>
-        </div>
-    </div>
+    <app-report-file [reportCategory]="reportCategory" [explorationProject]="explorationProject"></app-report-file>
 
 </div>
 
@@ -380,46 +330,6 @@
         </p-footer>   
     </p-dialog>
 
-    <!-- 探矿权报告弹出框 -->
-    <p-dialog header="{{explorationTitle}}" [(visible)]="reportDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
-        <div class="form-group has-feedback">
-            <label class="control-label">报告分类</label>
-            <div class="search">
-                <p-dropdown [options]="reportCategory" name="reportCategoryId" [(ngModel)]="explorationReport.reportCategoryId" placeholder="请选择报告分类" filter="true">
-                    <ng-template let-car pTemplate="item">
-                        <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
-                            <div style="font-size:14px;float:right;margin-top:4px">{{car.label}}</div>
-                        </div>
-                    </ng-template>
-                </p-dropdown>
-            </div>
-        </div>    
-        <div class="form-group has-feedback">
-            <label class="control-label">报告日期</label>
-            <div>
-                <p-calendar [showIcon]="true" [(ngModel)]="explorationReport.reportTime" name="reportTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
-            </div>    
-        </div>
-        <div class="form-group has-feedback">
-            <label class="control-label">报告文件路径</label>
-            <p-fileUpload name="demo[]" url="./upload.php" 
-                multiple="multiple" accept="image/*" maxFileSize="1000000">
-                <!-- <ng-template pTemplate="content">
-                    <ul *ngIf="uploadedFiles.length">
-                        <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
-                    </ul>
-                </ng-template> -->
-            </p-fileUpload>
-        </div>    
-        <div class="form-group has-feedback">
-            <label class="control-label">文件描述详情</label>
-            <div>
-                <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="explorationReport.reportDescription" name="projectArea"></textarea>
-            </div>    
-        </div>
-        <p-footer>
-            <button type="button" pButton (click)="saveExplorationReport()" label="保存"></button>
-            <button type="button" pButton icon="pi pi-close" (click)="reportDisplay = false" label="取消" class="ui-button-secondary"></button>
-        </p-footer>  
-    </p-dialog>
+   
+    
 </div>

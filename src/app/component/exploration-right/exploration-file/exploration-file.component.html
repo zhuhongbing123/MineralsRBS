@@ -1,6 +1,12 @@
 
 <div style="color:#fff">
-  <p>探矿权 > 探矿权文件分类</p>
+    <div *ngIf="reportTypeNumber==1">
+        <p>探矿权 > 探矿权文件分类</p>
+    </div>
+    <div *ngIf="reportTypeNumber==2">
+        <p>采矿权 > 采矿权文件分类</p>
+    </div>
+  
   <div class="ui-g-12 ui-md-4">
     <button pButton type="button" label="新增" (click)="setReport('add','')"></button>
   </div>

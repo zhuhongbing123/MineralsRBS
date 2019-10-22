@@ -52,7 +52,7 @@ export class ApiManageComponent implements OnInit {
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
       { field: 'uri', header: 'URI' },
-      { field: 'classify', header: '分类'},
+      { field: 'classify', header: '资源类别'},
       { field: 'method', header: '访问方式' },
       { field: 'status', header: '状态' },
       { field: 'operation', header: '操作' }

@@ -1,3 +1,4 @@
+<p>采矿权 > 采矿权项目信息</p>
 <div [hidden]="miningInfoTableDisplay">
   <div style="clear: both;" class="p-table">
       <p-table [columns]="miningInfoTitle" [value]="miningInfoValue"  [rows]="10">
@@ -150,81 +151,10 @@
                 <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'monitoring')"></p-paginator>
             </div>    
         </div>
-        <div [hidden]="!reportFileDisplay">
-                <button  pButton type="button" label="返回列表" (click)="reportFileDisplay = false"></button>
-                <div>
-                    <img src="./assets/img/pdf.jpg" style="height: 100px; width: 100px;">
-                    <div>
-                        <button  pButton type="button" label="查看" (click)="lookPDF()"></button>
-                        <button  pButton type="button" label="下载" ></button>
-                    </div> 
-                </div>
-                <button pButton type="button" (click)="excelChange()" label="查看Excel"></button>
-
-                <p-sidebar [(visible)]="pdfDisplay" [fullScreen]="true" [baseZIndex]="10000">
-                    <h1 style="font-weight:normal">Full Screen Sidebar</h1>
-                    <div id="example-pdf">
-            
-                    </div>
-                    <div  id="result" style="width: 100em;overflow: auto;height: 40em;"></div>
-                   
-                    <button >Export!</button>
-                    <button pButton type="button" (click)="pdfDisplay = false" label="返回" ></button>
-                </p-sidebar>
-        </div>
     </div>
   <!-- 采矿权报告 -->
-  <div  style="clear: both;" class="p-table" [hidden]="!reportDetailDisplay">
-    <div [hidden]="reportFileDisplay">
-        <div class="ui-g-12 ui-md-4">
-            <button pButton type="button" label="新增" (click)="setMining('addReport')"></button>
-        </div>
-        <div style="clear:both">
-            <p-table [columns]="reportClassifyTitle" [value]="reportClassifyValue"  [rows]="10">
-            <ng-template pTemplate="header" let-columns>
-                <tr>
-                    <th *ngFor="let col of columns">
-                        {{col.header}}
-                    </th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-rowData let-columns="columns">
-                <tr>
-                    <td *ngFor="let col of columns">
-                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('modifyReport',rowData)">修改</span>
-                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('viewReport',rowData)">查看文件</span>
-                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMining('deleteReport',rowData)">删除</span>
-                    </td>
-                </tr>
-            </ng-template>
-            </p-table>
-            <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'report')"></p-paginator>
-        </div>    
-    </div>
-    <div [hidden]="!reportFileDisplay">
-            <button  pButton type="button" label="返回列表" (click)="reportFileDisplay = false"></button>
-            <div>
-                <img src="./assets/img/pdf.jpg" style="height: 100px; width: 100px;">
-                <div>
-                    <button  pButton type="button" label="查看" (click)="lookPDF()"></button>
-                    <button  pButton type="button" label="下载" ></button>
-                </div> 
-            </div>
-            <button pButton type="button" (click)="excelChange()" label="查看Excel"></button>
+  <app-report-file [reportCategory]="reportCategory" [explorationProject]="miningProject"></app-report-file>
 
-            <p-sidebar [(visible)]="pdfDisplay" [fullScreen]="true" [baseZIndex]="10000">
-                <h1 style="font-weight:normal">Full Screen Sidebar</h1>
-                <div id="example-pdf">
-        
-                </div>
-                <div  id="result" style="width: 100em;overflow: auto;height: 40em;"></div>
-              
-                <button >Export!</button>
-                <button pButton type="button" (click)="pdfDisplay = false" label="返回" ></button>
-            </p-sidebar>
-    </div>
-  </div>
 </div>
 
 <div class="dialog-class textarea-style">

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpUtil } from '../../../common/util/http-util';
 import { ConfirmationService, MessageService } from 'primeng/api';
-
+declare let PDFObject;
 @Component({
   selector: 'app-mineral-owner',
   templateUrl: './mineral-owner.component.html',
@@ -20,6 +20,7 @@ export class MineralOwnerComponent implements OnInit {
   };//矿权人名称
   ownerDisplay = false;//矿权人弹出框是否显示
   modifyOwner = false;//是否修改矿权人
+  pdfDisplay = false;
  
   constructor(private httpUtil: HttpUtil,
               private confirmationService: ConfirmationService,
@@ -55,6 +56,7 @@ export class MineralOwnerComponent implements OnInit {
       this.ownerDisplay = true;
       this.mineralOwner.ownerName = '';
       this.modifyOwner = false;
+
       return;
     }
     if(type =='modify'){
