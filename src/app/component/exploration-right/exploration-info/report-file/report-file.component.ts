@@ -6,7 +6,8 @@ import { HttpUtil } from '../../../../common/util/http-util';
 import * as XLSX from 'xlsx';
 import { HttpUrl } from '../../../../common/util/http-url';
 import { Subscription } from 'rxjs';
-declare let PDFObject,ActiveXObject;
+import { Router } from '@angular/router';
+declare let PDFObject,$;
 
 @Component({
   selector: 'app-report-file',
@@ -39,11 +40,15 @@ export class ReportFileComponent implements OnInit {
   fileType;//文件类型
   isInitialize = true;//预览按钮灰化
   imgUrl;//图片路径
+  txtTable;//txt文件内容
   private reportFileCommon: Subscription;
+
+  explorationItems: MenuItem[];//探矿权详情tab页标题
   constructor(private explorationInfoService:ExplorationInfoService,
               private httpUtil: HttpUtil,
               private confirmationService: ConfirmationService,
-              private messageService: MessageService) {
+              private messageService: MessageService,
+              private router: Router) {
     this.reportFileCommon = this.explorationInfoService.reportFileCommon$.subscribe(value=>{
       if(value){
         this.reportDetailDisplay = true;
@@ -72,6 +77,11 @@ export class ReportFileComponent implements OnInit {
       { field: 'creationTime', header: '报告上传日期' },
       { field: 'updateTime', header: '报告更新日期' },
       { field: 'operation', header: '操作' }
+    ];
+    this.explorationItems = [
+      {label: '项目详情', icon: 'fa fa-fw fa-bar-chart'},
+      {label: '勘查阶段详情', icon: 'fa fa-fw fa-bar-chart'},
+      {label: '探矿权报告', icon: 'fa fa-fw fa-bar-chart'}
     ];
     this.itemsExcel =[
       {label: 'Stats', icon: 'fa fa-fw fa-bar-chart'}
@@ -141,7 +151,7 @@ export class ReportFileComponent implements OnInit {
       };
       this.fileTree = [];
       this.httpUtil.post('mineral-project-report/file',{
-        filePath:'00.行业规范'
+        filePath: value.reportFilePath
       }).then(value=>{
         if (value.meta.code === 6666) {
             let data = value.data.fileList;
@@ -250,10 +260,12 @@ export class ReportFileComponent implements OnInit {
 
   //查看PDF
   public lookPDF(url){
+
+    PDFObject.embed(url,"#example-pdf");
     let options = {
       pdfOpenParams: { scrollbars: '0', toolbar: '0', statusbar: '0'}//禁用工具栏代码
     };
-    PDFObject.embed(url,"#example-pdf",options);
+    PDFObject.embed(url,"#example-pdf");
     //document.getElementById('result').innerHTML ='';
     this.pdfDisplay =true;
     
@@ -281,25 +293,26 @@ export class ReportFileComponent implements OnInit {
   outputWorkbook(workbook) {
     var sheetNames = workbook.SheetNames; // 工作表名称集合
     this.itemsExcel = [];
+    this.excelSheetInfo = [];
+    this.excelName = [];
     for(let i in sheetNames){
       this.excelName.push(sheetNames[i]);
       this.itemsExcel.push({
           label: sheetNames[i], icon: 'fa fa-fw fa-bar-chart'
       })
       var worksheet = workbook.Sheets[sheetNames[i]];
-      var csv = XLSX.utils.sheet_to_html(worksheet);
+      var csv = XLSX.utils.sheet_to_json(worksheet);
       this.excelSheetInfo.push(csv);
       
     }
     document.getElementById('result').innerHTML = this.excelSheetInfo[0];
 
       //设置表格样式
-      let table = document.getElementsByTagName('table');
+      /* let table = document.getElementsByTagName('table');
       for(let i=0; i< table.length;i++){
         table[i].className = 'table table-bordered'
-      }
+      } */
     this.pdfDisplay = true;
-    document.getElementById('example-pdf').innerHTML ='';
   }
   
   
@@ -393,10 +406,13 @@ export class ReportFileComponent implements OnInit {
 
     switch(this.fileType){
       case 'doc':
-        this.httpUtil.post('report-viewer/viewPdfFile',{
+        this.httpUtil.post('report-viewer/toPdfFile',{
           "filePath": this.selectedFile.filePath
         }).then(value=>{
-
+            if(value.meta.code===6666){
+              let url = HttpUrl.fileUrl +'mineral/convert/'+ value.data.filePath;
+              this.lookPDF(url);
+            }
         })
         
         break;
@@ -411,21 +427,30 @@ export class ReportFileComponent implements OnInit {
         this.lookPDF(url);
         break;  
       case 'xlsx':
+        document.getElementById('result').innerHTML ='';
         this.excelChange(url);
         break;  
       case 'txt':
-      let fso = new ActiveXObject("Scripting.FileSystemObject");
-      let ts = fso.OpenTextFile(url, 1);
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', "./assets/js/aaa.txt", false);
+        xhr.overrideMimeType("text/html;charset=utf-8");//默认为utf-8
+        xhr.send(null);
+        this.txtTable = xhr.responseText;
         break;   
     }
     
     
   }
 
+
+
   pageChange(event){
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
     this.getReportClassify();
     
+  }
+  goBack(){
+    this.explorationInfoService.goBack();
   }
 }

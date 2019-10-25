@@ -4,6 +4,8 @@ import { HttpUtil } from '../../../common/util/http-util';
 import { ExplorationProject,ExplorationStage,ExplorationReport } from '../../../common/util/app-config';
 
 import { ExplorationInfoService } from './exploration-info.service';
+import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-exploration-info',
@@ -19,7 +21,8 @@ export class ExplorationInfoComponent implements OnInit {
   explorationInfoTitle;//探矿信息列表标题
   explorationInfoValue;//探矿信息列表数据
   explorationInfoTableDisplay = false;//探矿权信息列表是否显示
-  explorationItems: MenuItem[];//探矿权详情tab也标题
+  explorationItems: MenuItem[];//探矿权详情tab页标题
+  menuItem;//tab默认活动菜单项
 
   explorationDetailTitle;//勘查详情标题
   explorationDetailValue;//勘查详情内容
@@ -57,16 +60,24 @@ export class ExplorationInfoComponent implements OnInit {
   };//弹出框选择的文件 
   viewFileDisplay = false;//预览页面是否显示
   fileType;//文件类型
+  backCommon: Subscription;
 
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
-              private explorationInfoService: ExplorationInfoService) { }
+              private explorationInfoService: ExplorationInfoService,
+              private router: Router) { 
+               this.backCommon =  this.explorationInfoService.backCommon$.subscribe(()=>{
+                  this.explorationInfoTableDisplay = false;
+                })
+              }
 
   ngOnInit() {
     this.setTableValue();
   }
-
+  ngOnDestroy(){
+    this.backCommon.unsubscribe();
+  }
   //初始化表格
   public setTableValue(){
     
@@ -106,7 +117,7 @@ export class ExplorationInfoComponent implements OnInit {
       { field: 'updateTime', header: '报告更新日期' },
       { field: 'operation', header: '操作' }
     ];
-    
+    this.menuItem = this.explorationItems[0];
     this.getExplorationInfo();
     this.getMineralOwner();
     this.getReportCategory();
@@ -227,25 +238,28 @@ export class ExplorationInfoComponent implements OnInit {
     this.explorationInfoTableDisplay = true;
     this.projectDetailDisplay = true;
     this.explorationProject = data;
+    this.menuItem = JSON.parse(JSON.stringify(this.explorationItems[0]));
+    this.menuClick('项目详情');
     this.getStageInfo();
     this.getReportClassify();
   }
 
   /* 点击详情页面切换按钮 */
   menuClick(event){
-      if(event.path[0].innerText ==='项目详情'){
+      this.menuItem.label = event;
+      if(event ==='项目详情'){
         this.projectDetailDisplay = true;
         this.reportDetailDisplay = false;
         this.stageDetailDisplay = false;
         this.reportFileDisplay = false;
         this.explorationInfoService.getReportFile(false);
-      }else if(event.path[0].innerText ==='勘查阶段详情'){
+      }else if(event ==='勘查阶段详情'){
         this.stageDetailDisplay = true;
         this.projectDetailDisplay = false;
         this.reportDetailDisplay = false;
         this.reportFileDisplay = false;
         this.explorationInfoService.getReportFile(false);
-      }else if(event.path[0].innerText ==='探矿权报告'){
+      }else if(event ==='探矿权报告'){
         this.reportDetailDisplay = true
         this.explorationInfoService.getReportFile(true);
         this.projectDetailDisplay = false;

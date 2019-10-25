@@ -2,7 +2,7 @@
   <!--文件预览页面  -->       
   <p-sidebar [(visible)]="viewFileDisplay" [fullScreen]="true" [baseZIndex]="10000">
     <h1 style="font-weight:normal">{{selectedFile.label}}</h1>
-    <div id="example-pdf" [hidden]="fileType!=='pdf'">
+    <div id="example-pdf" [hidden]="fileType!=='pdf'&&fileType!=='doc'">
 
     </div>
     <div [hidden]="fileType!=='xlsx'">
@@ -15,6 +15,17 @@
         max-width: 400px;
         max-height: 400px;"/>
     </div>
+    <div [hidden]="fileType!=='txt'">
+        <!-- <table style="width: 80em;overflow: auto;height: 4em;border: 1px solid;
+        padding: 20px;">
+            <tbody *ngFor="let txt of txtTable">
+                <tr>
+                    <td>{{txt}}</td>
+                </tr>
+            </tbody>
+        </table> -->
+        <textarea rows="5" cols="30" pInputTextarea disabled [(ngModel)]="txtTable" name="projectArea"></textarea>
+    </div>
     
     
     <button pButton type="button" (click)="viewFileDisplay = false" label="返回" ></button>
@@ -24,6 +35,7 @@
         <div class="ui-g-12 ui-md-4">
             <button pButton type="button" label="新增" (click)="setExplorationt('addReport')"></button>
         </div>
+        <button style="float: right;top: 5px;" type="button" pButton  (click)="goBack()" label="返回"></button>
         <div style="clear:both">
             <p-table [columns]="reportClassifyTitle" [value]="reportClassifyValue" [paginator]="true" [rows]="10">
             <ng-template pTemplate="header" let-columns>

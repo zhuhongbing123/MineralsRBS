@@ -4,6 +4,7 @@ import { HttpUtil } from '../../../common/util/http-util';
 import { ExplorationProject,MiningMonitoring,ExplorationReport, MiningStage } from '../../../common/util/app-config';
 import * as XLSX from 'xlsx';
 import { ExplorationInfoService } from '../../exploration-right/exploration-info/exploration-info.service';
+import { Subscription } from 'rxjs';
 declare let PDFObject;
 @Component({
   selector: 'app-mining-info',
@@ -19,7 +20,8 @@ export class MiningInfoComponent implements OnInit {
   miningInfoTitle;//采矿信息列表标题
   miningInfoValue;//采矿信息列表数据
   miningInfoTableDisplay = false;//探矿权信息列表是否显示
-  miningItems: MenuItem[];//探矿权详情tab也标题
+  miningItems: MenuItem[];//探矿权详情tab页标题
+  menuItem;//tab默认活动菜单项
   miningProject: ExplorationProject = new ExplorationProject();//一条矿权项目数据
   miningStage: MiningStage = new MiningStage();//排查阶段单行数据
   miningMonitoring: MiningMonitoring = new MiningMonitoring();//年度监测报告单条数据
@@ -44,20 +46,23 @@ export class MiningInfoComponent implements OnInit {
   stageEndTime;//排查阶段结束时间
   monitoringDisplay=false;//年度监测报告是否显示
   modifyMonitoring = false;//修改年度监测报告
-  reportClassifyTitle;//采矿权报告列表标题
-  reportClassifyValue;//采矿权报告列表数据
-  reportDisplay = false;//采矿权报告弹出框是否显示
-  modifyReport = false;//是否修改报告文件
-  pdfDisplay = false;//查看PDF文件
+  validationYear;//监测报告年份
   miningTitle;//弹出框标题
-
+  backCommon: Subscription;
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private explorationInfoService: ExplorationInfoService) { }
+    private explorationInfoService: ExplorationInfoService) { 
+      this.backCommon = this.explorationInfoService.backCommon$.subscribe(()=>{
+        this.miningInfoTableDisplay = false;
+      })
+    }
 
   ngOnInit() {
     this.setTableValue();
+  }
+  ngOnDestroy(){
+    this.backCommon.unsubscribe();
   }
 
   //初始化表格
@@ -96,16 +101,7 @@ export class MiningInfoComponent implements OnInit {
       { field: 'problemFound', header: '监测过程发现的其它问题' },
       { field: 'operation', header: '操作' },
     ];
-    this.reportClassifyTitle = [
-      { field: 'reportCategoryId', header: '报告分类名称' },
-      { field: 'reportTime', header: '报告日期' },
-      { field: 'reportFilePath', header: '报告文件路径' },
-      { field: 'reportDescription', header: '文件详情描述' },
-      { field: 'reportUploader', header: '文件上传用户' },
-      { field: 'creationTime', header: '报告上传日期' },
-      { field: 'updateTime', header: '报告更新日期' },
-      { field: 'operation', header: '操作' }
-    ];
+    
     this.getMiningInfo();
     this.getMineralOwner();
     this.getReportCategory();
@@ -133,8 +129,8 @@ export class MiningInfoComponent implements OnInit {
       if (value.meta.code === 6666) {
         let data = value.data.stageInfos;
         for(let i in data){
-          data[i].investigationStartTime =  new Date(data[i].investigationStartTime*1000).toLocaleDateString().replace(/\//g, "-");
-          data[i].investigationEndTime =  new Date(data[i].investigationEndTime*1000).toLocaleDateString().replace(/\//g, "-");
+          data[i].miningStartTime =  new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-");
+          data[i].miningEndTime =  new Date(data[i].miningEndTime*1000).toLocaleDateString().replace(/\//g, "-");
           for(let j in this.mineralOwner){
               if(data[i].ownerId == this.mineralOwner[j].id){
                   data[i].ownerId = this.mineralOwner[j].ownerName;
@@ -180,11 +176,9 @@ export class MiningInfoComponent implements OnInit {
   getMonitoring(){
     this.httpUtil.get('mineral-project-validation/project/'+this.miningProject.id).then(value=>{
       if (value.meta.code === 6666) {
-          let data = value.data.reportInfos;
+          let data = value.data.validationInfos;
           for(let i in data){
-            data[i].reportTime =  new Date(data[i].reportTime*1000).toLocaleDateString().replace(/\//g, "-");
-            data[i].creationTime =  new Date(data[i].creationTime*1000).toLocaleDateString().replace(/\//g, "-");
-            data[i].updateTime =  new Date(data[i].updateTime*1000).toLocaleDateString().replace(/\//g, "-");
+            data[i].validationYear =  new Date(data[i].validationYear*1000).toLocaleDateString().replace(/\//g, "-");
             for(let j in this.reportCategory){
               if(data[i].reportCategoryId ===this.reportCategory[j].value){
                 data[i].reportCategoryId = this.reportCategory[j].reportCategory;
@@ -197,41 +191,14 @@ export class MiningInfoComponent implements OnInit {
     })
   }
 
-   /* 获取矿权报告 */
-   getReportClassify(){
-    this.httpUtil.get('mineral-project-report/project/'+this.miningProject.id).then(value=>{
-      if (value.meta.code === 6666) {
-          let data = value.data.reportInfos;
-          for(let i in data){
-            
-            data[i].reportTime =  new Date(data[i].reportTime*1000).toLocaleDateString().replace(/\//g, "-");
-            data[i].creationTime =  new Date(data[i].creationTime*1000).toLocaleDateString().replace(/\//g, "-");
-            data[i].updateTime =  new Date(data[i].updateTime*1000).toLocaleDateString().replace(/\//g, "-");
-            for(let j in this.reportCategory){
-              
-              if(data[i].reportCategoryId ===this.reportCategory[j].value){
-                data[i].reportCategoryId = this.reportCategory[j].reportCategory;
-                
-              }
-            }
-          }
-          //删除不是采矿权分类的报告
-          for(var i = data.length - 1; i >= 0; i--){
-            if(typeof(data[i].reportCategoryId)=='number'){
-              data.splice(i,1);
-            }
-          }
-          this.reportClassifyValue = data;
-      }
-    })
-  }
   /* 查看项目详情 */
   goDetails(data){
     this.miningInfoTableDisplay = true;
     this.projectDetailDisplay = true;
     this.miningProject = data;
+    this.menuItem = JSON.parse(JSON.stringify(this.miningItems[0]));
+    this.menuClick('项目详情');
     this.getStageInfo();
-    this.getReportClassify();
     this.getMonitoring();
   }
 
@@ -285,27 +252,28 @@ export class MiningInfoComponent implements OnInit {
 
   /* 点击详情页面切换按钮 */
   menuClick(event){
-    if(event.path[0].innerText ==='项目详情'){
+    this.menuItem.label = event;
+    if(event ==='项目详情'){
       this.projectDetailDisplay = true;
       this.monitoringDetailDisplay = false;
       this.stageDetailDisplay = false;
       this.reportFileDisplay = false;
       this.reportDetailDisplay = false;
       this.explorationInfoService.getReportFile(false);
-    }else if(event.path[0].innerText ==='排查阶段详情'){
+    }else if(event ==='排查阶段详情'){
       this.stageDetailDisplay = true;
       this.projectDetailDisplay = false;
       this.monitoringDetailDisplay = false;
       this.reportFileDisplay = false;
       this.reportDetailDisplay = false;
       this.explorationInfoService.getReportFile(false);
-    }else if(event.path[0].innerText ==='年度监测报告'){
+    }else if(event ==='年度监测报告'){
       this.monitoringDetailDisplay = true;
       this.projectDetailDisplay = false;
       this.stageDetailDisplay = false;
       this.reportDetailDisplay = false;
       this.explorationInfoService.getReportFile(false);
-    }else if(event.path[0].innerText ==='采矿权报告'){
+    }else if(event ==='采矿权报告'){
       this.stageDetailDisplay = false;
       this.projectDetailDisplay = false;
       this.monitoringDetailDisplay = false;
@@ -333,8 +301,8 @@ export class MiningInfoComponent implements OnInit {
       this.modifyStage = true;
       this.miningTitle = '修改排查阶段';
       this.miningStage = JSON.parse(JSON.stringify(value));  
-      this.stageStartTime = new Date(value.investigationStartTime);
-      this.stageEndTime = new Date(value.investigationEndTime);
+      this.stageStartTime = new Date(value.miningStartTime);
+      this.stageEndTime = new Date(value.miningEndTime);
       //矿权人
       for(let i in this.mineralOwner){
         if(this.miningStage.ownerId == this.mineralOwner[i].ownerName){
@@ -371,6 +339,7 @@ export class MiningInfoComponent implements OnInit {
         this.monitoringDisplay = true;
         this.miningTitle = '增加监测报告';
         this.miningMonitoring = new MiningMonitoring();
+        this.validationYear = '';
         this.modifyMonitoring = false;
         return;
     }
@@ -378,62 +347,13 @@ export class MiningInfoComponent implements OnInit {
     if(type =='modifyMonitoring'){
       this.monitoringDisplay = true;
       this.miningTitle = '修改监测报告';
-      this.miningMonitoring = new MiningMonitoring();
-      this.modifyMonitoring = false;
+      //this.miningMonitoring = new MiningMonitoring();
+      this.miningMonitoring = JSON.parse(JSON.stringify(value)); 
+      this.validationYear = new Date(value.validationYear);
+      this.modifyMonitoring = true;
       return;
     }
 
-
-    
-    /* 报告文件的增加 */
-    if(type==='addReport'){
-      this.reportDisplay = true;
-      this.miningTitle = '增加报告文件';
-      this.explorationReport = new ExplorationReport();
-      this.modifyReport = false;
-      return;
-    }
-    /* 报告文件修改 */
-    if(type==='modifyReport'){
-      this.modifyReport = true;
-      this.reportDisplay = true;
-      this.miningTitle = '修改报告文件('+value.reportCategoryId+')';
-      this.explorationReport = JSON.parse(JSON.stringify(value));
-      this.explorationReport.reportTime = new Date(this.explorationReport.reportTime);
-      for(let i in this.reportCategory){
-        if(this.reportCategory[i].label == this.explorationReport.reportCategoryId){
-          this.explorationReport.reportCategoryId = this.reportCategory[i].value;
-        }
-      }
-      return;
-    }
-    /* 查看报告文件 */
-    if(type==='viewReport'){
-      this.reportFileDisplay = true;
-      return;
-    }
-    /* 报告文件的删除 */
-    if(type==='deleteReport'){
-      this.confirmationService.confirm({
-        message: '确认删除该文件吗?',
-        header: '删除文件',
-        icon: 'pi pi-exclamation-triangle',
-        acceptLabel:'确定',
-        rejectLabel:'取消',
-        accept: () => {
-          this.httpUtil.delete('mineral-project-report/'+value.id).then(value=>{
-            if (value.meta.code === 6666) {
-              this.getReportClassify();
-              this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '删除成功'});
-            }
-          })
-        },
-        reject: () => {
-        
-        }
-      });
-      return;
-    }
   }
 
   /* 排查阶段保存 */
@@ -472,39 +392,7 @@ export class MiningInfoComponent implements OnInit {
     }
   }
 
-  /*保存采矿权文件  */
-  saveMiningReport(){
-    let reportInfo = {
-      "id":this.explorationReport.id,
-      "creationTime": new Date().getTime()/1000,
-      "projectId": this.miningProject.id,
-      "reportCategoryId": this.explorationReport.reportCategoryId,
-      "reportDescription": this.explorationReport.reportDescription,
-      "reportFilePath": "string",
-      "reportTime":  this.explorationReport.reportTime.getTime()/1000,
-      "reportUploader": "string",
-      "updateTime": new Date().getTime()/1000
-    };
-    if(this.modifyReport){
-      reportInfo.creationTime = new Date(this.explorationReport.creationTime).getTime()/1000;
-      this.httpUtil.put('mineral-project-report',reportInfo).then(value=>{
-        if (value.meta.code === 6666) {
-          this.reportDisplay =false;
-          this.getReportClassify();
-          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
-        }
-      })
-    }else{
-      this.httpUtil.post('mineral-project-report',reportInfo).then(value=>{
-        if (value.meta.code === 6666) {
-          this.reportDisplay =false;
-          this.getReportClassify();
-          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
-        }
-      })
-    }
-  }
-
+ 
   /* 保存年度监测报告 */
   saveMiningMonitoring(){
    let monitoringInfo = {
@@ -514,86 +402,29 @@ export class MiningInfoComponent implements OnInit {
       "projectId": this.miningProject.id,
       "resourceMaintained": this.miningMonitoring.resourceMaintained,
       "resourceUsed": this.miningMonitoring.resourceUsed,
-      "validationYear": this.miningMonitoring.validationYear.getTime()/1000
+      "validationYear": this.validationYear.getTime()/1000
     }
 
     if(this.modifyMonitoring){
       this.httpUtil.put('mineral-project-validation', monitoringInfo).then(value=>{
-
+        if (value.meta.code === 6666) {
+          this.monitoringDisplay = false;
+          this.getMonitoring();
+          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
+        }
       })
     }else{
       this.httpUtil.post('mineral-project-validation', monitoringInfo).then(value=>{
-
+        if (value.meta.code === 6666) {
+          this.monitoringDisplay = false;
+          this.getMonitoring();
+          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
+        }
       })
     }
   }
 
-  //查看PDF
-  public lookPDF(){
-    PDFObject.embed("./assets/js/房源表.pdf","#example-pdf");
-    document.getElementById('result').innerHTML ='';
-    this.pdfDisplay =true;
-    
-  }
-
-  /* ecxcel文件预览 */
-  
-  excelChange(){
-    var xhr = new XMLHttpRequest();
-    xhr.open('get', './assets/js/矿权排查表王文义(1)(1).xlsx', true);
-    xhr.responseType = 'arraybuffer';
-    let that =this;
-    xhr.onload = function(e) {
-        if(xhr.status == 200) {
-            var data = new Uint8Array(xhr.response)
-            var workbook = XLSX.read(data, {type: 'array'});
-            that.outputWorkbook(workbook)
-           // if(callback) callback(workbook);
-        }
-    };
-    xhr.send();
-  }
-  outputWorkbook(workbook) {
-    var sheetNames = workbook.SheetNames; // 工作表名称集合
-   
-    for(let i in sheetNames){
-      var worksheet = workbook.Sheets[sheetNames[i]];
-      var csv = XLSX.utils.sheet_to_csv(worksheet);
-      document.getElementById('result').innerHTML += this.csv2table(csv,sheetNames[i]);
-     
-    }
-    this.pdfDisplay = true;
-    document.getElementById('example-pdf').innerHTML ='';
-  }
-  
-  csv2table(csv,title){
-      var html = "<div>"+title+"</div><table class='table table-bordered'>";
-      var rows = csv.split('\n');
-      rows.pop(); // 最后一行没用的
-  /*     this.thead = rows[0];
-      this.data = rows.slice(1);
-      this.pdfDisplay = true; */
-      
-      rows.forEach(function(row, idx) {
-          var columns = row.split(',');
-          columns.unshift(idx+1); // 添加行索引
-          if(idx == 0) { // 添加列索引
-              html += '<thead><tr>';
-              for(var i=0; i<columns.length; i++) {
-                  html += '<th>' + (i==0?'':String.fromCharCode(65+i-1)) + '</th>';
-              }
-              html += '</tr></thead>';
-          }
-          html += '<tbody><tr>';
-          columns.forEach(function(column) {
-              html += '<td>'+column+'</td>';
-          });
-          html += '</tr></tbody>';
-      });
-      html += '</table>';
-      return html;
-  }
-
+ 
   pageChange(event,type){
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
@@ -608,9 +439,6 @@ export class MiningInfoComponent implements OnInit {
         
         this.getMonitoring();
         break; 
-      case 'report'://矿权报告
-        this.getReportClassify();
-        break;
     }
     
   }

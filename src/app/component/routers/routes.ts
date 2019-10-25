@@ -28,6 +28,7 @@ export const routes: Routes = [
         { path: '', redirectTo: 'explorationRight', pathMatch: 'full' },
         { path: 'explorationRight', loadChildren: '../exploration-right/exploration-right.module#ExplorationRightModule' },// 懒加载模块
         { path: 'miningRight', loadChildren: '../mining-right/mining-right.module#MiningRightModule' },
+        { path: 'mineralManage', loadChildren: '../mineral-manage/mineral-manage.module#MineralManageModule' },
         { path: 'systemConfig', loadChildren: '../system-config/system-config.module#SystemConfigModule' }
     ]
     },

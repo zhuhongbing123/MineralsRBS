@@ -24,7 +24,7 @@
 </div>
 
 <div [hidden]="!miningInfoTableDisplay">
-    <p-tabMenu [model]="miningItems" [activeItem]="miningItems[0]"  (click)="menuClick($event)"></p-tabMenu>
+    <p-tabMenu [model]="miningItems" [activeItem]="menuItem"  (click)="menuClick($event.path[0].innerText)"></p-tabMenu>
 
     <!-- 项目详情 -->
     <div [hidden]="!projectDetailDisplay" style="border: 1px solid #66afe9;background: radial-gradient(#49779ff5 100%, #f2f1ed 20%) !important;padding: 10px;">
@@ -99,7 +99,9 @@
     <div style="clear: both;" class="p-table" [hidden]="!stageDetailDisplay">
         <div class="ui-g-12 ui-md-4">
             <button pButton type="button" label="新增" (click)="setMining('addStage')"></button>
+            
         </div>
+        <button style="float: right;top: 5px;" type="button" pButton  (click)="miningInfoTableDisplay=false" label="返回"></button>
         <div style="clear:both">
             <p-table [columns]="stageDetailTitle" [value]="stageDetailValue" [rows]="10">
             <ng-template pTemplate="header" let-columns>
@@ -129,6 +131,7 @@
             <div class="ui-g-12 ui-md-4">
                 <button pButton type="button" label="新增" (click)="setMining('addMonitoring')"></button>
             </div>
+            <button style="float: right;top: 5px;" type="button" pButton  (click)="miningInfoTableDisplay=false" label="返回"></button>
             <div style="clear:both">
                 <p-table [columns]="monitoringTitle" [value]="monitoringValue"  [rows]="10">
                 <ng-template pTemplate="header" let-columns>
@@ -325,7 +328,7 @@
         <div class="form-group has-feedback">
             <label class="control-label">监测报告年份</label>
             <div>
-                <p-calendar [showIcon]="true" [(ngModel)]="miningMonitoring.validationYear" name="reportTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+                <p-calendar [showIcon]="true" [(ngModel)]="validationYear" name="validationYear" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
             </div>    
         </div>
         <div class="form-group has-feedback">
@@ -357,46 +360,5 @@
             <button type="button" pButton icon="pi pi-close" (click)="monitoringDisplay = false" label="取消" class="ui-button-secondary"></button>
         </p-footer>  
     </p-dialog>
-    <!-- 采矿权报告弹出框 -->
-    <p-dialog header="{{miningTitle}}" [(visible)]="reportDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
-      <div class="form-group has-feedback">
-          <label class="control-label">报告分类</label>
-          <div class="search">
-              <p-dropdown [options]="reportCategory" name="reportCategoryId" [(ngModel)]="explorationReport.reportCategoryId" placeholder="请选择报告分类" filter="true">
-                  <ng-template let-car pTemplate="item">
-                      <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
-                          <div style="font-size:14px;float:right;margin-top:4px">{{car.label}}</div>
-                      </div>
-                  </ng-template>
-              </p-dropdown>
-          </div>
-      </div>    
-      <div class="form-group has-feedback">
-          <label class="control-label">报告日期</label>
-          <div>
-              <p-calendar [showIcon]="true" [(ngModel)]="explorationReport.reportTime" name="reportTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
-          </div>    
-      </div>
-      <div class="form-group has-feedback">
-          <label class="control-label">报告文件路径</label>
-          <p-fileUpload name="demo[]" url="./upload.php" 
-              multiple="multiple" accept="image/*" maxFileSize="1000000">
-              <!-- <ng-template pTemplate="content">
-                  <ul *ngIf="uploadedFiles.length">
-                      <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
-                  </ul>
-              </ng-template> -->
-          </p-fileUpload>
-      </div>    
-      <div class="form-group has-feedback">
-          <label class="control-label">文件描述详情</label>
-          <div>
-              <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="explorationReport.reportDescription" name="projectArea"></textarea>
-          </div>    
-      </div>
-      <p-footer>
-          <button type="button" pButton (click)="saveMiningReport()" label="保存"></button>
-          <button type="button" pButton icon="pi pi-close" (click)="reportDisplay = false" label="取消" class="ui-button-secondary"></button>
-      </p-footer>  
-    </p-dialog>
+    
 </div>

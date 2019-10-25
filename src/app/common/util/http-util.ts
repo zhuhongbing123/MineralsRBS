@@ -26,6 +26,8 @@ export class HttpUtil {
         );
 
     }
+
+    
     public get(url){
         return this.http
       .get(

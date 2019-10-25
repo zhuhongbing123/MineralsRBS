@@ -53,7 +53,12 @@ export class MenuComponent implements OnInit {
         ]
       },
       {
-        label: '矿权人管理', icon: 'fa fa-fw  fa-tags',routerLink: ['/layout/systemConfig/mineralOwner'] 
+        label: '矿权管理', icon: 'fa fa-fw  fa-tags',
+        items:[
+          {label: '矿权项目管理', icon: 'fa fa-fw  fa-tags',routerLink: ['/layout/mineralManage/mineralProject']},
+          {label: '矿权人管理', icon: 'fa fa-fw  fa-tags',routerLink: ['/layout/systemConfig/mineralOwner']} 
+        ]
+        
       },
       {
         label: '系统配置', icon: 'fa fa-fw  fa-tags', 

@@ -12,7 +12,12 @@ export class MenuSelectComponent implements OnInit {
 
   ngOnInit() {
   }
-  aaa(){
-    this.router.navigate(['/layout/explorationRight/explorationInfo']);
+  goMineral(type){
+    if(type =='exploration'){
+      this.router.navigate(['/layout/explorationRight/explorationInfo']);
+    }
+    if(type=='mining'){
+      this.router.navigate(['/layout/miningRight/miningInfo']);
+    }
   }
 }

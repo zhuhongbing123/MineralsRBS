@@ -54,7 +54,8 @@ export class LoginComponent implements OnInit {
                 localStorage.setItem('token', data2.data.jwt);
                 localStorage.setItem('uid', this.username);
                 login$.unsubscribe();
-                this.router.navigate(['/menu']);
+                //this.router.navigate(['/menu']);
+                this.router.navigate(['/layout/explorationRight/explorationInfo']);
               } else {
                 this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '用户名密码错误'});
                 login$.unsubscribe();
