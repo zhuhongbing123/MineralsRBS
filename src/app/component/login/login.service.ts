@@ -12,7 +12,8 @@ export class LoginService {
     private baseUrl: string;//通用的URL地址
   constructor(private httpUtil: HttpUtil,
               private confirmationService: ConfirmationService,
-              private router: Router) {
+              private router: Router,
+              private messageService: MessageService) {
     this.baseUrl = HttpUrl.apiBaseUrl;
   }
 
@@ -53,11 +54,10 @@ export class LoginService {
       icon: "pi pi-info-circle",
 
       accept: () => {
-        localStorage.clear();
-        this.logOut().subscribe(value=>{
-          if (value.meta.code === 6666) {
+        this.logOut().then(value=>{
+          if (value['meta'].code === 6666) {
             // 本地消除存储用户信息
-            
+            localStorage.clear();
             this.router.navigateByUrl('/login');
           
           }
@@ -69,9 +69,26 @@ export class LoginService {
       });
 
   }
+  
   logOut() {
     const url = this.baseUrl + 'user/exit';
-    return this.httpUtil.postLogin(url);
+    return this.httpUtil.postLogout(url);
   }
   
+  /* jwt过期退出 */
+  exit(){
+    this.logOut().then(value=>{
+      if (value['meta'].code === 6666 || value['meta'].code === 2004) {
+        // 本地消除存储用户信息
+        localStorage.clear();
+        this.router.navigateByUrl('/login');
+        return;
+      
+      }
+    }).catch(()=>{
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
+    }).finally();
+  }
+  
+
 }

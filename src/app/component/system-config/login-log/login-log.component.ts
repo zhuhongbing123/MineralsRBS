@@ -12,6 +12,7 @@ export class LoginLogComponent implements OnInit {
   public loginLogValue: any;// 登录日志列表数据
   public loginLogTotal;//登录日志列表总数
   public LIMIT_LOGIN=10;//登录日志列表每页显示数量
+  loading: boolean;//列表加载动画显示
   constructor(private httpUtil: HttpUtil) { }
 
   ngOnInit() {
@@ -29,6 +30,7 @@ export class LoginLogComponent implements OnInit {
       { field: 'message', header: '其他信息' },
       { field: 'succeed', header: '状态' }
     ];
+    this.loading = true;
     this.getLoginLog();
   }
   getLoginLog(){
@@ -53,6 +55,7 @@ export class LoginLogComponent implements OnInit {
         data[i].createTime = newDate; */
     }
     this.loginLogValue = data;
+    this.loading = false;
   }
 
   /* 表格切换页码 */

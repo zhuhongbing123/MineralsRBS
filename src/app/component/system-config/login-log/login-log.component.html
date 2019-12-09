@@ -1,6 +1,6 @@
 <p>系统配置 > 登录日志</p>
 <div class="p-table">
-    <p-table [columns]="loginLogTitle" [value]="loginLogValue"  [scrollable]="true" >
+    <p-table [columns]="loginLogTitle" [value]="loginLogValue"  [scrollable]="true" [loading]="loading">
     <ng-template pTemplate="header" let-columns>
         <tr>
             
@@ -14,7 +14,7 @@
 
             <td *ngFor="let col of columns" class="area-table-td">
                     <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                    <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
+                    <span *ngIf = "col.field == 'createTime'" > {{rowData[col.field]*1000  | date:'yyyy-MM-dd HH:mm'}}</span>
             </td>
             
         </tr>

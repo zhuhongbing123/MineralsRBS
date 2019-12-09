@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpUtil } from '../../../common/util/http-util';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { LoginService } from '../../login/login.service';
 
 @Component({
   selector: 'app-user-management',
@@ -24,9 +25,20 @@ export class UserManagementComponent implements OnInit {
   pageSize = 10;//列表每页数量
   pageNumber = 1;//列表第几页
   userTitle;//弹出框标题
+
+  addDisplay = false;//添加用户角色
+  modifyDisplay = false;//修改用户角色
+  deleteDisplay = false;//删除用户角色
+  searchDisplay = false;//搜索用户按钮
+
+  filteredUserName;//输入的用户名
+  filteredUser:any[];//搜索框下拉的用户名
+  allUserName;//所有用户名字
+  loading: boolean;//列表加载动画显示
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
-              private confirmationService: ConfirmationService) { }
+              private confirmationService: ConfirmationService,
+              private loginService: LoginService) { }
 
   ngOnInit() {
     this.getTableValue();
@@ -46,8 +58,35 @@ export class UserManagementComponent implements OnInit {
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
       { field: 'status', header: '状态' },
-    ]
+    ];
+    this.loading = true;
+    //获取授权的API资源
+    if(!localStorage.getItem('api')){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
+      this.loginService.exit();
+      return;
+    }
+    //获取授权的API资源
+    JSON.parse(localStorage.getItem('api')).forEach(element => {
+      if(element.uri ==='/user/authority/role' && element.method =='POST'){
+        this.addDisplay =true;
+      };
+      if(element.uri ==='/user/update/role' && element.method =='POST'){
+        this.modifyDisplay =true;
+      };
+      if(element.uri ==='/user/authority/role/*/*' && element.method =='DELETE'){
+        this.deleteDisplay =true;
+      };
+      if(element.uri ==='/user/search/*/*' && element.method =='POST'){
+        this.searchDisplay =true;
+      }
+      
+    });
+    if(!this.modifyDisplay && !this.deleteDisplay){
+      this.userTableTitle.splice(this.userTableTitle.length-1,1);
+    }
     this.getUserValue();
+    this.getUserName();
   }
 
   /* 获取用户数据 */
@@ -63,11 +102,21 @@ export class UserManagementComponent implements OnInit {
             
         }
         this.userTableValue = data;
+        this.loading = false;
         }
       }).then(()=>{
         this.getRoleValue();
       });
       
+  }
+
+  /* 获取所有用户名称 */
+  getUserName(){
+    this.httpUtil.get('user/name').then(value=>{
+      if (value.meta.code === 6666) {
+        this.allUserName = value.data.userNames;
+      }
+    })
   }
 
   getRoleValue(){
@@ -95,9 +144,34 @@ export class UserManagementComponent implements OnInit {
       }
     });
   }
+
+  /* 通过用户名搜索用户 */
+  getFilteredUser(){
+    this.httpUtil.post('user/search/'+this.pageNumber+'/'+this.pageSize,{
+      userName: this.filteredUserName?this.filteredUserName:''
+    }).then(value=>{
+      let data = value.data.users.list;
+      this.userTotal = value.data.users.total;
+      for(let i in data){
+          if(data[i].succeed==1){
+            data[i].succeed = '成功'
+          }
+            
+      }
+      this.userTableValue = data;
+    }).then(()=>{
+      this.getRoleValue();
+    });
+  }
+
   /* 获取用户角色 */
   setUserRole(value,type){
     this.selectUser = value;
+    /* 搜索用户名 */
+    if(type=='filtered'){
+      this.getFilteredUser();
+      return;
+    }
     if(type =='delete'){
       this.confirmationService.confirm({
         message: '确认删除该用户('+value.username+')的角色('+value.role+')吗?',
@@ -130,7 +204,7 @@ export class UserManagementComponent implements OnInit {
     this.selectedRole;
     if(this.selectUser.roleId){
       //修改角色
-        this.httpUtil.put('user/update/role',{
+        this.httpUtil.post('user/update/role',{
           uid:this.selectUser.uid.toString(),
           oldRoleId:this.selectUser.roleId.toString(),
           newRoleId:this.selectedRole.id.toString()
@@ -161,10 +235,24 @@ export class UserManagementComponent implements OnInit {
   pageChange(event,type){
     this.pageNumber = event.page+1;
     this.pageSize = event.rows;
+      if(this.filteredUserName){
+        this.getFilteredUser();
+      }
       if(type==='user'){
         this.getUserValue();
       }else{
         this.getRoleValue();
       }
+  }
+
+  /* 过滤显示用户名 */
+  filteredUsers(event){
+    this.filteredUser = [];
+    for(let i in this.allUserName){
+      let brand = this.allUserName[i];
+      if(brand.toLowerCase().indexOf(event.query.toLowerCase()) >-1) {
+          this.filteredUser.push(brand);
+      }
+    }
   }
 }

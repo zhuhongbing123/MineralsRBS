@@ -2,11 +2,20 @@
 <div>
   <span>矿权管理 > 矿权项目</span>
 </div>
-<div class="ui-g-12 ui-md-4">
-  <button pButton type="button" label="新增" (click)="setMineral('add')"></button>
+<div class="ui-g-12 ui-md-4" style="float:left">
+  <button pButton type="button" [hidden]="!addDisplay" label="新增" (click)="setMineral('add')"></button>
+</div>
+<div style="float: right;margin-top: 10px" [hidden]="!searchDisplay">
+        <span style="margin-right:10px">项目名称</span>
+        <p-autoComplete [(ngModel)]="filteredProjectName" [suggestions]="filteredProject" (completeMethod)="filteredName($event)"
+            placeholder="输入项目名称" ></p-autoComplete>
+            <span style="margin-right:10px;margin-left: 10px">矿权人</span>
+            <p-autoComplete [(ngModel)]="ownerName" 
+            placeholder="输入矿权人" ></p-autoComplete>
+        <button pButton  type="button" label="查询" (click)="setMineral('filtered')"></button>
 </div>
 <div style="clear: both;" class="p-table">
-  <p-table [columns]="mineralProjectTitle" [value]="mineralProjectValue"  [rows]="10">
+  <p-table [columns]="mineralProjectTitle" [value]="mineralProjectValue"  [rows]="10" [loading]="loading">
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th *ngFor="let col of columns">
@@ -18,122 +27,207 @@
         <tr>
             <td *ngFor="let col of columns">
                 <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setMineral('delete',rowData)">删除</span>
+                <span *ngIf = "col.field == 'operation' && modifDisplay" class="operation-icon"  (click)="setMineral('modify',rowData)">修改</span>
+                <span *ngIf = "col.field == 'operation' && deleteDisplay" class="operation-icon"  (click)="setMineral('delete',rowData)">删除</span>
             </td>
         </tr>
     </ng-template>
   </p-table>
   <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+
 </div>
 
 <div class="dialog-class textarea-style">
   <!-- 矿权项目增加弹出框 -->
-  <p-dialog header="新增探矿权项目" [(visible)]="mineralProjectDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+  <p-dialog header="新增探矿权项目" [(visible)]="mineralProjectDisplay"  [maximizable]="true" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
           <form>
               <div class="form-group has-feedback">
                   <label class="control-label">项目名称</label>
-                  <input  type="text"   [(ngModel)]="mineralProject.projectName" name="projectName"  class="form-control">
+                  <input  type="text" style="width:700px !important"  [(ngModel)]="mineralProject.projectName" name="projectName"  class="form-control">
               </div>
+              <div class="form-group has-feedback">
+                <label class="control-label">项目定位区域</label>
+                <button type="button" pButton (click)="viewMap()" label="查看"></button>
+              </div>  
               <div class="form-group has-feedback">
                   <label class="control-label">探矿权首立时间</label>
                   <div>
-                      <p-calendar [showIcon]="true" [(ngModel)]="explorationStartTime" name="explorationStartTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+                      <p-calendar 
+                        [showIcon]="true" 
+                        [(ngModel)]="explorationStartTime" 
+                        name="explorationStartTime" 
+                        [monthNavigator]="true" 
+                        [yearNavigator]="true" 
+                        yearRange="1970:2030"
+                        dateFormat="yy.mm.dd"
+                      >
+                      </p-calendar>
                   </div>    
               </div>
-              <div class="form-group has-feedback" [hidden]="modifyExploration">
+              <div class="form-group has-feedback">
                   <label class="control-label">探矿权范围</label>
-                  <input type="text" name="explorationArea" class="form-control" [(ngModel)]="mineralProject.explorationArea">
+                  <input type="text" style="width:700px !important" name="explorationArea" class="form-control" [(ngModel)]="mineralProject.explorationArea">
               </div>
-              <div class="form-group has-feedback" [hidden]="modifyExploration">
+              <div class="form-group has-feedback">
                   <label class="control-label">采矿权首立时间</label>
                   <div>
-                      <p-calendar [showIcon]="true" [(ngModel)]="miningStartTime" name="miningStartTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+                      <p-calendar 
+                        [showIcon]="true" 
+                        dateFormat="yy.mm.dd" 
+                        [(ngModel)]="miningStartTime" 
+                        name="miningStartTime" 
+                        [monthNavigator]="true" 
+                        [yearNavigator]="true" 
+                        yearRange="1970:2030"
+                      ></p-calendar>
                   </div>   
               </div>
-              <div class="form-group has-feedback" [hidden]="modifyExploration">
+              <div class="form-group has-feedback" >
                   <label class="control-label">采矿权范围</label>
-                  <input type="text" name="miningArea" class="form-control" [(ngModel)]="mineralProject.miningArea" [ngModelOptions]="{standalone: true}">
+                  <input type="text" style="width:700px !important" name="miningArea" class="form-control" [(ngModel)]="mineralProject.miningArea" [ngModelOptions]="{standalone: true}">
               </div>
-              <div class="form-group has-feedback"  [hidden]="modifyExploration">
+              <div class="form-group has-feedback" >
                   <label class="control-label">勘查阶段/报告成果</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.investigationFinalStage" name="investigationFinalStage"></textarea>
+                      <textarea rows="5" style="width:700px" cols="30" pInputTextarea [(ngModel)]="mineralProject.investigationFinalStage" name="investigationFinalStage"></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">区域地质背景</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.areaGeologicBackground" name="areaGeologicBackground"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.areaGeologicBackground" name="areaGeologicBackground"></textarea>
                   </div>
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">地球物理及地球化学特性</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.geophysicalGeochemical" name="geophysicalGeochemical"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.geophysicalGeochemical" name="geophysicalGeochemical"></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">矿区地质背景:地层</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.mineralGeologicalStratum" name="mineralGeologicalStratum"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.mineralGeologicalStratum" name="mineralGeologicalStratum"></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">矿区地质背景:构造</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.mineralGeologicalStructure" name="mineralGeologicalStructure"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.mineralGeologicalStructure" name="mineralGeologicalStructure"></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">矿区地质背景:岩浆岩</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.mineralGeologicalMagmatite" name="mineralGeologicalMagmatite"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.mineralGeologicalMagmatite" name="mineralGeologicalMagmatite"></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">成矿带归属</label>
-                  <input type="text" name="uri" class="form-control" [(ngModel)]="mineralProject.mineralBeltOwner" name="mineralBeltOwner">
+                  <input type="text" style="width:700px !important" name="uri" class="form-control" [(ngModel)]="mineralProject.mineralBeltOwner" name="mineralBeltOwner">
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">成矿带地质背景</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.mineralBeltGeologic" name="mineralBeltGeologic"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.mineralBeltGeologic" name="mineralBeltGeologic"></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">围岩及蚀变</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.rockAlteration" name="rockAlteration"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.rockAlteration" name="rockAlteration"></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">矿(化)体特征</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.mineralCharacteristics" name="mineralCharacteristics"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.mineralCharacteristics" name="mineralCharacteristics"></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">主要成果</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.majorAchievement" name="majorAchievement"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.majorAchievement" name="majorAchievement"></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">初步认识</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.preliminaryUnderstanding" name="preliminaryUnderstanding"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.preliminaryUnderstanding" name="preliminaryUnderstanding"></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">存在的问题以及下一步工作</label>
                   <div>
-                      <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="mineralProject.remarks" name="remarks"></textarea>
+                      <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.remarks" name="remarks"></textarea>
                   </div>    
               </div>
           </form>
+          <div id="projectMap" class="map"></div>
           <p-footer>
               <button type="button" pButton (click)="saveMineralProject()" label="保存"></button>
               <button type="button" pButton icon="pi pi-close" (click)="mineralProjectDisplay = false" label="取消" class="ui-button-secondary"></button>
           </p-footer>
+  </p-dialog>
+  <!-- 项目范围 -->
+  <!-- <p-dialog header="项目区域设置" [(visible)]="mineralAreaDisplay"  [maximizable]="true" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+    <div style="height: 86.5vh;">
+         <div id="projectMap" class="map"></div>
+      </div>
+  </p-dialog> -->
+  <el-dialog [title]="'矿权区域'" [(visible)]="mineralAreaDisplay">
+        <div style="margin-bottom:10px">
+                <button type="button" pButton  label="新增区域" [hidden]="mineralProject.areaCoordinates " (click)="setArea('add')"></button>
+                <button type="button" pButton  label="删除区域" [hidden]="!mineralProject.areaCoordinates " (click)="setArea('delete')"></button>
+                <button type="button" pButton  label="修改区域" [hidden]="!mineralProject.areaCoordinates" (click)="setArea('modify')"></button>
+                <button type="button" pButton  label="放大" (click)="fullMap('full')"></button>
+                <button type="button" pButton  label="缩小" (click)="fullMap('close')"></button>
+        </div>
+        <div [hidden]="!addAreaDisplay">
+            <p-dropdown 
+            [options]="drawShaps" 
+            [(ngModel)]="selectedDraw" 
+            placeholder="选择一种图形类型" 
+            optionLabel="name"
+            (onChange)="selectDraw('area')"
+            ></p-dropdown>
+        </div>
+        <div id="main_content" #main_content >
+            <div id="projectMap" class="map">
+                <div id="popup" class="ol-popup">
+                <a href ='#' id="popup-closer" class="ol-popup-closer"></a>
+                <div id="popup-content" style="color:black"></div>
+                
+                </div>
+                <!-- 比例尺显示 -->
+                <div id="digitalScale" >
+                <select id="type" [hidden]="true">
+                    <option value="LineString">Length (LineString)</option>
+                </select>
+                </div>
+            </div>
+            
+            <!-- 坐标显示 -->
+            <div id="mouse-position">
+            </div>
+            
+        </div>
+  </el-dialog>
+
+  <p-dialog header="区域" [(visible)]="areaDialogDisplay"  [baseZIndex]="10001" [maximizable]="true" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+        
+        <div class="form-group has-feedback">
+            <label class="control-label">填充色</label>
+            <p-colorPicker [(ngModel)]="mineralProject.areaBackground"></p-colorPicker>
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label">区域透明度</label>
+            <p-spinner size="30" [(ngModel)]="mineralProject.areaOpacity" [min]="0" [max]="100" [step]="10"></p-spinner>
+            <span>(范围0-100)</span>
+        </div>
+        <p-footer>
+                <button type="button" pButton (click)="saveArea()" label="保存"></button>
+                <button type="button" pButton icon="pi pi-close" (click)="saveArea('cancel')" label="取消" class="ui-button-secondary"></button>
+        </p-footer>
   </p-dialog>
 </div>

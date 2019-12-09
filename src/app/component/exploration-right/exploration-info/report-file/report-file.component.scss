@@ -17,3 +17,15 @@ padding: 1em;
 display: block;
 border: solid 1px #123;
 }
+
+.click-file{
+    cursor: pointer;
+}
+
+.file-path{
+    margin-right:5px;
+    color: #00ffa7;
+}
+.file-path:hover{
+    color: #0090ff;
+}

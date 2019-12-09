@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpUtil } from '../../../common/util/http-util';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { FALSE } from 'ol/functions';
+import { LoginService } from '../../login/login.service';
 
 @Component({
   selector: 'app-api-manage',
@@ -37,9 +39,20 @@ export class ApiManageComponent implements OnInit {
   public selectApiValue;//当前操作的api数据
   public saveType;//保存类型
   apiTitle;//弹出框标题
+
+  addButtonDisplay = false;//新增按钮显示
+  modifyDisplay = false;//修改按钮显示
+  deleteDisplay = false;//删除按钮显示
+  searchDisplay = false;//搜索按钮显示
+
+  filteredAPIName:string;//输入的API名称
+  filteredAPI:any[];//搜索API下拉框值
+  allAPIName;//所有API名称
+  loading: boolean;//列表加载动画显示
   constructor(private httpUtil: HttpUtil,
               private messageService:MessageService,
-              private confirmationService: ConfirmationService) { }
+              private confirmationService: ConfirmationService,
+              private loginService: LoginService) { }
 
   ngOnInit() {
     this.getTableValue();
@@ -58,6 +71,12 @@ export class ApiManageComponent implements OnInit {
       { field: 'operation', header: '操作' }
 
     ];
+    this.loading = true;
+    //只有管理员才能显示URI
+    if(localStorage.getItem('roleCode') !== 'role_admin'){
+      this.apiTableTitle.splice(3,1)
+    }
+
     this.accessMethod = [
       {label: 'POST', value: 'POST'},
       {label: 'GET', value: 'GET'},
@@ -72,9 +91,36 @@ export class ApiManageComponent implements OnInit {
     this.apiType = [
       {label: '--API资源--', value: '2'},
       {label: '--API类别--', value: '3'}
-    ]
+    ];
+    //获取授权的API资源
+    if(!localStorage.getItem('api')){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
+      this.loginService.exit();
+      return;
+    }
+    //获取授权的API资源
+    JSON.parse(localStorage.getItem('api')).forEach(element => {
+      if(element.uri ==='/resource/api' && element.method =='POST'){
+          this.addButtonDisplay =true;
+      }
+      if(element.uri ==='/resource/api' && element.method =='PUT'){
+        this.modifyDisplay =true;
+      }
+      if(element.uri ==='/resource/api' && element.method =='DELETE'){
+        this.deleteDisplay =true;
+      }
+      if(element.uri ==='/resource/search/*/*' && element.method =='POST'){
+        this.searchDisplay =true;
+      }
+    
+    });
+
+    if(!this.modifyDisplay && !this.deleteDisplay){
+      this.apiTableTitle.splice(this.apiTableTitle.length-1,1);
+    }
     this.getApiValue();
     this.getApiClassify();
+    this.getAPIName();
   }
 
   /* 获取API分类 */
@@ -82,6 +128,10 @@ export class ApiManageComponent implements OnInit {
       this.httpUtil.get('resource/api/-1/1/10000').then(value=>{
         if (value.meta.code === 6666) {
           let data = value.data.data;
+          this.apiClassify=[{
+            label:'全部',
+            value:0
+          }];
           for(let i in data){
             this.apiClassify.push({
               label:data[i].name,
@@ -113,6 +163,42 @@ export class ApiManageComponent implements OnInit {
             data[i].status = '禁用'
           }
           for(let j in this.apiClassify){
+              if(data[i].parentId ==this.apiClassify[j].value && data[i].type!==3){
+                data[i]['classify'] = this.apiClassify[j].label;
+              }
+          }
+        }
+        this.apiTableValue = data;
+        this.loading = false;
+      }
+    })
+  }
+
+  /* 获取所有API名称 */
+  getAPIName(){
+    this.httpUtil.get('resource/name').then(value=>{
+      if (value.meta.code === 6666) {
+        this.allAPIName = value.data.apiNames;
+      }
+    })
+  }
+  /* 通过名称搜索API */
+  getFilteredApi(){
+    this.httpUtil.post('resource/search/'+this.currentPage+'/'+this.pageSize,{
+      resourceName: this.filteredAPIName?this.filteredAPIName:''
+    }).then(value=>{
+      if (value.meta.code === 6666) {
+        let data = value.data.resources.list;
+        this.apiTotal = value.data.resources.total;
+
+        for(let i in data){
+          if(data[i].status==1){
+            data[i].status = '正常'
+          }
+          if(data[i].status==9){
+            data[i].status = '禁用'
+          }
+          for(let j in this.apiClassify){
               if(data[i].parentId ==this.apiClassify[j].value){
                 data[i]['classify'] = this.apiClassify[j].label;
               }
@@ -126,10 +212,20 @@ export class ApiManageComponent implements OnInit {
   pageChange(event){
     this.currentPage = event.page+1;
     this.pageSize = event.rows;
-    this.getApiValue();
+    if(this.filteredAPIName){
+      this.getFilteredApi();
+    }else{
+      this.getApiValue();
+    }
+    
   }
 /* 对表格的操作 */
-  setApi(type,value){
+  setApi(type,value?){
+    //搜索API名称
+    if(type=='filtered'){
+      this.getFilteredApi();
+      return;
+    }
       this.selectApiValue = value;
       this.saveType = type;
       if(type ==='add'){
@@ -144,6 +240,7 @@ export class ApiManageComponent implements OnInit {
         this.apiEditorDisplay = true;
         return;
       }
+       
       if(type==='delete'){
         this.confirmationService.confirm({
           message: '确认删除该API('+value.name+')吗?',
@@ -186,7 +283,12 @@ export class ApiManageComponent implements OnInit {
     this.getApiValue();
   }
 
+  /* 保存API */
   saveAPI(){
+    if(!this.apiEditor.name){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '名称不能为空'});
+      return;
+    }
     let type = this.saveType;
     if(type ==='add'){
       this.httpUtil.post('resource/api',{
@@ -224,5 +326,15 @@ export class ApiManageComponent implements OnInit {
       })
     }
     
+  }
+
+  filteredApi(event){
+    this.filteredAPI = [];
+    for(let i in this.allAPIName){
+      let brand = this.allAPIName[i];
+      if(brand.toLowerCase().indexOf(event.query.toLowerCase()) >-1) {
+          this.filteredAPI.push(brand);
+      }
+    }
   }
 }

@@ -1,10 +1,16 @@
 <div  class="p-table">
     <p>矿权人管理</p>
-    <div class="ui-g-12 ui-md-4">
-        <button pButton type="button" label="新增" (click)="setOwner('add')"></button>
+    <div class="ui-g-12 ui-md-4" style="float: left;">
+        <button pButton [hidden]="!addDisplay" type="button" label="新增" (click)="setOwner('add')"></button>
+        
+    </div>
+    <div style="float: right;" [hidden]="!queryDisplay">
+        <p-autoComplete [(ngModel)]="filteredOwnerName" [suggestions]="filteredOwner" (completeMethod)="filterOwners($event)"
+            placeholder="输入矿权人名字" ></p-autoComplete>
+        <button pButton  type="button" label="查询" (click)="setOwner('filtered')"></button>
     </div>
     <div style="clear:both">
-        <p-table [columns]="mineralOwnerTitle" [value]="mineralOwnerValue"  [rows]="10">
+        <p-table [columns]="mineralOwnerTitle" [value]="mineralOwnerValue"  [rows]="10" [loading]="loading">
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th *ngFor="let col of columns">
@@ -16,8 +22,8 @@
                 <tr>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setOwner('modify',rowData)">修改</span>
-                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setOwner('delete',rowData)">删除</span>
+                        <span *ngIf = "col.field == 'operation' && modifyDisplay" class="operation-icon"  (click)="setOwner('modify',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation' && deleteDisplay" class="operation-icon"  (click)="setOwner('delete',rowData)">删除</span>
                     </td>
                 </tr>
             </ng-template>

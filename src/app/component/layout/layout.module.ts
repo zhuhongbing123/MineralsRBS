@@ -2,9 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LayoutComponent } from './layout.component';
 import { MenuComponent, SubMenuComponent } from './menu.component';
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { RouterModule, Router, NavigationStart, NavigationEnd } from '@angular/router';
+import { RouterModule  } from '@angular/router';
 import { TopBarComponent } from './topbar.component';
 import { ConfirmDialogModule } from 'primeng/primeng';
 import { ToastModule } from 'primeng/toast'

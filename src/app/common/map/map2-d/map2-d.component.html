@@ -1,0 +1,24 @@
+<div id="main_content" #main_content >
+<div id="{{mapDivId}}" class="map">
+  <div id="popup" class="ol-popup">
+    <a href ='#' id="popup-closer" class="ol-popup-closer"></a>
+    <div id="popup-content" style="color:black"></div>
+  
+  </div>
+  <!-- 比例尺显示 -->
+  <div id="digitalScale" (click)="mapMeasure()" >
+    <select id="type" [hidden]="true">
+      <option value="LineString">Length (LineString)</option>
+    </select>
+  </div>
+</div>
+<!--地图左下角 测量工具-->
+<div style="position: relative;bottom:120px;left:9px;width: 50px;">
+    <img src="./assets/img/mapStaff.png" alt="pic" style="width: 23px;cursor: pointer;" id="measure_location" (click)="mapMeasure()">
+    <img src="./assets/img/delete.png" alt="pic" id="clear_measure_location" style="display: none;margin-left:10px;;cursor: pointer;" (click)="clearMeasure()">
+</div>
+<!-- 坐标显示 -->
+<div id="mouse-position">
+</div>
+
+</div>

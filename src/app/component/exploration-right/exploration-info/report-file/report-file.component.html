@@ -5,37 +5,62 @@
     <div id="example-pdf" [hidden]="fileType!=='pdf'&&fileType!=='doc'">
 
     </div>
+
     <div [hidden]="fileType!=='xlsx'">
         <p-tabMenu [model]="itemsExcel" [activeItem]="itemsExcel[0]" (click)="excelClick($event)"></p-tabMenu>
         <div  id="result" style="width: 100em;overflow: auto;height: 40em;"></div>
     </div>
-    <div [hidden]="fileType!=='png'&& fileType!=='jpg'" style="width:50%;height:50%;text-align: center;border: 1px solid;">
-        <img src="{{imgUrl}}" style="width: 100%;
-        height: 100%;
-        max-width: 400px;
-        max-height: 400px;"/>
+
+    <div [hidden]="fileType!=='png'&& fileType!=='jpg'"  style="text-align: center;border: 1px solid;width: 100%;
+    height: 80%;overflow: auto;">
+        <img src="{{imgUrl}}" id="img" style="width:90%;"/>
     </div>
+
     <div [hidden]="fileType!=='txt'">
-        <!-- <table style="width: 80em;overflow: auto;height: 4em;border: 1px solid;
-        padding: 20px;">
-            <tbody *ngFor="let txt of txtTable">
-                <tr>
-                    <td>{{txt}}</td>
-                </tr>
-            </tbody>
-        </table> -->
-        <textarea rows="5" cols="30" pInputTextarea disabled [(ngModel)]="txtTable" name="projectArea"></textarea>
+        <textarea rows="5" cols="30" style="width:100%" pInputTextarea disabled [(ngModel)]="txtTable" name="projectArea"></textarea>
     </div>
     
-    
-    <button pButton type="button" (click)="viewFileDisplay = false" label="返回" ></button>
+    <div id='tiff'style="width: 100%;height: 80%;overflow: auto;" [hidden]="fileType!=='tif'"></div>
+    <button pButton type="button" (click)="viewFileDisplay = false"  label="返回" ></button>
   </p-sidebar>
 <div  style="clear: both;" class="p-table" [hidden]="!reportDetailDisplay">
     <div [hidden]="viewFileDisplay">
-        <div class="ui-g-12 ui-md-4">
-            <button pButton type="button" label="新增" (click)="setExplorationt('addReport')"></button>
+        <div style="float:left;margin-bottom: 10px;margin-top:10px">
+            <button pButton type="button" label="新增" [hidden]="!addButton" (click)="setExplorationt('addReport')"></button>
         </div>
-        <button style="float: right;top: 5px;" type="button" pButton  (click)="goBack()" label="返回"></button>
+        <!-- 只有政策报告界面存在搜索 -->
+        <div style="float: right;margin-top:10px" [hidden]="type!=='policy' && !isClickSearch">
+            <span style="margin-right:5px">开始时间</span>
+            <p-calendar 
+                [showIcon]="true" 
+                [(ngModel)]="startTime" 
+                name="startTime" 
+                [monthNavigator]="true" 
+                [yearNavigator]="true" 
+                [showTime]="true"
+                yearRange="1970:2030"
+                dateFormat="yy.mm.dd"
+            ></p-calendar>
+            <span style="margin-right:5px;margin-left: 5px">结束时间</span>
+            <p-calendar 
+                [showIcon]="true" 
+                [(ngModel)]="endTime" 
+                name="endTime" 
+                [monthNavigator]="true" 
+                [yearNavigator]="true" 
+                [showTime]="true"
+                yearRange="1970:2030"
+                dateFormat="yy.mm.dd"
+            ></p-calendar>
+            <span style="margin-right:5px;margin-left: 5px">文件描述</span>
+            <p-autoComplete [(ngModel)]="reportDesc"
+                placeholder="输入文件描述" ></p-autoComplete>
+            <span style="margin-right:5px;margin-left: 5px">报告分类名称</span>
+            <p-autoComplete [(ngModel)]="policyReportCategory"
+            placeholder="输入报告分类名称" ></p-autoComplete>
+            <button pButton  type="button"  label="查询"  (click)="setExplorationt('filtered')"></button>
+        </div>
+        <button style="float: right;margin-top: 10px;margin-bottom: 10px" type="button" pButton [hidden]="type==='policy'" (click)="goBack()" label="返回"></button>
         <div style="clear:both">
             <p-table [columns]="reportClassifyTitle" [value]="reportClassifyValue" [paginator]="true" [rows]="10">
             <ng-template pTemplate="header" let-columns>
@@ -49,14 +74,14 @@
                 <tr>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setExplorationt('modifyReport',rowData)">修改</span>
-                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setExplorationt('viewReport',rowData)">查看文件</span>
-                        <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="setExplorationt('deleteReport',rowData)">删除</span>
+                        <span *ngIf = "col.field == 'operation' && modifyButton" class="operation-icon"  (click)="setExplorationt('modifyReport',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation' && viewButton" class="operation-icon"  (click)="setExplorationt('viewReport',rowData)">查看文件</span>
+                        <span *ngIf = "col.field == 'operation' && deleteButton" class="operation-icon"  (click)="setExplorationt('deleteReport',rowData)">删除</span>
                     </td>
                 </tr>
             </ng-template>
             </p-table>
-        
+            
         </div>
     </div>
    
@@ -67,10 +92,10 @@
         <div class="form-group has-feedback">
             <label class="control-label">报告分类</label>
             <div class="search">
-                <p-dropdown [options]="reportCategory" name="reportCategoryId" [(ngModel)]="explorationReport.reportCategoryId" placeholder="请选择报告分类" filter="true">
+                <p-dropdown [options]="reportCategory" [style]="{'width':'700px'}" name="reportCategoryId" [(ngModel)]="explorationReport.reportCategoryId" placeholder="请选择报告分类" filter="true">
                     <ng-template let-car pTemplate="item">
                         <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
-                            <div style="font-size:14px;float:right;margin-top:4px">{{car.label}}</div>
+                            <div style="font-size:14px;float: left;margin-top:4px">{{car.label}}</div>
                         </div>
                     </ng-template>
                 </p-dropdown>
@@ -79,17 +104,32 @@
         <div class="form-group has-feedback">
             <label class="control-label">报告日期</label>
             <div>
-                <p-calendar [showIcon]="true" [(ngModel)]="explorationReport.reportTime" name="reportTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+                <p-calendar 
+                    [showIcon]="true" 
+                    [(ngModel)]="explorationReport.reportTime" 
+                    name="reportTime" 
+                    [monthNavigator]="true" 
+                    [yearNavigator]="true" 
+                    yearRange="1970:2030"
+                    dateFormat="yy.mm.dd"
+                ></p-calendar>
             </div>    
         </div>
         <div class="form-group has-feedback">
             <label class="control-label">报告文件路径(以'/'隔开文件夹和文件)</label>
-            <input  type="text"   [(ngModel)]="explorationReport.reportFilePath" name="reportFilePath"  class="form-control">
+            <input  type="text" style="width:700px !important"  [(ngModel)]="explorationReport.reportFilePath" name="reportFilePath"  class="form-control">
         </div>    
         <div class="form-group has-feedback">
             <label class="control-label">文件描述详情</label>
             <div>
-                <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="explorationReport.reportDescription" name="projectArea"></textarea>
+                <textarea 
+                    rows="5" 
+                    cols="30" 
+                    pInputTextarea 
+                    [(ngModel)]="explorationReport.reportDescription" 
+                    name="projectArea"
+                    style="width:700px !important"
+                ></textarea>
             </div>    
         </div>
         <p-footer>
@@ -99,17 +139,43 @@
     </p-dialog>
 
     <!-- 查看文件弹出框 -->
-    <p-dialog header="查看文件" [(visible)]="reportFileDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px',height:'400px'}">
-            <p>选中文件后点击“预览”按钮进行查看文件</p>
-            <div style="max-height:400px;min-height: 300px">
+    <p-dialog header="查看文件" [(visible)]="reportFileDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px',height:'400px'}">
+            <!-- <div style="max-height:400px;min-height: 300px">
                 <p-tree [value]="fileTree" [filter]="true" selectionMode="single" [(selection)]="selectedFile" (onNodeSelect)="treeSelect($event)" [style]="{width:'500px',height:'100%'}" >                           
                 </p-tree>
+            </div> -->
+            <div [hidden]="!loadingDisplay" style="text-align: center;margin-top: 0px;">
+                <img src="./assets/img/loading.gif">
+                <div>加载中...</div>
             </div>
-            
+            <div [hidden]="loadingDisplay">
+                <div>
+                    <span *ngFor="let path of clickFolderPath" (click)="clickFile(path,'path')" class="click-file file-path">{{path.name}}/</span>
+                </div>    
+                <div style="max-height:400px;min-height: 300px;" class="p-table">
+                    <p-table [columns]="fileTitle" [value]="fileValue">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th *ngFor="let col of columns">
+                                    {{col.header}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr>
+                                <td *ngFor="let col of columns">
+                                    <span *ngIf = "col.field !== 'operation' && col.field == 'name'" class="click-file" (click)="treeSelect(rowData)"> {{rowData[col.field]}}</span>
+                                    <span *ngIf = "col.field !== 'operation' && col.field == 'fileType'"> {{rowData[col.field]}}</span>
+                                    <span *ngIf = "col.field == 'operation' && rowData.file" class="click-file" (click)="previewFile(rowData)"> 预览</span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                
+            </div>
             <p-footer>
-                    <span style="float:left;color:#00ff56">已选择文件为：{{selectedFile.label}}</span>
-                    <button type="button" pButton (click)="previewFile()" [disabled]="isInitialize" label="预览"></button>
-                    <button type="button" pButton icon="pi pi-close" (click)="reportFileDisplay = false" label="取消" class="ui-button-secondary"></button>
+                <button type="button" pButton icon="pi pi-close" (click)="reportFileDisplay = false" label="取消" class="ui-button-secondary"></button>
             </p-footer>
     </p-dialog>
 </div>

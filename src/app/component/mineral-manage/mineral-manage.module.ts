@@ -5,7 +5,12 @@ import { RouterModule } from '@angular/router';
 import { MineralManageRoutes } from '../routers/mineral-manage.route';
 import { MineralProjectComponent } from '../mineral-manage/mineral-project/mineral-project.component';
 import { TableModule } from 'primeng/table';
-import { ButtonModule, PaginatorModule, DialogModule, InputTextareaModule, CalendarModule } from 'primeng/primeng';
+import { ButtonModule, PaginatorModule, DialogModule, InputTextareaModule, CalendarModule, AutoCompleteModule, SidebarModule, ColorPickerModule, SpinnerModule, DialogService } from 'primeng/primeng';
+import { MapCommonModule } from '../../common/map/map.module';
+import { Map2dService } from '../../common/map/map2-d/map2-d.service';
+import { DynamicDialogModule } from 'primeng/components/dynamicdialog/dynamicdialog';
+import { ElModule  } from 'element-angular';
+import { ProjectMapComponent } from './project-map/project-map.component'
 
 @NgModule({
     imports: [
@@ -17,8 +22,18 @@ import { ButtonModule, PaginatorModule, DialogModule, InputTextareaModule, Calen
       PaginatorModule,
       DialogModule,
       InputTextareaModule,
-      CalendarModule
+      CalendarModule,
+      AutoCompleteModule,
+      SidebarModule,
+      DynamicDialogModule,
+      ColorPickerModule,
+      SpinnerModule,
+      ElModule.forRoot()
     ],
-    declarations:[MineralProjectComponent]
+    declarations:[MineralProjectComponent, ProjectMapComponent],
+    providers:[Map2dService,DialogService],
+    entryComponents: [
+      ProjectMapComponent
+    ],
 })
 export class MineralManageModule { }

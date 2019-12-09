@@ -16,6 +16,7 @@ import { HttpUtil } from './common/util/http-util';
 import { RegisterModule } from './component/register/register.module';
 import { HttpInterceptorProviders } from './component/interceptor/http-interceptor-providers';
 
+import { ElModule } from 'element-angular'
 @NgModule({
     imports: [
         BrowserModule,
@@ -26,8 +27,8 @@ import { HttpInterceptorProviders } from './component/interceptor/http-intercept
     LayoutModule,
     LoginModule,
     MenuSelectModule,
-    RegisterModule
-        
+    RegisterModule,
+    ElModule.forRoot()
         
     ],
     declarations: [
@@ -41,6 +42,7 @@ import { HttpInterceptorProviders } from './component/interceptor/http-intercept
         HttpInterceptorProviders
         
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    exports:[]
 })
 export class AppModule { }

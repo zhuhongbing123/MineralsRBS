@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { LoginService } from './login.service';
+import { HttpUtil } from '../../common/util/http-util';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private messageService: MessageService,
     private router: Router,
-    private loginService: LoginService) {
+    private loginService: LoginService,
+    private httpUtil: HttpUtil) {
 
   }
 
@@ -53,9 +55,12 @@ export class LoginComponent implements OnInit {
               if (data2.meta.code === 1003 && data2.data.jwt != null) {
                 localStorage.setItem('token', data2.data.jwt);
                 localStorage.setItem('uid', this.username);
+                localStorage.setItem('roleId', data2.data.user.roleId);
+                localStorage.setItem('roleCode', data2.data.user.roleCode);
+                this.getRoleApi(data2.data.user.roleId);
                 login$.unsubscribe();
                 //this.router.navigate(['/menu']);
-                this.router.navigate(['/layout/explorationRight/explorationInfo']);
+                
               } else {
                 this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '用户名密码错误'});
                 login$.unsubscribe();
@@ -89,6 +94,23 @@ export class LoginComponent implements OnInit {
       return false;
     }
     return true;
+  }
+  /* 获取角色API */
+  getRoleApi(roleId){
+    this.httpUtil.get('role/api/'+ roleId).then(value=>{
+      if(value.meta.code === 6666){
+        let data = value.data.data;
+        localStorage.setItem('api', JSON.stringify(data));
+      }
+    }).then(()=>{
+      this.httpUtil.get('role/1/1000').then(value=>{
+        if(value.meta.code === 6666){
+          let data = value.data.data.list;
+          localStorage.setItem('role', JSON.stringify(data));
+          this.router.navigate(['/layout/explorationRight/explorationInfo']);//跳转到探矿权
+        }
+      })
+    })
   }
 
 }

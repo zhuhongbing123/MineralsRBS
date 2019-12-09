@@ -1,0 +1,432 @@
+<div>
+    <p>探矿权 > 探矿权项目信息 > {{explorationProject.projectName}}</p>
+</div>
+<p-tabMenu [model]="explorationItems" [activeItem]="explorationItems[0]"  (click)="menuClick($event.path[0].innerText)"></p-tabMenu>
+
+    <!-- 项目详情 -->
+    <div [hidden]="!projectDetailDisplay" style="border: 1px solid #66afe9;background: radial-gradient(#49779ff5 100%, #f2f1ed 20%) !important;padding: 10px;">
+          
+        <div class="p-table">
+            <table  class="table table-bordered" style=" color: #fff;">
+                <tbody>
+                    <tr>
+                        <td>项目名称</td>
+                        <td>{{explorationProject.projectName}}</td>
+                    </tr>
+                    <tr>
+                        <td>探矿权首立时间</td>
+                        <td>{{explorationProject.explorationStartTime}}</td>
+                    </tr>
+                    <tr>
+                        <td>区域地质背景</td>
+                        <td>{{explorationProject.areaGeologicBackground}}</td>
+                    </tr>
+                    <tr>
+                        <td>地球物理及地球化学特征</td>
+                        <td>{{explorationProject.geophysicalGeochemical}}</td>
+                    </tr>
+                    <tr>
+                        <td>矿区地质背景:地层</td>
+                        <td>{{explorationProject.mineralGeologicalStratum}}</td>
+                    </tr>
+                    <tr>
+                        <td>矿区地质背景:构造</td>
+                        <td>{{explorationProject.mineralGeologicalStructure}}</td>
+                    </tr>
+                    <tr>
+                        <td>矿区地质背景:岩浆层</td>
+                        <td>{{explorationProject.mineralGeologicalMagmatite}}</td>
+                    </tr>
+                    <tr>
+                        <td>成矿带归属</td>
+                        <td>{{explorationProject.mineralBeltOwner}}</td>
+                    </tr>
+                    <tr>
+                        <td>成矿地质背景</td>
+                        <td>{{explorationProject.mineralBeltGeologic}}</td>
+                    </tr>
+                    <tr>
+                        <td>围岩及蚀变</td>
+                        <td>{{explorationProject.rockAlteration}}</td>
+                    </tr>
+                    <tr>
+                        <td>矿（化）体特征</td>
+                        <td>{{explorationProject.mineralCharacteristics}}</td>
+                    </tr>
+                    <tr>
+                        <td>主要成果</td>
+                        <td>{{explorationProject.majorAchievement}}</td>
+                    </tr>
+                    <tr>
+                        <td>初步认识</td>
+                        <td>{{explorationProject.preliminaryUnderstanding}}</td>
+                    </tr>
+                    <tr>
+                        <td>存在的问题及下一步工作建议</td>
+                        <td>{{explorationProject.remarks}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" [hidden]="!modifyButton" pButton (click)="modifyProject()" label="编辑"></button>
+            <button style="margin-left:20px" type="button" pButton  (click)="goBack()" label="返回" class="ui-button-secondary"></button>
+        </div>
+    </div>
+
+    <!--  勘查详情-->
+    <div style="clear: both;" class="p-table" [hidden]="!stageDetailDisplay">
+        <div class="ui-g-12 ui-md-4">
+            <button pButton type="button" [hidden]="!addStageButton" label="新增" (click)="setExplorationt('addStage')"></button>
+        </div>
+        <button style="float: right;top: 5px;" type="button" pButton  (click)="goBack()" label="返回"></button>
+        <div style="clear:both">
+            <p-table [columns]="explorationDetailTitle" [value]="explorationDetailValue" [paginator]="true" [rows]="10">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns">
+                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        <span *ngIf = "col.field == 'operation' && modifyStageButton" class="operation-icon"  (click)="setExplorationt('modifyStage',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation' && deleteStageButton" class="operation-icon"  (click)="setExplorationt('deleteStage',rowData)">删除</span>
+                    </td>
+                </tr>
+            </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <!-- 矿权报告 -->
+    <app-report-file [type]="'exploration'"></app-report-file>
+
+  <div class="dialog-class textarea-style">
+      <!-- 探矿权项目增加、修改弹出框 -->
+      <p-dialog header="编辑探矿权项目" [(visible)]="explorationtDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+              <form>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">项目名称</label>
+                      <input  type="text" style="width:700px !important"  [(ngModel)]="explorationProject.projectName" name="projectName"  class="form-control">
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">探矿权首立时间</label>
+                      <div>
+                          <p-calendar 
+                            [showIcon]="true" 
+                            [(ngModel)]="explorationStartTime" 
+                            name="explorationStartTime" 
+                            [monthNavigator]="true" 
+                            [yearNavigator]="true"
+                            yearRange="1970:2030"
+                            dateFormat="yy.mm.dd"
+                           ></p-calendar>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback" [hidden]="modifyExploration">
+                      <label class="control-label">探矿权范围</label>
+                      <input type="text" style="width:700px !important" name="explorationArea" class="form-control" [(ngModel)]="explorationProject.explorationArea">
+                  </div>
+                  <div class="form-group has-feedback" [hidden]="modifyExploration">
+                      <label class="control-label">采矿权首立时间</label>
+                      <div>
+                          <p-calendar 
+                            [showIcon]="true" 
+                            [(ngModel)]="miningStartTime" 
+                            name="miningStartTime" 
+                            [monthNavigator]="true" 
+                            [yearNavigator]="true" 
+                            yearRange="1970:2030"
+                            dateFormat="yy.mm.dd"
+                          ></p-calendar>
+                      </div>   
+                  </div>
+                  <div class="form-group has-feedback" [hidden]="modifyExploration">
+                      <label class="control-label">采矿权范围</label>
+                      <input type="text" style="width:700px !important" name="miningArea" class="form-control" [(ngModel)]="explorationProject.miningArea" [ngModelOptions]="{standalone: true}">
+                  </div>
+                  <div class="form-group has-feedback"  [hidden]="modifyExploration">
+                      <label class="control-label">勘查阶段/报告成果</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.investigationFinalStage" 
+                            name="investigationFinalStage"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">区域地质背景</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.areaGeologicBackground" 
+                            name="areaGeologicBackground"
+                            class="text-style"
+                          ></textarea>
+                      </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">地球物理及地球化学特性</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.geophysicalGeochemical" 
+                            name="geophysicalGeochemical"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">矿区地质背景:地层</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.mineralGeologicalStratum" 
+                            name="mineralGeologicalStratum"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">矿区地质背景:构造</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.mineralGeologicalStructure" 
+                            name="mineralGeologicalStructure"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">矿区地质背景:岩浆岩</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.mineralGeologicalMagmatite" 
+                            name="mineralGeologicalMagmatite"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">成矿带归属</label>
+                      <input type="text" style="width:700px !important" name="uri" class="form-control" [(ngModel)]="explorationProject.mineralBeltOwner" name="mineralBeltOwner">
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">成矿带地质背景</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.mineralBeltGeologic" 
+                            name="mineralBeltGeologic"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">围岩及蚀变</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.rockAlteration" 
+                            name="rockAlteration"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">矿(化)体特征</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.mineralCharacteristics" 
+                            name="mineralCharacteristics"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">主要成果</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.majorAchievement" 
+                            name="majorAchievement"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">初步认识</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.preliminaryUnderstanding" 
+                            name="preliminaryUnderstanding"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+                  <div class="form-group has-feedback">
+                      <label class="control-label">存在的问题以及下一步工作</label>
+                      <div>
+                          <textarea 
+                            rows="5" 
+                            cols="30" 
+                            pInputTextarea 
+                            [(ngModel)]="explorationProject.remarks" 
+                            name="remarks"
+                            class="text-style"
+                          ></textarea>
+                      </div>    
+                  </div>
+              </form>
+              <p-footer>
+                  <button type="button" pButton (click)="saveExplorationProject('save')" label="保存"></button>
+                  <button type="button" pButton icon="pi pi-close" (click)="saveExplorationProject('cancel')" label="取消" class="ui-button-secondary"></button>
+              </p-footer>
+      </p-dialog>
+  
+      <!-- 勘查阶段弹出框 -->
+      <p-dialog header="{{explorationTitle}}" [(visible)]="stageDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+          <form>
+              <div class="form-group has-feedback">
+                  <label class="control-label">矿权人</label>
+                  <div class="search">
+                      <p-dropdown [options]="mineralOwner" [style]="{'width':'700px'}" name="ownerId" [(ngModel)]="explorationStage.ownerId" placeholder="请选择一个矿权人" filter="true">
+                          <ng-template let-car pTemplate="item">
+                              <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+                                  <div style="font-size:14px;float:left;margin-top:4px">{{car.label}}</div>
+                              </div>
+                          </ng-template>
+                      </p-dropdown>
+                  </div>
+              </div>
+              <div class="form-group has-feedback">
+                  <label class="control-label">开始时间</label>
+                  <div>
+                      <p-calendar 
+                        [showIcon]="true" 
+                        [(ngModel)]="stageStartTime" 
+                        name="investigationStartTime" 
+                        [monthNavigator]="true" 
+                        [yearNavigator]="true" 
+                        yearRange="1970:2030"
+                        dateFormat="yy.mm.dd"
+                      ></p-calendar>
+                  </div>    
+              </div>
+              <div class="form-group has-feedback">
+                  <label class="control-label">结束时间</label>
+                  <div>
+                      <p-calendar 
+                        [showIcon]="true" 
+                        [(ngModel)]="stageEndTime" 
+                        name="investigationEndTime" 
+                        [monthNavigator]="true" 
+                        [yearNavigator]="true" 
+                        yearRange="1970:2030"
+                        dateFormat="yy.mm.dd"
+                      ></p-calendar>
+                  </div>    
+              </div>
+              <div class="form-group has-feedback">
+                  <label class="control-label">矿权范围</label>
+                  <div>
+                      <textarea 
+                        rows="5" 
+                        cols="30" 
+                        pInputTextarea 
+                        [(ngModel)]="explorationStage.projectArea" 
+                        name="projectArea"
+                        class="text-style"
+                      ></textarea>
+                  </div>    
+              </div>
+              <div class="form-group has-feedback">
+                  <label class="control-label">勘查单位</label>
+                  <div>
+                      <textarea 
+                        rows="5" 
+                        cols="30" 
+                        pInputTextarea 
+                        [(ngModel)]="explorationStage.investigationOrganization" 
+                        name="investigationOrganization"
+                        class="text-style"
+                      ></textarea>
+                  </div>    
+              </div>
+              <div class="form-group has-feedback">
+                  <label class="control-label">类别</label>
+                  <div>
+                      <input type="text" style="width:700px !important" name="investigationCategory" class="form-control" [(ngModel)]="explorationStage.investigationCategory">
+                  </div>    
+              </div>
+              <div class="form-group has-feedback">
+                  <label class="control-label">面积</label>
+                  <div>
+                      <input type="text" style="width:700px !important" name="investigationArea" class="form-control" [(ngModel)]="explorationStage.investigationArea">
+                  </div>    
+              </div>
+              <div class="form-group has-feedback">
+                  <label class="control-label">勘查矿种</label>
+                  <div>
+                      <input type="text" style="width:700px !important" name="investigationMineralType" class="form-control" [(ngModel)]="explorationStage.investigationMineralType">
+                  </div>    
+              </div>
+              <div class="form-group has-feedback">
+                  <label class="control-label">勘查阶段</label>
+                  <div>
+                      <input type="text" style="width:700px !important" name="investigationStage" class="form-control" [(ngModel)]="explorationStage.investigationStage">
+                  </div>    
+              </div>
+              <div class="form-group has-feedback">
+                  <label class="control-label">勘查工作量</label>
+                  <div>
+                      <input type="text" style="width:700px !important" name="investigationWorkload" class="form-control" [(ngModel)]="explorationStage.investigationWorkload">
+                  </div>    
+              </div>
+              <div class="form-group has-feedback">
+                  <label class="control-label">投入金额</label>
+                  <div>
+                      <input type="text" style="width:700px !important" name="investigationInvestment" class="form-control" [(ngModel)]="explorationStage.investigationInvestment">
+                  </div>    
+              </div>
+          </form>     
+          <p-footer>
+              <button type="button" pButton (click)="saveExplorationStage()" label="保存"></button>
+              <button type="button" pButton icon="pi pi-close" (click)="stageDisplay = false" label="取消" class="ui-button-secondary"></button>
+          </p-footer>   
+      </p-dialog>
+  
+     
+      
+  </div>
+  

@@ -30,6 +30,9 @@ export class AppConfig {
 export class ExplorationProject {
 
   "areaGeologicBackground": string;//区域地质背景
+  "areaCoordinates":string;//矿权定位区域
+  "areaBackground":string;//矿权定位区域背景色
+  "areaOpacity":string;//矿权定位区域透明度
   "explorationArea": string;//探矿权范围
   "explorationStartTime": any;//探矿权首立时间
   "geophysicalGeochemical": string;//地球物理及地球化学特性
@@ -103,4 +106,26 @@ export class MiningMonitoring{
   "resourceMaintained":string;//年末保有资源量
   "executionStatus":String;//执行情况
   "problemFound":string;//监测过程发现的其它问题
+}
+/* 地图的定位点标注 */
+export class MapLocationLabel{
+  "description": string; //描述
+  "id": number;
+  "poiCoordinates": string;//坐标
+  "poiIcon": string;//定位图片
+  "poiName": string;//名称
+}
+/* 地图的定位区域 */
+export class MapLocationArea{
+  "description": string; //描述
+  "id": number;
+  "areaCoordinates": string;//坐标
+  "areaColor": "#ff0044";//区域颜色
+  "areaName": string;//名称
+  "areaOpacity": number;//区域透明度
+}
+
+
+export class Basic {
+  option: string;//坐标点
 }

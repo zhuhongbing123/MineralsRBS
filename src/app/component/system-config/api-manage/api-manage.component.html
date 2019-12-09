@@ -1,10 +1,15 @@
 <p>系统配置 > API管理</p>
 <div class="search ui-g-12 ui-md-4">
-        <button pButton type="button" label="新增" (click)="setApi('add','')"></button>
-        <p-dropdown [options]="apiClassify" [(ngModel)]="selectApiClassify" (onChange)="selectClassify()" placeholder="资源类别" [virtualScroll]="true"  [filter]="true"></p-dropdown>
+        <button pButton [hidden]="!addButtonDisplay" style="margin-right:20px" type="button" label="新增" (click)="setApi('add','')"></button>
+        <p-dropdown [options]="apiClassify" [style]="{width:'300px'}" [(ngModel)]="selectApiClassify" (onChange)="selectClassify()" placeholder="资源类别" [virtualScroll]="true"  [filter]="true"></p-dropdown>
+</div>
+<div style="float: right;margin-top: 10px" [hidden]="!searchDisplay">
+        <p-autoComplete [(ngModel)]="filteredAPIName" [suggestions]="filteredAPI" (completeMethod)="filteredApi($event)"
+            placeholder="输入API名称" ></p-autoComplete>
+        <button pButton  type="button" label="查询" (click)="setApi('filtered')"></button>
 </div>
 <div class="p-table" style="clear:both">
-    <p-table [columns]="apiTableTitle" [value]="apiTableValue">
+    <p-table [columns]="apiTableTitle" [value]="apiTableValue" [loading]="loading">
       <ng-template pTemplate="header" let-columns>
           <tr>
               <th *ngFor="let col of columns">
@@ -16,8 +21,8 @@
           <tr>
               <td *ngFor="let col of columns">
                   <span *ngIf = "col.field !== 'operation' && col.field !== 'link'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                  <span  *ngIf = "col.field == 'operation'"  (click)="setApi('modify',rowData)" class="operation-icon"> 修改</span>
-                  <span  *ngIf = "col.field == 'operation'"  (click)="setApi('delete',rowData)" class="operation-icon">删除 </span>
+                  <span  *ngIf = "col.field == 'operation' && modifyDisplay"  (click)="setApi('modify',rowData)" class="operation-icon"> 修改</span>
+                  <span  *ngIf = "col.field == 'operation' && deleteDisplay"  (click)="setApi('delete',rowData)" class="operation-icon">删除 </span>
               </td>
           </tr>
       </ng-template>
@@ -27,41 +32,41 @@
 
 <!-- 编辑api -->
 <div class="dialog-class">
-        <p-dialog header="{{apiTitle}}" [(visible)]="apiEditorDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+        <p-dialog header="{{apiTitle}}" [(visible)]="apiEditorDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
                 <form>
                         <div class="form-group has-feedback">
                           <label class="control-label">编码</label>
-                          <input [(ngModel)]="apiEditor.code" type="text" name="code" class="form-control">
+                          <input [(ngModel)]="apiEditor.code" style="width:700px !important" type="text" name="code" class="form-control">
                         </div>
                         <div class="form-group has-feedback">
                             <label class="control-label">名称</label>
-                            <input [(ngModel)]="apiEditor.name" type="text" name="name" class="form-control">
+                            <input [(ngModel)]="apiEditor.name" style="width:700px !important" type="text" name="name" class="form-control">
                         </div>
                         <div class="form-group has-feedback">
                             <label class="control-label">URI</label>
-                            <input [(ngModel)]="apiEditor.uri" type="text" name="uri" class="form-control">
+                            <input [(ngModel)]="apiEditor.uri" style="width:700px !important" type="text" name="uri" class="form-control">
                         </div>
                         <div class="form-group has-feedback">
                             <label class="control-label">API类别</label>
-                            <select [(ngModel)]="apiEditor.classify" name="classify" class="form-control">
+                            <select [(ngModel)]="apiEditor.classify" style="width:700px !important" name="classify" class="form-control">
                                     <option *ngFor="let item of apiClassify" value="{{item.value}}">{{item.label}}</option>
                             </select>
                         </div>
                         <div class="form-group has-feedback">
                                 <label class="control-label">类型</label>
-                                <select [(ngModel)]="apiEditor.type" name="type" class="form-control">
+                                <select [(ngModel)]="apiEditor.type" style="width:700px !important" name="type" class="form-control">
                                         <option *ngFor="let item of apiType" value="{{item.value}}">{{item.label}}</option>
                                 </select>
                         </div>
                         <div class="form-group has-feedback">
                                 <label class="control-label">访问方式</label>
-                                <select [(ngModel)]="apiEditor.method" name="method" class="form-control">
+                                <select [(ngModel)]="apiEditor.method" style="width:700px !important" name="method" class="form-control">
                                         <option *ngFor="let item of accessMethod" value="{{item.value}}">{{item.label}}</option>
                                 </select>
                         </div>
                         <div class="form-group has-feedback">
                                 <label class="control-label">状态</label>
-                                <select [(ngModel)]="apiEditor.status" name="status" class="form-control">
+                                <select [(ngModel)]="apiEditor.status" style="width:700px !important" name="status" class="form-control">
                                         <option *ngFor="let item of apiStatus" value="{{item.value}}">{{item.label}}</option>
                                 </select>
                         </div>

@@ -1,0 +1,214 @@
+<div style="height: 86.5vh;">
+  <app-map2-d #2dMap mapDivId="outMap"></app-map2-d>
+</div>
+
+<!-- 右侧菜单栏 -->
+<div class="fixed-control" style="right: 0px;z-index: 9999;">
+  
+  <!-- 区域设定 -->
+  <div class="right-operation" [hidden]="!mapDrawDisplay">
+    <div>
+        <span>区域设定</span>
+        <span class="right-operation-close fa fa-close" (click)="mapDrawDisplay = false"></span>
+    </div>
+    <div [hidden]="!addAreaDisplay">
+        <p-dropdown 
+            [options]="drawShaps" 
+            [(ngModel)]="selectedDraw" 
+            placeholder="选择一种图形类型" 
+            optionLabel="name"
+            (onChange)="selectDraw('area')"
+        ></p-dropdown>
+    </div>
+    <div style="clear: both;" class="p-table">
+        <p-table [columns]="areaLocationTitle" [value]="areaLocationValue"  [rows]="10">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns">
+                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        <span *ngIf = "col.field == 'operation' && modifyAreaDisplay" class="operation-icon"  (click)="setMineralMap('modifyArea',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation' && deleteAreaDisplay" class="operation-icon"  (click)="setMineralMap('deleteArea',rowData)">删除</span>
+                        <span *ngIf = "col.field == 'operation' " class="operation-icon"  (click)="setMineralMap('locationArea',rowData)">定位</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-paginator [hidden]="!areaTotal" [rows]="LIMIT_LOGIN" [totalRecords]="areaTotal" [rowsPerPageOptions]="[10,20,30]" ></p-paginator>
+    </div>
+  </div>
+  
+  <!-- 定位图标 -->
+    <div class="right-operation" [hidden]="!locationIconDisplay">
+        <div>
+            <span>地点标注</span>
+            <span class="right-operation-close fa fa-close" (click)="locationIconDisplay = false"></span>
+        </div>
+        <button pButton  type="button" label="新增" (click)="openSignPoint()" [hidden]="!addPoiDisplay"></button>
+
+        <div style="clear: both;" class="p-table">
+                <p-table [columns]="locationLabelTitle" [value]="locationLabelValue"  [rows]="10" >
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of columns">
+                                {{col.header}}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                        <tr>
+                            <td *ngFor="let col of columns">
+                                <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                                <span *ngIf = "col.field == 'operation' && modifyPoiDisplay" class="operation-icon"  (click)="setMineralMap('modifyLabel',rowData)">修改</span>
+                                <span *ngIf = "col.field == 'operation' && deletePoiDisplay" class="operation-icon"  (click)="setMineralMap('deleteLabel',rowData)">删除</span>
+                                <span *ngIf = "col.field == 'operation' " class="operation-icon"  (click)="setMineralMap('locationLabel',rowData)">定位</span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <p-paginator [hidden]="!labelTotal" [rows]="LIMIT_LOGIN" [totalRecords]="labelTotal" [rowsPerPageOptions]="[10,20,30]" ></p-paginator>
+        </div>
+    </div>
+       <!-- 项目列表 -->
+    <div class="right-operation" [hidden]="!locationMineralDisplay">
+            <div>
+                    <span class="right-operation-close fa fa-close" (click)="locationMineralDisplay = false"></span>
+            </div>
+            <div style="clear: both;" class="p-table">
+                    <p-table [columns]="mineralLocationTitle" [value]="mineralLocationValue"  [rows]="10" >
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th *ngFor="let col of columns">
+                                    {{col.header}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                            <tr>
+                                <td *ngFor="let col of columns">
+                                    <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                                    <span *ngIf = "col.field == 'operation' && !rowData.areaCoordinates && addProjectAreaDisplay" class="operation-icon"  (click)="setMineralMap('addMineral',rowData)">新增区域</span>
+                                    <span *ngIf = "col.field == 'operation' && rowData.areaCoordinates && addProjectAreaDisplay" class="operation-icon"  (click)="setMineralMap('modifyMineral',rowData)">修改</span>
+                                    <span *ngIf = "col.field == 'operation' && rowData.areaCoordinates" class="operation-icon"  (click)="setMineralMap('locationMineral',rowData)">定位</span>
+                                    <span *ngIf = "col.field == 'operation' && rowData.areaCoordinates && addProjectAreaDisplay" class="operation-icon"  (click)="setMineralMap('deleteMineral',rowData)">删除</span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <p-paginator [hidden]="!mineralTotal" [rows]="LIMIT_LOGIN" [totalRecords]="mineralTotal" [rowsPerPageOptions]="[10,20,30]" ></p-paginator>
+            </div>
+            
+    </div>
+    <div   [hidden]="!dropdownDisplay" style="position: absolute;
+    margin-top: 500px;">
+        <div style="border:1px solid ;width:400px;height:50px;background-color: #467e9b;">
+        <p-dropdown 
+            [options]="drawShaps" 
+            [(ngModel)]="selectedDraw" 
+            placeholder="选择一种图形类型" 
+            optionLabel="name"
+            (onChange)="selectDraw('mineral')"
+        ></p-dropdown>
+        <button pButton type="button" (click)="cancelDraw()" label="取消"></button>
+        </div>
+        
+    </div>
+    <!-- 菜单按钮 -->
+    <div class="p-grid p-dir-col">
+        <div class="p-col" [hidden]="!projectDisplay">
+            <button pButton type="button"  icon="fa fa-map-marker fa-lg" pTooltip="定位" tooltipPosition="left" (click)="openMineral()"></button>
+        </div>
+        <div class="p-col" [hidden]="!areaDisplay">
+          <button pButton type="button" icon="fa fa-map" (click)="mapInteraction()" pTooltip="区域标注" tooltipPosition="left"></button>
+        </div>
+        <div [hidden]="!poiDisplay">
+            <button pButton type="button" icon="fa fa-map-pin fa-lg" pTooltip="地点标注" tooltipPosition="left" (click)="signPoint('open')"></button>
+        </div>
+      </div>
+  </div>
+  <div class="dialog-class textarea-style">
+  <!-- 选择图标 -->
+  <p-dialog header="选择图标" [(visible)]="selectIconDisplay" [modal]="true" [responsive]="true" [style]="{width: '350px', minWidth: '200px'}" [minY]="70" 
+        [maximizable]="true" [baseZIndex]="10000">
+        <p-selectButton [options]="locationIcon" [(ngModel)]="selectedIcon" optionLabel="name">
+                <ng-template let-item>
+                    <div style="padding: .5em 1em" >
+                        <img style="vertical-align: middle; margin-right: .5em" src="{{item.value.flag}}" height="20px"/>
+                        
+                    </div>
+                </ng-template>
+        </p-selectButton>
+        <p-footer>
+            <button type="button" pButton  (click)="signPoint()" label="添加标注"></button>
+            <button type="button" pButton icon="pi pi-close" (click)="selectIconDisplay = false" label="取消" class="ui-button-secondary"></button>
+        </p-footer>
+  </p-dialog>
+
+<p-dialog header="图标信息" [(visible)]="labelInfoDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px', minWidth: '200px'}" [minY]="70" 
+  [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-group has-feedback">
+        <label class="control-label">名称</label>
+        <input  type="text" style="width:700px !important"  [(ngModel)]="mapLocationLabel.poiName" name="projectName"  class="form-control">
+    </div>
+    <div class="form-group has-feedback">
+            <label class="control-label">描述</label>
+            <input  type="text" style="width:700px !important" [(ngModel)]="mapLocationLabel.description" name="projectName"  class="form-control">
+    </div>
+    <p-footer>
+        <button type="button" pButton  (click)="saveLocationPoint('save')" label="确认"></button>
+        <button type="button" pButton icon="pi pi-close" (click)="saveLocationPoint('cancel')" label="取消" class="ui-button-secondary"></button>
+    </p-footer>
+</p-dialog>
+
+<!-- 区域信息弹出框 -->
+<p-dialog header="区域信息" [(visible)]="areaInfoDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px', minWidth: '200px'}" [minY]="70" 
+  [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-group has-feedback">
+        <label class="control-label">名称</label>
+        <input  type="text" style="width:700px !important"  [(ngModel)]="mapLocationArea.areaName" name="projectName"  class="form-control">
+    </div>
+    <div class="form-group has-feedback">
+        <label class="control-label">填充色</label>
+        <p-colorPicker [(ngModel)]="mapLocationArea.areaColor"></p-colorPicker>
+    </div>
+    <div class="form-group has-feedback">
+        <label class="control-label">区域透明度</label>
+        <p-spinner size="30" [(ngModel)]="areaOpacity" [min]="0" [max]="1" [step]="0.1"></p-spinner>
+        <span>(范围0-1)</span>
+    </div>
+    <div class="form-group has-feedback">
+            <label class="control-label">描述</label>
+            <input  type="text" style="width:700px !important" [(ngModel)]="mapLocationArea.description" name="projectName"  class="form-control">
+    </div>
+    <p-footer>
+        <button type="button" pButton  (click)="saveLocationArea('save')" label="确认"></button>
+        <button type="button" pButton icon="pi pi-close" (click)="saveLocationArea('cancel')" label="取消" class="ui-button-secondary"></button>
+    </p-footer>
+</p-dialog>
+<p-dialog header="项目区域信息" [(visible)]="mineralInfoDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px', minWidth: '300px'}" [minY]="70" 
+  [maximizable]="true" [baseZIndex]="10000">
+    <div class="form-group has-feedback">
+        <label class="control-label">名称</label>
+        <input  type="text" style="width:700px !important" disabled [(ngModel)]="projectName" name="projectName"  class="form-control">
+    </div>
+    <div class="form-group has-feedback">
+        <label class="control-label">填充色</label>
+        <p-colorPicker [(ngModel)]="projectColor"></p-colorPicker>
+    </div>
+    <div class="form-group has-feedback">
+        <label class="control-label">区域透明度</label>
+        <p-spinner size="30" [(ngModel)]="areaOpacity" [min]="0" [max]="1" [step]="0.1"></p-spinner>
+        <span>(范围0-1)</span>
+    </div>
+    <p-footer>
+        <button type="button" pButton  (click)="saveLocationMineral('save')" label="确认"></button>
+        <button type="button" pButton icon="pi pi-close" (click)="saveLocationMineral('cancel')" label="取消" class="ui-button-secondary"></button>
+    </p-footer>
+</p-dialog>
+</div>

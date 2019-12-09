@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { RouterModule } from '@angular/router';
 
-import { CheckboxModule, InputTextModule, ButtonModule, BreadcrumbModule, DialogModule, SidebarModule, TabMenuModule, PaginatorModule, CalendarModule, InputTextareaModule, DropdownModule, FileUploadModule, TreeModule } from 'primeng/primeng';
+import { CheckboxModule, InputTextModule, ButtonModule, DialogModule, SidebarModule, TabMenuModule, PaginatorModule, CalendarModule, InputTextareaModule, DropdownModule, FileUploadModule, TreeModule, AutoCompleteModule } from 'primeng/primeng';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from "primeng/table";
 import { CarService } from '../../demo/service/carservice';
@@ -11,6 +11,7 @@ import { MiningInfoComponent } from './mining-info/mining-info.component';
 import { MiningRightRoutes } from '../routers/mining-right.route';
 import { MiningFileComponent } from './mining-file/mining-file.component';
 import { ExplorationRightModule } from '../exploration-right/exploration-right.module';
+import { MiningDetailsComponent } from './mining-info/mining-details/mining-details.component';
 
 
 
@@ -32,10 +33,11 @@ import { ExplorationRightModule } from '../exploration-right/exploration-right.m
     DropdownModule,
     FileUploadModule,
     ExplorationRightModule,
-    TreeModule
+    TreeModule,
+    AutoCompleteModule
   ],
   providers: [CarService],
-  declarations: [MiningInfoComponent, MiningFileComponent],
+  declarations: [MiningInfoComponent, MiningFileComponent, MiningDetailsComponent],
   exports:[]
 })
 export class MiningRightModule { }

@@ -36,7 +36,11 @@ export class MenuComponent implements OnInit {
     this.models = [
      
       {
-        label: '矿业权政策', icon: 'fa fa-fw  fa-tags'
+        label: '矿业权政策', icon: 'fa fa-file-text',
+        items: [
+          { label: '矿业权政策文件分类', icon: 'fa fa-file-text-o', routerLink: ['/layout/mineralPolicy/policyFile'] },
+          { label: '矿业权政策报告', icon: 'fa fa-file-text-o', routerLink: ['/layout/mineralPolicy/policyReport'] }
+        ]
       },
       {
         label: '探矿权', icon: 'fa fa-fw  fa-tags',
@@ -59,6 +63,12 @@ export class MenuComponent implements OnInit {
           {label: '矿权人管理', icon: 'fa fa-fw  fa-tags',routerLink: ['/layout/systemConfig/mineralOwner']} 
         ]
         
+      },
+      {
+        label: '地图', icon: 'fa fa-fw  fa-map',
+        items: [
+          { label: '室外地图', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/mapManage/outDoor'] }
+        ]
       },
       {
         label: '系统配置', icon: 'fa fa-fw  fa-tags', 

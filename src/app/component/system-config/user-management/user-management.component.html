@@ -1,30 +1,38 @@
 <div class="ui-g-12 ui-md-4">系统配置 > 用户管理</div>
+
 <div class="p-table">
-  <p-table [columns]="userTableTitle" [value]="userTableValue">
-    <ng-template pTemplate="header" let-columns>
-        <tr>
-            <th *ngFor="let col of columns">
-                {{col.header}}
-            </th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
-            <td *ngFor="let col of columns">
-                <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
-                <span *ngIf = "col.field == 'operation'"  (click)="setUserRole(rowData,'modify')" class="operation-icon"> 角色管理</span>
-                <span *ngIf = "col.field == 'operation'"  (click)="setUserRole(rowData,'delete')" class="operation-icon"> 删除角色</span>
-            </td>
-        </tr>
-    </ng-template>
-  </p-table>
+    <div style="float: right;clear: both;margin-bottom: 10px;" [hidden]="!searchDisplay">
+            <p-autoComplete [(ngModel)]="filteredUserName" [suggestions]="filteredUser" (completeMethod)="filteredUsers($event)"
+                placeholder="输入用户名" ></p-autoComplete>
+            <button pButton [hidden]="!addDisplay" type="button" label="查询" (click)="setUserRole('','filtered')"></button>
+    </div>
+    <div style="clear:both">
+        <p-table [columns]="userTableTitle" [value]="userTableValue" [loading]="loading">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns">
+                        <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
+                        <span *ngIf = "col.field == 'operation' && modifyDisplay"  (click)="setUserRole(rowData,'modify')" class="operation-icon"> 角色管理</span>
+                        <span *ngIf = "col.field == 'operation' && deleteDisplay && rowData.role"  (click)="setUserRole(rowData,'delete')" class="operation-icon"> 删除角色</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>    
   <p-paginator [hidden]="!userTotal" [rows]="LIMIT_LOGIN" [totalRecords]="userTotal"  [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'user')"></p-paginator>
 </div>
 
 <!-- 角色操作弹出框 -->
 <div class="dialog-class">
-        <p-dialog header="{{userTitle}}" [(visible)]="userRoleDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+        <p-dialog header="{{userTitle}}" [(visible)]="userRoleDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
             <div class="p-table">
                 <p-table [columns]="roleTitle" [value]="roleValue"  [(selection)]="selectedRole">
                   <ng-template pTemplate="header" let-columns>
@@ -51,8 +59,8 @@
                 <p-paginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal"  [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'role')"></p-paginator> 
             </div>
                 <p-footer>
-                        <button type="button" pButton icon="pi pi-check" (click)="saveRole()" label="保存"></button>
-                        <button type="button" pButton icon="pi pi-close" (click)="userRoleDisplay=false" label="取消" class="ui-button-secondary"></button>
+                        <button type="button" pButton (click)="saveRole()" label="保存"></button>
+                        <button type="button" pButton (click)="userRoleDisplay=false" label="取消" class="ui-button-secondary"></button>
                 </p-footer>  
             
         </p-dialog>

@@ -1,17 +1,21 @@
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {  HttpErrorResponse, HttpClient, HttpHeaders } from '@angular/common/http';
 import {catchError} from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ResponseVO } from '../../component/pojo/ResponseVO';
 import { HttpUrl } from './http-url';
-
+import { RequestOptions} from '@angular/http'; 
 @Injectable()
 export class HttpUtil {
     private baseUrl: string;
+    headers;
+    options;
     constructor( private http: HttpClient,private router: Router) {
         this.baseUrl = HttpUrl.apiBaseUrl;
+        this.headers = new HttpHeaders({ 'appId': localStorage.getItem('uid')?localStorage.getItem('uid'):'','token': localStorage.getItem('token')?localStorage.getItem('token'):''});
+        this.options = new RequestOptions({ headers: this.headers });
     }
     public getLogin(url: string): Observable<ResponseVO> {
         const uri = url;
@@ -19,6 +23,7 @@ export class HttpUtil {
           //catchError(this.handleError())
         );
     }
+    
     public postLogin(url: string, body?: any | null): Observable<ResponseVO> {
         const uri =  url;
         return this.http.post<ResponseVO>(uri, body).pipe(
@@ -27,7 +32,22 @@ export class HttpUtil {
 
     }
 
-    
+    /* 注销 */
+    public postLogout(url: string, body?: any | null) {
+      const uri =  url;
+      if(!localStorage.getItem('token')){
+        this.router.navigateByUrl('/login');
+        return;
+      }
+      return this.http.post(uri, body,this.options).toPromise().then(res => {
+          if (res["code"] === 401) {
+            this.router.navigateByUrl("");
+          } else {
+            return res;
+          }
+        });
+
+  }
     public get(url){
         return this.http
       .get(

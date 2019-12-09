@@ -2,8 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PasswordModule } from 'primeng/password';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ConfirmDialogModule, PaginatorModule, ButtonModule, DropdownModule, DialogModule, PanelMenuModule, SidebarModule } from 'primeng/primeng';
-// import { LocalStorage } from '../../common/local.storage';
+import { ConfirmDialogModule, PaginatorModule, ButtonModule, DropdownModule, DialogModule, PanelMenuModule, SidebarModule, AutoCompleteModule, CalendarModule } from 'primeng/primeng';
 import { ToastModule } from 'primeng/toast';
 import { SystemConfigService } from './system-config.service';
 import { RouterModule } from '@angular/router';
@@ -22,7 +21,6 @@ import { MineralOwnerComponent } from './mineral-owner/mineral-owner.component';
 @NgModule({
   imports: [
     CommonModule,
-    // InputGroupModule,
     PasswordModule,
     FormsModule,
     RouterModule.forChild(SystemConfigRoutes),
@@ -35,7 +33,9 @@ import { MineralOwnerComponent } from './mineral-owner/mineral-owner.component';
     DropdownModule,
     DialogModule,
     PanelMenuModule,
-    SidebarModule
+    SidebarModule,
+    AutoCompleteModule,
+    CalendarModule
     
   ],
   providers: [SystemConfigService],

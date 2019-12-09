@@ -6,11 +6,14 @@ import {catchError, mergeMap, repeat} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import { Observable , of} from 'rxjs';
 import { LoginService } from '../login/login.service';
+import { MessageService } from 'primeng/api';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
   constructor( private router: Router,
-               private loginService: LoginService) {}
+               private loginService: LoginService,
+               private messageService: MessageService,
+               ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authToken = localStorage.getItem('token');
@@ -25,6 +28,7 @@ export class AuthInterceptor implements HttpInterceptor {
       });
     } else {
       authReq = req.clone();
+    
     }
 
     return next.handle(authReq).pipe(
@@ -33,7 +37,9 @@ export class AuthInterceptor implements HttpInterceptor {
         if (event instanceof HttpResponse) {
           if (event.status === 200) {
             // 若返回JWT过期但refresh token未过期,返回新的JWT 状态码为1005
+            
             if (event.body.meta.code === 1005) {
+              
               const jwt = event.body.data.jwt;
               // 更新AuthorizationToken
               localStorage.setItem('token',jwt);
@@ -50,11 +56,21 @@ export class AuthInterceptor implements HttpInterceptor {
             }
             // jwt过期  清空本地信息跳转登录界面
             if (event.body.meta.code === 1006) {
-              this.loginService.logout();
+              this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '长时间未操作，请重新登录'});
+              localStorage.clear();
+              this.loginService.exit();
             }
             // err jwt 情况本地信息跳转登录界面
             if (event.body.meta.code === 1007) {
-              this.loginService.logout();
+              this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '长时间未操作，请重新登录'});
+              localStorage.clear();
+              this.loginService.exit();
+            }
+            //注销之后跳转登录界面
+            if (event.body.meta.code === 2004) {
+              this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '长时间未操作，请重新登录'});
+              localStorage.clear();
+              this.loginService.exit();
             }
           }
           if (event.status === 404) {
