@@ -175,7 +175,7 @@
          <div id="projectMap" class="map"></div>
       </div>
   </p-dialog> -->
-  <el-dialog [title]="'矿权区域'" [(visible)]="mineralAreaDisplay">
+  <!-- <el-dialog [title]="'矿权区域'" [(visible)]="mineralAreaDisplay">
         <div style="margin-bottom:10px">
                 <button type="button" pButton  label="新增区域" [hidden]="mineralProject.areaCoordinates " (click)="setArea('add')"></button>
                 <button type="button" pButton  label="删除区域" [hidden]="!mineralProject.areaCoordinates " (click)="setArea('delete')"></button>
@@ -199,7 +199,7 @@
                 <div id="popup-content" style="color:black"></div>
                 
                 </div>
-                <!-- 比例尺显示 -->
+            
                 <div id="digitalScale" >
                 <select id="type" [hidden]="true">
                     <option value="LineString">Length (LineString)</option>
@@ -207,14 +207,14 @@
                 </div>
             </div>
             
-            <!-- 坐标显示 -->
+    
             <div id="mouse-position">
             </div>
             
         </div>
-  </el-dialog>
+  </el-dialog> -->
 
-  <p-dialog header="区域" [(visible)]="areaDialogDisplay"  [baseZIndex]="10001" [maximizable]="true" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+  <!-- <p-dialog header="区域" [(visible)]="areaDialogDisplay"  [baseZIndex]="10001" [maximizable]="true" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
         
         <div class="form-group has-feedback">
             <label class="control-label">填充色</label>
@@ -229,5 +229,5 @@
                 <button type="button" pButton (click)="saveArea()" label="保存"></button>
                 <button type="button" pButton icon="pi pi-close" (click)="saveArea('cancel')" label="取消" class="ui-button-secondary"></button>
         </p-footer>
-  </p-dialog>
+  </p-dialog> -->
 </div>

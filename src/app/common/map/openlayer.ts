@@ -725,19 +725,24 @@ export class Openlayer {
       }
 
       /* 定位 */
-      locatorCard(point){
+      locatorCard(point,zoom){
           //定位地图某一点
           var points = fromLonLat(point);
-          let aaa = this.map.getView().getCenter()
         var viewAnimate = this.map.getView();
-        viewAnimate.animate({zoom: 6}, {center: points,duration: 2000});
+        viewAnimate.animate({zoom: zoom}, {center: points,duration: 2000});
       }
 
       /* 区域初始化 */
       areaPoint(data){
         
         for(let i=0; i<data.length;i++){
-            let point = data[i].areaCoordinates?data[i].areaCoordinates.split(',').map(Number):'';
+            let point;
+            if( data[i].areaCoordinates &&  data[i].areaCoordinates.coordinates){
+                point = data[i].areaCoordinates.coordinates.split(',').map(Number)
+            }else{
+                point = data[i].areaCoordinates?data[i].areaCoordinates.split(',').map(Number):'';
+            }
+            
             let areaName = '';
             let areaColor = '';
             let areaOpacity;

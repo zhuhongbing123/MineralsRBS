@@ -73,6 +73,7 @@ export class OutdoorComponent implements OnInit {
 
   ngOnInit() {
     this.setTableValue();
+
     
   }
   ngAfterViewInit(){
@@ -145,9 +146,10 @@ export class OutdoorComponent implements OnInit {
     
     });
 
-
+    this.locationMineralDisplay = true;
     this.getMapLocationLabelAll();
     this.getMapLocationAreaAll();
+    this.getMineralLocation();
     //this.getMieralLocation();
    }
   /* 获取所有地图点位标注 */
@@ -171,6 +173,11 @@ export class OutdoorComponent implements OnInit {
         let data = value.data.mineralAreas;
         
         this.twoMap.forEach(outdoorMap=>{
+          for(let i in data){
+            if(data[i].areaCoordinates){
+              data[i].areaCoordinates = JSON.parse(data[i].areaCoordinates);
+            }
+          }
           outdoorMap.initializeArea(data);
           outdoorMap.oldAreaValue.push(data);
         })
@@ -186,8 +193,13 @@ export class OutdoorComponent implements OnInit {
     this.httpUtil.get('mineral-project/all').then(value=>{
       if (value.meta.code === 6666) {
         let data = value.data.mineralProjects;
-        
+        for(let i in data){
+          if(data[i].areaCoordinates){
+            data[i].areaCoordinates = JSON.parse(data[i].areaCoordinates);
+          }
+        }
         this.twoMap.forEach(outdoorMap=>{
+          
           outdoorMap.initializeArea(data);
           outdoorMap.oldAreaValue.push(data);
         })
@@ -218,6 +230,7 @@ export class OutdoorComponent implements OnInit {
         /* for(let i in data){
           data[i].areaCoordinates = ProjectionUtil.toLonLat(data[i].areaCoordinates.split(',').map(Number))
         } */
+        
         this.areaLocationValue = data;
       }
     })
@@ -234,6 +247,9 @@ export class OutdoorComponent implements OnInit {
           data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):''; */
           if(data[i].lastestProjectOwner){
             data[i]['owner_id']= data[i].lastestProjectOwner.ownerName;
+          }
+          if(data[i].areaCoordinates){
+            data[i].areaCoordinates = JSON.parse(data[i].areaCoordinates);
           }
         }
         this.mineralLocationValue = data;
@@ -308,13 +324,13 @@ export class OutdoorComponent implements OnInit {
     })
   }
   /* 定位 */
-  locatorCard(point){
+  locatorCard(point,zoom){
     /* this.locationIconDisplay = false;
     this.mapDrawDisplay = false; */
     point= point.split(',').map(Number);
     this.twoMap.forEach(outdoorMap=>{
       outdoorMap.removeInteraction();
-      outdoorMap.locatorCard(point);
+      outdoorMap.locatorCard(point,zoom);
   
     })
   }
@@ -323,16 +339,16 @@ export class OutdoorComponent implements OnInit {
   setMineralMap(type,value?){
     /* 定位图标 */
     if(type ==='locationLabel'){
-      this.locatorCard(value.poiCoordinates);
+      this.locatorCard(value.poiCoordinates,6);
       return;
     }
     /* 定位区域 */
     if(type ==='locationArea'){
       let point = [];
-      value.areaCoordinates = ProjectionUtil.toLonLat(value.areaCoordinates.split(',').map(Number));
-      point.push(value.areaCoordinates[0]);
-      point.push(value.areaCoordinates[1]);
-      this.locatorCard(point.toString());
+      let areaCoordinates = ProjectionUtil.toLonLat(JSON.parse(value.areaCoordinates).coordinates.split(',').map(Number));
+      point.push(areaCoordinates[0]);
+      point.push(areaCoordinates[1]);
+      this.locatorCard(point.toString(),JSON.parse(value.areaCoordinates).zoom);
       return;
     }
     /* 图标修改 */
@@ -418,10 +434,12 @@ export class OutdoorComponent implements OnInit {
     /* 定位项目区域 */
     if(type=='locationMineral'){
       let point = [];
-      value.areaCoordinates = ProjectionUtil.toLonLat(value.areaCoordinates.split(',').map(Number));
-      point.push(value.areaCoordinates[0]);
-      point.push(value.areaCoordinates[1]);
-      this.locatorCard(point.toString());
+      //let coordinates = value.areaCoordinates.length>0?value.areaCoordinates:JSON.parse(value.areaCoordinates).coordinates;
+      //let zoom = 
+      let areaCoordinates = ProjectionUtil.toLonLat(value.areaCoordinates.coordinates.split(',').map(Number));
+      point.push(areaCoordinates[0]);
+      point.push(areaCoordinates[1]);
+      this.locatorCard(point.toString(),value.areaCoordinates.zoom);
       return;
     } 
     /* 修改项目区域 */
@@ -527,7 +545,12 @@ export class OutdoorComponent implements OnInit {
     }
     
     if(this.modifyArea){
-      this.mapLocationArea.areaCoordinates = this.mapLocationArea.areaCoordinates.toString();
+      this.modifyArea = false;
+      let areaCoordinates = {
+        zoom: JSON.parse(this.mapLocationArea.areaCoordinates).zoom,
+        coordinates:JSON.parse(this.mapLocationArea.areaCoordinates).coordinates
+      }
+      this.mapLocationArea.areaCoordinates = JSON.stringify(areaCoordinates);
       this.mapLocationArea.areaOpacity = this.areaOpacity*100;
       this.httpUtil.put('mineral-area',this.mapLocationArea).then(value=>{
         if (value.meta.code === 6666) {
@@ -544,9 +567,17 @@ export class OutdoorComponent implements OnInit {
         
       })
     }else{
+      let zoom;
+      this.twoMap.forEach(outdoorMap=>{
+        zoom = outdoorMap.zoom;
+      })
+      let areaCoordinates = {
+        zoom:zoom,
+        coordinates:this.areaCoordinate.toString()
+      }
       let info ={
         "areaColor": this.mapLocationArea.areaColor,
-        "areaCoordinates": this.areaCoordinate.toString(),
+        "areaCoordinates": JSON.stringify(areaCoordinates),
         "areaName": this.mapLocationArea.areaName,
         "description": this.mapLocationArea.description,
         "areaOpacity": this.areaOpacity*100
@@ -582,16 +613,28 @@ export class OutdoorComponent implements OnInit {
     let info;
     if(this.modifyMineral){
       this.modifyMineral = false;
+      let areaCoordinates = {
+        zoom:this.projectInfo.areaCoordinates.zoom,
+        coordinates:this.projectInfo.areaCoordinates.coordinates.toString()
+      }
        info={
         "areaBackground": this.projectColor,
         "projectId": this.projectInfo.id,
-        "areaCoordinates": this.projectInfo.areaCoordinates.toString(),
+        "areaCoordinates": JSON.stringify(areaCoordinates),
         "areaOpacity": this.areaOpacity*100
       }
     }else{
+      let zoom;
+      this.twoMap.forEach(outdoorMap=>{
+        zoom = outdoorMap.zoom;
+      })
+      let areaCoordinates = {
+        zoom:zoom,
+        coordinates:this.areaCoordinate.toString(),
+      }
       info={
         "areaBackground": this.projectColor,
-        "areaCoordinates": this.areaCoordinate.toString(),
+        "areaCoordinates": JSON.stringify(areaCoordinates),
         "projectId": this.projectInfo.id,
         "areaOpacity": this.areaOpacity*100
       }

@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
   // 姓名,密码 
   public username:string;
   public password:string;
+  loadingDisplay = false;//加载中提示
   // Token:any;
   constructor(
   
@@ -36,12 +37,14 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(type) {
+    
     if(type ==='register'){
       this.router.navigate(['/register']);
     }else{
       if (!this.check()) {
         return;
       }
+      this.loadingDisplay = true;
     // 获取tokenKey秘钥
     const getToken$ = this.loginService.getTokenKey().subscribe(
       data => {
@@ -53,6 +56,7 @@ export class LoginComponent implements OnInit {
             data2 => {
               // 认证成功返回jwt
               if (data2.meta.code === 1003 && data2.data.jwt != null) {
+                
                 localStorage.setItem('token', data2.data.jwt);
                 localStorage.setItem('uid', this.username);
                 localStorage.setItem('roleId', data2.data.user.roleId);
@@ -61,8 +65,10 @@ export class LoginComponent implements OnInit {
                 login$.unsubscribe();
                 //this.router.navigate(['/menu']);
                 
+                
               } else {
                 this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '用户名密码错误'});
+                this.loadingDisplay = false;
                 login$.unsubscribe();
               }
             },
@@ -70,6 +76,7 @@ export class LoginComponent implements OnInit {
               console.error(error);
               login$.unsubscribe();
               this.messageService.add({key: 'tc', severity:'error', summary: '警告', detail: '服务器开小差啦'});
+              this.loadingDisplay = false;
             }
           );
         }
@@ -107,6 +114,7 @@ export class LoginComponent implements OnInit {
         if(value.meta.code === 6666){
           let data = value.data.data.list;
           localStorage.setItem('role', JSON.stringify(data));
+          //this.loadingDisplay = false;
           this.router.navigate(['/layout/explorationRight/explorationInfo']);//跳转到探矿权
         }
       })

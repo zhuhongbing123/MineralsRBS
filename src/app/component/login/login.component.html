@@ -16,12 +16,18 @@
             <input [(ngModel)]="password" class="passwordBox_iput" type="password" 
               placeholder="请输入密码" (keyup.enter)="keyUpSearch()" />
           </div>
-          <button class="submitBox" type="button" (click)="onSubmit('login')">
-            登录
-          </button>
-          <button class="submitBox" type="button" (click)="onSubmit('register')">
-            注册
-          </button>
+          <div [hidden]="loadingDisplay">
+            <button class="submitBox" type="button" (click)="onSubmit('login')">
+              登录
+            </button>
+            <button class="submitBox" type="button" (click)="onSubmit('register')">
+              注册
+            </button>
+          </div>
+          <div [hidden]="!loadingDisplay" style="text-align: center;margin-top: 0px;">
+            <img src="./assets/img/loading.gif">
+            <div>登录中...</div>
+         </div>
         </div>
       </div>
     </div>

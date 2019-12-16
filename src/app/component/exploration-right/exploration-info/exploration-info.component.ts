@@ -88,12 +88,14 @@ export class ExplorationInfoComponent implements OnInit {
         this.queryDisplay =true;
       }
     })
+    
+  }
+  ngAfterViewInit(){
     this.getExplorationInfo();
     this.getMineralOwner();
     this.getReportCategory();
     this.getProjectName();
   }
-
   /* 获取探矿权项目数据 */
   getExplorationInfo(){
     this.httpUtil.get('mineral-project/type/1/'+this.startPage+'/'+this.limit).then(value=>{

@@ -67,7 +67,7 @@ export class MenuComponent implements OnInit {
       {
         label: '地图', icon: 'fa fa-fw  fa-map',
         items: [
-          { label: '室外地图', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/mapManage/outDoor'] }
+          { label: '矿权地图', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/mapManage/outDoor'] }
         ]
       },
       {

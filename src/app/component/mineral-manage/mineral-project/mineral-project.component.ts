@@ -5,7 +5,7 @@ import { ExplorationProject } from '../../../common/util/app-config';
 import { LoginService } from '../../login/login.service';
 import { Openlayer } from '../../../common/map/openlayer';
 import { Map2dService } from '../../../common/map/map2-d/map2-d.service';
-import * as ProjectionUtil from 'ol/proj';
+
 import { ProjectMapComponent } from '../project-map/project-map.component';
 
 
@@ -40,15 +40,7 @@ export class MineralProjectComponent implements OnInit {
   loading: boolean;//列表加载动画显示
   ownerName;//矿权人名称
 
-  OlFloorMap: Openlayer;
-  drawShaps;//地图形状类型
-  selectedDraw;//已选择的形状
-  addAreaDisplay = false;//添加区域下拉框
-
-  areaBackground = "#ff0044";//临时区域颜色
-  areaOpacity = 1;//临时区域透明度
-  areaDialogDisplay = false;//新增区域弹出框
-  modifyAreaDisplay = false;//修改地图区域
+  
 
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
@@ -56,12 +48,7 @@ export class MineralProjectComponent implements OnInit {
               private loginService: LoginService,
               private map2dService: Map2dService,
               public dialogService: DialogService) {
-                //接受地图画图区域后返回的值
-                this.map2dService.areaLocationCommon$.subscribe(value=>{
-                  this.mineralProject.areaCoordinates = value.points.toString();
-                  this.addAreaDisplay = false;
-                  this.areaDialogDisplay = true;
-                })
+                
                }
 
   ngOnInit() {
@@ -69,10 +56,10 @@ export class MineralProjectComponent implements OnInit {
     this.getProjectName();
   }
   ngAfterViewInit(){
-    this.OlFloorMap = new Openlayer(this.map2dService);
-    this.OlFloorMap.mapDivId = 'projectMap';
+    /* this.OlFloorMap = new Openlayer(this.map2dService);
+    this.OlFloorMap.mapDivId = 'projectMapss';
     this.OlFloorMap.fullMap = false;
-    this.OlFloorMap.initMap();
+    this.OlFloorMap.initMap(); */
     let that = this;
     window.onresize = function(){
       if(document.getElementById('main_content')){
@@ -102,11 +89,7 @@ export class MineralProjectComponent implements OnInit {
       { field: 'miningArea', header: '采矿权范围' },
       { field: 'operation', header: '操作' }
     ];
-    this.drawShaps = [
-      {code: 'Circle', name: '圆形'},
-     /*  {code: 'Box', name: '矩形'}, */
-      {code: 'Polygon', name: '多边形'}
-    ];
+    
     this.loading = true;
     //获取授权的API资源
     if(!localStorage.getItem('api')){
@@ -308,125 +291,22 @@ export class MineralProjectComponent implements OnInit {
 
   /* 显示地图区域 */
   viewMap(){
-    this.mineralAreaDisplay = true;
-    this.OlFloorMap.clickIcon = false;
-    this.removeLayer();
-    //显示区域
-    let area = [];
-    let points = [];
-    area.push(this.mineralProject)
-    this.OlFloorMap.areaPoint(area);
+     this.dialogService.open(ProjectMapComponent, {
+      header: this.mineralProject.projectName+'区域',
+      width: '70%',
+      baseZIndex:2000,
+      // height: "50%",
+      // baseZIndex: 1000,
+      data: {
+        isIndoorMap: false,
+        mineralProject:this.mineralProject
+      },
+    });
     
-    //定位区域
-    if(this.mineralProject.areaCoordinates){
-      let areaCoordinates = this.mineralProject.areaCoordinates;
-      let point = ProjectionUtil.toLonLat(areaCoordinates.split(',').map(Number));
-      points.push(point[0]);
-      points.push(point[1]);
-      this.OlFloorMap.locatorCard(points);
-    }
+    
    
   }
-   /* 地图交互 */
-   selectDraw(type){
-    this.OlFloorMap.addPoint = true;
-    this.OlFloorMap.addInteractions(this.selectedDraw.code,type)
-    
-  }
+   
 
-  /* 地图区域操作 */
-  setArea(type){
 
-    if(type=='modify'){
-      this.areaDialogDisplay = true;
-      this.modifyAreaDisplay = true;
-      return;
-    }
-    if(type=='add'){
-      this.addAreaDisplay = true;
-      this.mineralProject.areaOpacity = '10';
-      this.mineralProject.areaBackground = '#ff0044';
-    }else{
-      this.httpUtil.post('mineral-project/coordinates',{
-        "areaBackground": "",
-        "areaCoordinates": "",
-        "projectId": this.mineralProject.id
-      }).then(value=>{
-        if (value.meta.code === 6666) {
-          this.mineralProject.areaBackground = '';
-          this.mineralProject.areaCoordinates = '';
-          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '删除成功'});
-        }
-      })
-
-      this.removeLayer();
-    }
-  }
-  /* 保存地图区域 */
-  saveArea(type?){
-    if(type=='cancel'){
-      if(!this.modifyAreaDisplay){
-
-        //清除区域
-        this.mineralProject.areaCoordinates = '';
-        this.mineralProject.areaBackground = '';
-        this.removeLayer();
-        //显示区域
-       /*  let area = [];
-        area.push(this.mineralProject)
-        this.OlFloorMap.areaPoint(area); */
-      }
-      this.modifyAreaDisplay = false;
-      this.areaDialogDisplay = false;
-      return;
-    }
-    let info ={
-      "areaBackground": this.mineralProject.areaBackground,
-      "areaCoordinates": this.mineralProject.areaCoordinates.toString(),
-      "areaOpacity": this.mineralProject.areaOpacity.toString(),
-      "projectId": this.mineralProject.id
-    }
-    this.httpUtil.post('mineral-project/coordinates',info).then(value=>{
-      if (value.meta.code === 6666) {
-          this.removeLayer();
-          //显示区域
-          let area = [];
-          area.push(this.mineralProject)
-          this.OlFloorMap.areaPoint(area);
-          this.areaDialogDisplay = false;
-          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
-      }
-      
-    })
-  }
-
-  /* 清除地图所有图层 */
-  removeLayer(){
-    //this.OlFloorMap.map.getLayers().get
-    let layer = this.OlFloorMap.vectorLayer;
-    for(let i in layer){
-      let aa = layer[i].getSource().featureChangeKeys_['29'];
-      this.OlFloorMap.map.removeLayer(layer[i])
-    }
-  }
-/* 放大地图 */
-  fullMap(type){
-    
-    if(type=='full'){
-      document.getElementsByClassName('el-dialog')[0].className = 'dialog-class el-dialog';
-      document.getElementById('main_content').style.height =  document.body.clientHeight*0.8+'px';
-    }else{
-      document.getElementsByClassName('el-dialog')[0].className = 'el-dialog';
-      document.getElementById('main_content').style.height = '370px';
-      
-    }
-    document.getElementById('main_content').style.width = (document.getElementsByClassName('el-dialog')[0]['offsetWidth']*0.98).toString()+"px";
-  
-    setTimeout(() => {
-      this.OlFloorMap.map.updateSize();
-      
-    }, 5000);
-    
-    //this.removeLayer();
-  }
 }

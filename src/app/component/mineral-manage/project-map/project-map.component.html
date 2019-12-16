@@ -1,20 +1,53 @@
-<div id="main_content" #main_content >
-    <div id="projectMap" class="map">
-        <div id="popup" class="ol-popup">
-        <a href ='#' id="popup-closer" class="ol-popup-closer"></a>
-        <div id="popup-content" style="color:black"></div>
-        
-        </div>
-        <!-- 比例尺显示 -->
-        <div id="digitalScale" >
-        <select id="type" [hidden]="true">
-            <option value="LineString">Length (LineString)</option>
-        </select>
-        </div>
-    </div>
-    
-    <!-- 坐标显示 -->
-    <div id="mouse-position">
-    </div>
-    
+<div style="margin-bottom:10px">
+    <button type="button" pButton  label="新增区域" [hidden]="mineralProject.areaCoordinates " (click)="setArea('add')"></button>
+    <button type="button" pButton  label="删除区域" [hidden]="!mineralProject.areaCoordinates " (click)="setArea('delete')"></button>
+    <button type="button" pButton  label="修改区域" [hidden]="!mineralProject.areaCoordinates" (click)="setArea('modify')"></button>
 </div>
+<div [hidden]="!addAreaDisplay">
+    <p-dropdown 
+    [options]="drawShaps" 
+    [(ngModel)]="selectedDraw" 
+    placeholder="选择一种图形类型" 
+    optionLabel="name"
+    (onChange)="selectDraw('area')"
+    ></p-dropdown>
+</div>
+<div id="main_content" #main_content >
+  <div id="projectMaps" class="map">
+  
+      <!-- 比例尺显示 -->
+      <div id="digitalScale" >
+      <select id="type" [hidden]="true">
+          <option value="LineString">Length (LineString)</option>
+      </select>
+      </div>
+  </div>
+
+  <!-- 坐标显示 -->
+  <div id="mouse-position">
+  </div>
+  <el-dialog [title]="'矿权区域'"[(visible)]="areaDialogDisplay" [show-close]=false [close-on-press-escape]=false [close-on-click-modal]=false >
+        <ng-template #title>
+            <span style="color:white">矿权区域</span>
+        </ng-template>
+        <div class="form-group has-feedback">
+            <label class="control-label" style="color: white">填充色</label>
+            <p-colorPicker [(ngModel)]="mineralProject.areaBackground"></p-colorPicker>
+        </div>
+        <div class="form-group has-feedback" style="color: white">
+            <label class="control-label">区域透明度</label>
+            <p-spinner size="30" [(ngModel)]="mineralProject.areaOpacity" [min]="0" [max]="100" [step]="10"></p-spinner>
+            <span>(范围0-100)</span>
+        </div>
+
+        <ng-template #footer>
+            <el-button (click)="saveArea()">保存</el-button>
+            <el-button (click)="saveArea('cancel')">取消</el-button>
+        </ng-template>
+
+  </el-dialog>
+
+</div>
+
+    
+

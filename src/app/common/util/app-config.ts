@@ -33,6 +33,7 @@ export class ExplorationProject {
   "areaCoordinates":string;//矿权定位区域
   "areaBackground":string;//矿权定位区域背景色
   "areaOpacity":string;//矿权定位区域透明度
+  "zoom":number;//地图缩放级别
   "explorationArea": string;//探矿权范围
   "explorationStartTime": any;//探矿权首立时间
   "geophysicalGeochemical": string;//地球物理及地球化学特性

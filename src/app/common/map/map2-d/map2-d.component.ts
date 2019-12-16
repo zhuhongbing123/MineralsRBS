@@ -19,18 +19,21 @@ export class Map2DComponent implements OnInit {
   map;
   oldIconValue = [];//初始化时的图标数据
   oldAreaValue = [];//初始化时的区域数据
+  zoom;
   constructor(private outdoorComponent: OutdoorComponent,
               private map2dService: Map2dService) { 
                 this.map2dService.areaLocationCommon$.subscribe(value=>{
                   if(value.type=='area'){
-                    this.outdoorComponent.areaInfoDisplay = true;
-                    this.outdoorComponent.mapLocationArea = new MapLocationArea();
                     
+                    this.outdoorComponent.mapLocationArea = new MapLocationArea();
+                    this.outdoorComponent.mapLocationArea.areaColor = '#ff0044';
+                    this.outdoorComponent.areaOpacity = 1;
+                    this.outdoorComponent.areaInfoDisplay = true;
                   }else{
                     this.outdoorComponent.mineralInfoDisplay=true;
                   }
                   this.outdoorComponent.areaCoordinate = value.points;
-                  
+                  this.zoom = this.OlFloorMap.map.getView().getZoom();
                 })
               }
 
@@ -73,8 +76,8 @@ export class Map2DComponent implements OnInit {
 
   
   /* 定位 */
-  locatorCard(point){
-    this.OlFloorMap.locatorCard(point);
+  locatorCard(point,zoom){
+    this.OlFloorMap.locatorCard(point,zoom);
   }
 
   /* 添加定位标记点 */
