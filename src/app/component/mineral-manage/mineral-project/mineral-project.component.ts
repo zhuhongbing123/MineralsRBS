@@ -126,8 +126,8 @@ export class MineralProjectComponent implements OnInit {
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
         for(let i in data){
-          data[i].explorationStartTime =  data[i].explorationStartTime?new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-          data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].explorationStartTime =  data[i].explorationStartTime!==0?new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].miningStartTime =  data[i].miningStartTime!==0?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           if(data[i].lastestProjectOwner){
             data[i]['owner_id']= data[i].lastestProjectOwner.ownerName;
           }
@@ -160,8 +160,8 @@ export class MineralProjectComponent implements OnInit {
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
         for(let i in data){
-          data[i].explorationStartTime =  data[i].explorationStartTime?new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-          data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].explorationStartTime =  data[i].explorationStartTime!==0?new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].miningStartTime =  data[i].miningStartTime!==0?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           if(data[i].lastestProjectOwner){
             data[i]['owner_id']= data[i].lastestProjectOwner.ownerName;
           }
@@ -175,8 +175,8 @@ export class MineralProjectComponent implements OnInit {
   setMineral(type,value?){
     this.isModify = false;
     if(type=='modify'){
-      this.explorationStartTime = value.explorationStartTime!==0?new Date(value.explorationStartTime):'';
-      this.miningStartTime = value.miningStartTime!==0?new Date(value.miningStartTime):'';
+      this.explorationStartTime = value.explorationStartTime?new Date(value.explorationStartTime):'';
+      this.miningStartTime = value.miningStartTime?new Date(value.miningStartTime):'';
       this.mineralProject = value;
       this.mineralProjectDisplay = true;
       this.isModify = true;
@@ -223,28 +223,7 @@ export class MineralProjectComponent implements OnInit {
     }
     this.mineralProject.explorationStartTime = this.explorationStartTime?this.explorationStartTime.getTime()/1000:0;
     this.mineralProject.miningStartTime = this.miningStartTime?this.miningStartTime.getTime()/1000:0;
-    /* let projectInfo = {
-      "areaGeologicBackground": this.mineralProject.areaGeologicBackground,
-      "explorationArea": this.mineralProject.explorationArea,
-      "explorationStartTime": this.explorationStartTime?this.explorationStartTime.getTime()/1000:0,
-      "geophysicalGeochemical": this.mineralProject.geophysicalGeochemical,
-      "investigationFinalStage": this.mineralProject.investigationFinalStage,
-      "majorAchievement": this.mineralProject.majorAchievement,
-      "mineralBeltGeologic": this.mineralProject.mineralBeltGeologic,
-      "mineralBeltOwner": this.mineralProject.mineralBeltOwner,
-      "mineralCharacteristics": this.mineralProject.mineralCharacteristics,
-      "mineralGeologicalMagmatite": this.mineralProject.mineralGeologicalMagmatite,
-      "mineralGeologicalStratum": this.mineralProject.mineralGeologicalStratum,
-      "mineralGeologicalStructure": this.mineralProject.mineralGeologicalStructure,
-      "miningArea": this.mineralProject.miningArea,
-      "miningStartTime":this.miningStartTime?this.miningStartTime.getTime()/1000:0,
-      "preliminaryUnderstanding": this.mineralProject.preliminaryUnderstanding,
-      "projectName": this.mineralProject.projectName,
-      "remarks": this.mineralProject.remarks,
-      "rockAlteration": this.mineralProject.rockAlteration,
-      "id": this.mineralProject.id
-    }; */
-
+  
     if(this.isModify){
       /* 修改探矿权项目 */
       this.httpUtil.put('mineral-project',this.mineralProject).then(value=>{

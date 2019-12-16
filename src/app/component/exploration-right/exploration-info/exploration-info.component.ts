@@ -103,7 +103,7 @@ export class ExplorationInfoComponent implements OnInit {
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
         for(let i in data){
-          data[i].explorationStartTime = data[i].explorationStartTime? new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].explorationStartTime = data[i].explorationStartTime!==0? new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i]['owner_id'] = data[i].lastestProjectOwner?data[i].lastestProjectOwner.ownerName:''
         }
         
