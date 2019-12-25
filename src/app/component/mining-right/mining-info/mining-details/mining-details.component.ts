@@ -3,7 +3,7 @@ import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
 import { ExplorationProject, MiningStage, MiningMonitoring, ExplorationReport } from '../../../../common/util/app-config';
 import { HttpUtil } from '../../../../common/util/http-util';
 import { ExplorationInfoService } from '../../../exploration-right/exploration-info/exploration-info.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { LoginService } from '../../../login/login.service';
 
 @Component({
@@ -56,18 +56,26 @@ export class MiningDetailsComponent implements OnInit {
   modifyValidationButton = false;//监测阶段修改按钮显示
   deleteValidationButton = false;//监测阶段删除按钮显示
 
+  buttonType = false;//点击按钮的类型
 
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private explorationInfoService: ExplorationInfoService,
     private router: Router,
-    private loginService: LoginService) { }
+    private loginService: LoginService,
+    public route: ActivatedRoute) { }
 
   ngOnInit() {
     this.miningProject = this.explorationInfoService.explorationProject;
     this.reportCategory = this.explorationInfoService.reportCategory;
     this.mineralOwner = this.explorationInfoService.mineralOwner;
+    this.route.queryParams.subscribe(params => {
+      if(params['type']=='modify'){
+        this.buttonType = true;
+      }
+
+    });
     this.setTableValue();
   }
 
@@ -81,6 +89,7 @@ export class MiningDetailsComponent implements OnInit {
       {label: '采矿权报告', icon: 'fa fa-fw fa-bar-chart'}
     ];
     this.stageDetailTitle = [
+      { field: 'number', header: '序号' },
       { field: 'ownerId', header: '矿权人' },
       { field: 'miningStartTime', header: '开始时间' },
       { field: 'miningEndTime', header: '结束时间' },
@@ -93,6 +102,7 @@ export class MiningDetailsComponent implements OnInit {
       { field: 'operation', header: '操作' },
     ];
     this.monitoringTitle = [
+      { field: 'number', header: '序号' },
       { field: 'validationYear', header: '监测报告年份' },
       { field: 'resourceUsed', header: '年度动用资源量' },
       { field: 'resourceMaintained', header: '年末保有资源量' },
@@ -146,10 +156,12 @@ export class MiningDetailsComponent implements OnInit {
    /* 获取开采阶段详情 */
    getStageInfo(){
     /* 获取采矿权开采阶段详情 */
-    this.httpUtil.get('mineral-mining-stage/project/'+this.miningProject.id).then(value=>{
+    this.httpUtil.get('mineral-mining-stage/project/'+this.miningProject.id+'/'+this.startPage+'/'+this.limit).then(value=>{
       if (value.meta.code === 6666) {
-        let data = value.data.stageInfos;
-        for(let i in data){
+        let data = value.data.miningStages.list;
+        this.stageTotal = value.data.miningStages.total;
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i].miningEndTime =  data[i].miningEndTime?new Date(data[i].miningEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           for(let j in this.mineralOwner){
@@ -164,10 +176,12 @@ export class MiningDetailsComponent implements OnInit {
   }
   /* 获取年度监测报告 */
   getMonitoring(){
-    this.httpUtil.get('mineral-project-validation/project/'+this.miningProject.id).then(value=>{
+    this.httpUtil.get('mineral-project-validation/project/'+this.miningProject.id+'/'+this.startPage+'/'+this.limit).then(value=>{
       if (value.meta.code === 6666) {
-          let data = value.data.validationInfos;
-          for(let i in data){
+          let data = value.data.projectValidations.list;
+          this.validationTotal = value.data.projectValidations.total;
+          for(let i=0; i<data.length;i++){
+            data[i].number = (this.startPage-1)*this.limit+i +1;
             data[i].validationYear =  new Date(data[i].validationYear*1000).toLocaleDateString().replace(/\//g, "-");
             for(let j in this.reportCategory){
               if(data[i].reportCategoryId ===this.reportCategory[j].value){
@@ -456,7 +470,7 @@ saveMiningProject(type){
       case 'stage':
         this.getStageInfo()
         break;
-      case 'monitoring'://年度监测
+      case 'validation'://年度监测
         
         this.getMonitoring();
         break; 

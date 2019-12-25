@@ -7,6 +7,7 @@ import { Openlayer } from '../../../common/map/openlayer';
 import { Map2dService } from '../../../common/map/map2-d/map2-d.service';
 
 import { ProjectMapComponent } from '../project-map/project-map.component';
+import { MineralManageService } from '../mineral-manage.service';
 
 
 @Component({
@@ -47,8 +48,13 @@ export class MineralProjectComponent implements OnInit {
               private confirmationService: ConfirmationService,
               private loginService: LoginService,
               private map2dService: Map2dService,
-              public dialogService: DialogService) {
-                
+              public dialogService: DialogService,
+              private mineralManageService: MineralManageService) {
+                this.mineralManageService.addAreaCommon$.subscribe((value)=>{
+                  this.mineralProject.areaBackground = value.areaBackground;
+                  this.mineralProject.areaCoordinates = value.areaCoordinates;
+                  this.mineralProject.areaOpacity = value.areaOpacity;
+                })
                }
 
   ngOnInit() {
@@ -81,6 +87,7 @@ export class MineralProjectComponent implements OnInit {
   public setTableValue(){
     
     this.mineralProjectTitle=[
+      { field: 'number', header: '序号' },
       { field: 'projectName', header: '项目名称' },
       { field: 'owner_id', header: '矿权人' },
       { field: 'explorationStartTime', header: '探矿权首立时间' },
@@ -125,7 +132,8 @@ export class MineralProjectComponent implements OnInit {
       if (value.meta.code === 6666) {
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           data[i].explorationStartTime =  data[i].explorationStartTime!==0?new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i].miningStartTime =  data[i].miningStartTime!==0?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           if(data[i].lastestProjectOwner){
@@ -159,7 +167,8 @@ export class MineralProjectComponent implements OnInit {
         this.isClickSearch = true;
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           data[i].explorationStartTime =  data[i].explorationStartTime!==0?new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i].miningStartTime =  data[i].miningStartTime!==0?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           if(data[i].lastestProjectOwner){
@@ -271,7 +280,7 @@ export class MineralProjectComponent implements OnInit {
   /* 显示地图区域 */
   viewMap(){
      this.dialogService.open(ProjectMapComponent, {
-      header: this.mineralProject.projectName+'区域',
+      header: this.mineralProject.projectName?this.mineralProject.projectName:'新增项目'+'区域',
       width: '70%',
       baseZIndex:2000,
       // height: "50%",

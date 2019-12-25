@@ -35,7 +35,7 @@ export class OperationLogComponent implements OnInit {
   //初始化列表数据
   getTableValue(){
     this.operationLogTitle = [
-      { field: 'id', header: 'ID' },
+      { field: 'number', header: '序号' },
       { field: 'logName', header: '日志类型' },
       { field: 'userId', header: '用户标识' },
       { field: 'api', header: '调用API' },
@@ -65,7 +65,11 @@ export class OperationLogComponent implements OnInit {
   getOperationLog(){
     this.httpUtil.get('log/operationLog/'+this.pageNumber+'/'+this.pageSize).then(value=>{
       if (value.meta.code === 6666) {
-        this.operationLogValue = value.data.data.list;
+        let data = value.data.data.list;
+        for(let i=0;i<data.length;i++){
+          data[i].number = (this.pageNumber-1)*this.pageSize+i +1;
+        }
+        this.operationLogValue = data;
         this.operationLogTotal = value.data.data.total;
         this.setTableValue(value.data.data.list);
       }
@@ -89,7 +93,11 @@ export class OperationLogComponent implements OnInit {
     }).then(value=>{
       if (value.meta.code === 6666) {
         this.isClickSearch = true;
-        this.operationLogValue = value.data.logs.list;
+        let data = value.data.logs.list;
+        for(let i=0;i<data.length;i++){
+          data[i].number = (this.pageNumber-1)*this.pageSize+i +1;
+        }
+        this.operationLogValue = data;
         this.operationLogTotal = value.data.logs.total;
         this.setTableValue(value.data.logs.list);
       }

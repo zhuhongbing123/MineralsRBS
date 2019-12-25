@@ -26,6 +26,11 @@
               </td>
           </tr>
       </ng-template>
+      <ng-template pTemplate="summary">
+            <div style="text-align: right;">
+               共{{apiTotal}}条
+            </div>
+        </ng-template>
     </p-table>
     <p-paginator [hidden]="!apiTotal" [rows]="LIMIT_LOGIN" [totalRecords]="apiTotal"  [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
 </div>

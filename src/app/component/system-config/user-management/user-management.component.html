@@ -1,10 +1,17 @@
 <div class="ui-g-12 ui-md-4">系统配置 > 用户管理</div>
 
 <div class="p-table">
-    <div style="float: right;clear: both;margin-bottom: 10px;" [hidden]="!searchDisplay">
-            <p-autoComplete [(ngModel)]="filteredUserName" [suggestions]="filteredUser" (completeMethod)="filteredUsers($event)"
-                placeholder="输入用户名" ></p-autoComplete>
-            <button pButton [hidden]="!addDisplay" type="button" label="查询" (click)="setUserRole('','filtered')"></button>
+    
+    <div style="clear: both;margin-bottom: 10px;" [hidden]="!searchDisplay">
+            <div class="ui-g-12 ui-md-4">
+                    <button pButton type="button"  label="新增" (click)="setUserRole('','add')"></button>
+            </div>
+            <div style="float:right">
+                    <p-autoComplete [(ngModel)]="filteredUserName" [suggestions]="filteredUser" (completeMethod)="filteredUsers($event)"
+                    placeholder="输入用户名" ></p-autoComplete>
+                <button pButton [hidden]="!addDisplay" type="button" label="查询" (click)="setUserRole('','filtered')"></button>
+            </div>
+            
     </div>
     <div style="clear:both">
         <p-table [columns]="userTableTitle" [value]="userTableValue" [loading]="loading">
@@ -20,10 +27,22 @@
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                         <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
-                        <span *ngIf = "col.field == 'operation' && modifyDisplay"  (click)="setUserRole(rowData,'modify')" class="operation-icon"> 角色管理</span>
-                        <span *ngIf = "col.field == 'operation' && deleteDisplay && rowData.role"  (click)="setUserRole(rowData,'delete')" class="operation-icon"> 删除角色</span>
+                        <span *ngIf = "col.field == 'operation' && modifyDisplay"  (click)="setUserRole(rowData,'modifyRole')" class="operation-icon"> 角色管理</span>
+                        <span *ngIf = "col.field == 'operation'" >
+                              
+                            <p-splitButton label="更多" [model]="items" styleClass="ui-button-info" (onDropdownClick)="userRowData=rowData"></p-splitButton>
+
+                        </span> 
+<!--                         <span *ngIf = "col.field == 'operation' && deleteDisplay && rowData.role"  (click)="setUserRole(rowData,'deleteRole')" class="operation-icon"> 删除角色</span>
+                        <span *ngIf = "col.field == 'operation' && deleteDisplay && rowData.role"  (click)="setUserRole(rowData,'modify')" class="operation-icon"> 修改</span>
+                        <span *ngIf = "col.field == 'operation' && deleteDisplay && rowData.role"  (click)="setUserRole(rowData,'delete')" class="operation-icon"> 删除</span> -->
                     </td>
                 </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                    <div style="text-align: right;">
+                       共{{userTotal}}条
+                    </div>
             </ng-template>
         </p-table>
     </div>    
@@ -54,6 +73,11 @@
                           </td>
                       </tr>
                   </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div style="text-align: right;">
+                           共{{roleTotal}}条
+                        </div>
+                    </ng-template>
                 </p-table>
            
                 <p-paginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal"  [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'role')"></p-paginator> 
@@ -65,3 +89,27 @@
             
         </p-dialog>
 </div>
+<div class="dialog-class">
+        <!-- 矿权人增加、修改弹出框 -->
+        <p-dialog header="矿权人" [(visible)]="userDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+                <form>
+                    <div class="form-group has-feedback">
+                        <label class="control-label">账户名称</label>
+                        <input  type="text"   [(ngModel)]="accountName" name="accountName"  class="form-control">
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="control-label">用户名</label>
+                        <input  type="text"   [(ngModel)]="userName" name="userName"  class="form-control">
+                    </div>
+                    <div class="form-group has-feedback">
+                        <label class="control-label">密码</label>
+                        <input  type="text"   [(ngModel)]="password" name="password"  class="form-control">
+                    </div>
+                </form>
+                <p-footer>
+                    <button type="button" pButton  (click)="saveOwner()" label="保存"></button>
+                    <button type="button" pButton  (click)="userDisplay=false" label="取消" class="ui-button-secondary"></button>
+                 </p-footer>   
+        </p-dialog>
+</div>                
+    

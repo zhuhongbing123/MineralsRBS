@@ -31,6 +31,11 @@
                 </td>
             </tr>
         </ng-template>
+        <ng-template pTemplate="summary">
+                <div style="text-align: right;">
+                   共{{reportTotal}}条
+                </div>
+        </ng-template>
       </p-table>
       <p-paginator [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
   </div>

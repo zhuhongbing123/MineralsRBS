@@ -66,7 +66,7 @@
                   </tr>
               </tbody>
           </table>
-          <button type="button" [hidden]="!modifyButton" pButton (click)="modifyProject()" label="编辑"></button>
+          <button type="button" [hidden]="!modifyButton || !buttonType" pButton (click)="modifyProject()" label="修改"></button>
           <button style="margin-left:20px" type="button" pButton  (click)="goBack()" label="返回" class="ui-button-secondary"></button>
       </div>
   </div>
@@ -74,12 +74,12 @@
   <!--  开采详情-->
   <div style="clear: both;" class="p-table" [hidden]="!stageDetailDisplay">
       <div class="ui-g-12 ui-md-4">
-          <button pButton type="button" [hidden]="!addStageButton" label="新增" (click)="setMining('addStage')"></button>
+          <button pButton type="button" [hidden]="!addStageButton || !buttonType" label="新增" (click)="setMining('addStage')"></button>
           
       </div>
       <button style="float: right;top: 5px;" type="button" pButton  (click)="goBack()" label="返回"></button>
       <div style="clear:both">
-          <p-table [columns]="stageDetailTitle" [value]="stageDetailValue" [rows]="10" [paginator]="true">
+          <p-table [columns]="stageDetailTitle" [value]="stageDetailValue" >
           <ng-template pTemplate="header" let-columns>
               <tr>
                   <th *ngFor="let col of columns">
@@ -91,12 +91,18 @@
               <tr>
                   <td *ngFor="let col of columns">
                       <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                      <span *ngIf = "col.field == 'operation' && modifyStageButton" class="operation-icon"  (click)="setMining('modifyStage',rowData)">修改</span>
-                      <span *ngIf = "col.field == 'operation' && deleteStageButton" class="operation-icon"  (click)="setMining('deleteStage',rowData)">删除</span>
+                      <span *ngIf = "col.field == 'operation' && modifyStageButton && buttonType" class="operation-icon"  (click)="setMining('modifyStage',rowData)">修改</span>
+                      <span *ngIf = "col.field == 'operation' && deleteStageButton && buttonType" class="operation-icon"  (click)="setMining('deleteStage',rowData)">删除</span>
                   </td>
               </tr>
           </ng-template>
+          <ng-template pTemplate="summary">
+                <div style="text-align: right;">
+                   共{{stageTotal}}条
+                </div>
+            </ng-template>
           </p-table>
+          <p-paginator [hidden]="!stageTotal" [rows]="LIMIT_LOGIN" [totalRecords]="stageTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'stage')"></p-paginator>
       </div>    
   </div>
 
@@ -104,11 +110,11 @@
   <div  style="clear: both;" class="p-table" [hidden]="!monitoringDetailDisplay">
       <div [hidden]="reportFileDisplay">
           <div class="ui-g-12 ui-md-4">
-              <button pButton type="button" [hidden]="!addValidationButton" label="新增" (click)="setMining('addMonitoring')"></button>
+              <button pButton type="button" [hidden]="!addValidationButton ||! buttonType" label="新增" (click)="setMining('addMonitoring')"></button>
           </div>
           <button style="float: right;top: 5px;" type="button" pButton  (click)="goBack()" label="返回"></button>
           <div style="clear:both">
-              <p-table [columns]="monitoringTitle" [value]="monitoringValue"  [rows]="10" [paginator]="true">
+              <p-table [columns]="monitoringTitle" [value]="monitoringValue">
               <ng-template pTemplate="header" let-columns>
                   <tr>
                       <th *ngFor="let col of columns">
@@ -120,17 +126,23 @@
                   <tr>
                       <td *ngFor="let col of columns">
                           <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                          <span *ngIf = "col.field == 'operation' && modifyValidationButton" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)">修改</span>
-                          <span *ngIf = "col.field == 'operation' && deleteValidationButton" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)">删除</span>
+                          <span *ngIf = "col.field == 'operation' && modifyValidationButton && buttonType" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)">修改</span>
+                          <span *ngIf = "col.field == 'operation' && deleteValidationButton && buttonType" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)">删除</span>
                       </td>
                   </tr>
               </ng-template>
+              <ng-template pTemplate="summary">
+                    <div style="text-align: right;">
+                       共{{validationTotal}}条
+                    </div>
+                </ng-template>
               </p-table>
+              <p-paginator [hidden]="!validationTotal" [rows]="LIMIT_LOGIN" [totalRecords]="validationTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'validation')"></p-paginator>
           </div>    
       </div>
   </div>
 <!-- 采矿权报告 -->
-<app-report-file [reportCategory]="reportCategory" [explorationProject]="miningProject" [type]="'mining'"></app-report-file>
+<app-report-file [reportCategory]="reportCategory" [explorationProject]="miningProject" [type]="'mining'" [buttonType]="buttonType"></app-report-file>
 
 </div>
 

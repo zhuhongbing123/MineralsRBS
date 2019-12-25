@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
+import { MenuItem, MessageService, ConfirmationService, DialogService } from 'primeng/api';
 import { HttpUtil } from '../../../common/util/http-util';
 import { ExplorationProject,ExplorationStage,ExplorationReport } from '../../../common/util/app-config';
 
@@ -7,6 +7,8 @@ import { ExplorationInfoService } from './exploration-info.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/login.service';
+import { ProjectMapComponent } from '../../mineral-manage/project-map/project-map.component';
+import { MineralManageService } from '../../mineral-manage/mineral-manage.service';
 
 @Component({
   selector: 'app-exploration-info',
@@ -29,7 +31,7 @@ export class ExplorationInfoComponent implements OnInit {
   explorationProject: ExplorationProject = new ExplorationProject();//一条探矿权项目数据
   modifyExploration = false;//是否修改探矿权
   oldProjectInfo;//项目信息修改之前的值
-  explorationStartTime;//探矿权首立时间
+  explorationStartTime = new Date();//探矿权首立时间
   miningStartTime;//采矿权首立时间
   mineralOwner:any[] = [];//矿权人
   reportCategory;//报告分类数据
@@ -47,6 +49,8 @@ export class ExplorationInfoComponent implements OnInit {
   allProjectName;//所有项目名称
   isClickSearch = false;//是否点击了搜索
   loading: boolean;//列表加载动画显示
+  modifyButton = false;//修改按钮
+
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
@@ -55,7 +59,8 @@ export class ExplorationInfoComponent implements OnInit {
               private router: Router) { 
                this.backCommon =  this.explorationInfoService.backCommon$.subscribe(()=>{
                   this.setTableValue();
-                })
+                });
+               
               }
 
   ngOnInit() {
@@ -68,6 +73,7 @@ export class ExplorationInfoComponent implements OnInit {
   public setTableValue(){
     
     this.explorationInfoTitle=[
+      { field: 'number', header: '序号' },
       { field: 'projectName', header: '项目名称' },
       { field: 'owner_id', header: '矿权人' },
       { field: 'explorationStartTime', header: '探矿权首立时间' },
@@ -87,6 +93,9 @@ export class ExplorationInfoComponent implements OnInit {
       if(element.uri ==='/mineral-project/search/*/*' && element.method =='POST'){
         this.queryDisplay =true;
       }
+      if(element.uri ==='/mineral-project' && element.method =='PUT'){
+        this.modifyButton =true;
+      }
     })
     
   }
@@ -102,9 +111,10 @@ export class ExplorationInfoComponent implements OnInit {
       if (value.meta.code === 6666) {
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
           data[i].explorationStartTime = data[i].explorationStartTime!==0? new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-          data[i]['owner_id'] = data[i].lastestProjectOwner?data[i].lastestProjectOwner.ownerName:''
+          data[i]['owner_id'] = data[i].lastestProjectOwner?data[i].lastestProjectOwner.ownerName:'';
+          data[i].number = (this.startPage-1)*this.limit+i +1;
         }
         
         this.explorationInfoValue = data;
@@ -132,9 +142,9 @@ export class ExplorationInfoComponent implements OnInit {
 
   /* 获取报告分类 */
   getReportCategory(){
-    this.httpUtil.get('mineral-project-category/list/1/1000').then(value=>{
+    this.httpUtil.get('mineral-report-category/list/1/1000').then(value=>{
       if (value.meta.code === 6666) {
-        let data = value.data.projectReports.list;
+        let data = value.data.reportCategories.list;
         for(var i = data.length - 1; i >= 0; i--){
           data[i]['label'] = data[i].reportCategory;
           data[i]['value'] = data[i].id;
@@ -167,7 +177,8 @@ export class ExplorationInfoComponent implements OnInit {
         this.isClickSearch = true;
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           data[i].explorationStartTime = data[i].explorationStartTime? new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
         }
         
@@ -192,9 +203,14 @@ export class ExplorationInfoComponent implements OnInit {
     
   }
   /* 查看项目详情 */
-  goDetails(data){
+  goDetails(data,type){
     this.explorationProject = data;
-    this.router.navigate(['/layout/explorationRight/explorationDetails'],{ skipLocationChange: true });
+    if(type=='detail'){
+      this.router.navigate(['/layout/explorationRight/explorationDetails'],{ skipLocationChange: true,queryParams:{'type':'detail'} });
+    }else{
+      this.router.navigate(['/layout/explorationRight/explorationDetails'],{ skipLocationChange: true,queryParams:{'type':'modify'} });
+    }
+
     this.explorationInfoService.explorationProject = this.explorationProject;
     this.explorationInfoService.reportCategory = this.reportCategory;
     this.explorationInfoService.mineralOwner = this.mineralOwner;
@@ -212,7 +228,7 @@ export class ExplorationInfoComponent implements OnInit {
     if(type ==='add'){
       this.modifyExploration = false;
       this.explorationProject = new ExplorationProject();
-      this.explorationStartTime = '';
+      this.explorationStartTime = new Date();
       this.explorationtDisplay = true;
     }else{
       this.confirmationService.confirm({
@@ -261,5 +277,40 @@ export class ExplorationInfoComponent implements OnInit {
     }
   }
 
+  /* 保存新增项目 */
+  saveProject(){
+    if(!this.explorationProject.projectName){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '项目名称不能为空'});
+      return;
+    }
+    this.explorationProject.explorationStartTime = this.explorationStartTime.getTime()/1000
+    this.explorationProject.miningStartTime = 0;
   
+ 
+      /* 增加探矿权项目 */
+      this.httpUtil.post('mineral-project',this.explorationProject).then(value=>{
+        if (value.meta.code === 6666) {
+          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
+          this.explorationtDisplay = false;
+          this.getExplorationInfo();
+        }
+      })
+
+  }
+ /* 显示地图区域 */
+  /* viewMap(){
+    this.dialogService.open(ProjectMapComponent, {
+      header: '新增项目区域',
+      width: '70%',
+      baseZIndex:2000,
+      // height: "50%",
+      // baseZIndex: 1000,
+      data: {
+        isIndoorMap: false,
+        addLocationArea: true,
+        mineralProject:[]
+      },
+    });
+  } */
+    
 }

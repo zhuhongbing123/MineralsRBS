@@ -42,7 +42,8 @@ export class ExplorationFileComponent implements OnInit {
   //初始化表格
   public setTableValue(){
     this.explorationInfoTitle=[
-      { field: 'reportCategory', header: '报告分类名称' },
+      { field: 'number', header: '序号' },
+      { field: 'reportCategoryName', header: '报告分类名称' },
       { field: 'reportType', header: '报告种类' },
       { field: 'operation', header: '操作' }
     ];
@@ -55,13 +56,13 @@ export class ExplorationFileComponent implements OnInit {
     }
     //获取授权的API资源
     JSON.parse(localStorage.getItem('api')).forEach(element => {
-      if(element.uri ==='/mineral-project-category' && element.method =='POST'){
+      if(element.uri ==='/mineral-report-category' && element.method =='POST'){
         this.addButton =true;
       }
-      if(element.uri ==='/mineral-project-category' && element.method =='PUT'){
+      if(element.uri ==='/mineral-report-category' && element.method =='PUT'){
         this.modifyButton =true;
       }
-      if(element.uri ==='/mineral-project-category/*' && element.method =='DELETE'){
+      if(element.uri ==='/mineral-report-category/*' && element.method =='DELETE'){
           this.deleteButton =true;
       }
     });
@@ -74,11 +75,12 @@ export class ExplorationFileComponent implements OnInit {
   /* 获取报告分类数据 */
   getReportCategory(){
     let type = this.reportTypeNumber;
-    this.httpUtil.get('mineral-project-category/type/'+type+'/'+this.startPage+'/'+this.limit).then(value=>{
+    this.httpUtil.get('mineral-report-category/type/'+type+'/'+this.startPage+'/'+this.limit).then(value=>{
       if (value.meta.code === 6666) {
-          let data = value.data.projectReports.list;
-          this.reportTotal = value.data.projectReports.total;
-          for(let i in data){
+          let data = value.data.reportCategories.list;
+          this.reportTotal = value.data.reportCategories.total;
+          for(let i=0; i<data.length;i++){
+            data[i].number = (this.startPage-1)*this.limit+i +1;
             if(data[i].reportType ==0){
               data[i].reportType = '行业规范'
             }
@@ -119,7 +121,7 @@ export class ExplorationFileComponent implements OnInit {
         acceptLabel:'确定',
         rejectLabel:'取消',
         accept: () => {
-          this.httpUtil.delete('mineral-project-category/'+value.id).then(value=>{
+          this.httpUtil.delete('mineral-report-category/'+value.id).then(value=>{
             if (value.meta.code === 6666) {
               this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '删除成功'});
               this.getReportCategory();
@@ -141,7 +143,7 @@ export class ExplorationFileComponent implements OnInit {
       return;
     }
     if(this.reportType =='add'){
-      this.httpUtil.post('mineral-project-category',{
+      this.httpUtil.post('mineral-report-category',{
         "reportType": this.reportTypeNumber,
         "reportCategory": this.reportCategoryName
       }).then(value=>{
@@ -152,7 +154,7 @@ export class ExplorationFileComponent implements OnInit {
         }
       })
     }else{
-      this.httpUtil.put('mineral-project-category',{
+      this.httpUtil.put('mineral-report-category',{
         "reportType": this.reportTypeNumber,
         "reportCategory": this.reportCategoryName,
         "id":this.reportValue.id

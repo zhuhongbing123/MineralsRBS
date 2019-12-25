@@ -51,6 +51,8 @@ export class LoginComponent implements OnInit {
         if (data.data.tokenKey !== undefined) {
           const tokenKey = data.data.tokenKey;
           const userKey = data.data.userKey;
+          localStorage.setItem('tokenKey', data.data.tokenKey);
+          localStorage.setItem('userKey', data.data.userKey);
           getToken$.unsubscribe();
           const login$ = this.loginService.login(this.username, this.password, tokenKey, userKey).subscribe(
             data2 => {

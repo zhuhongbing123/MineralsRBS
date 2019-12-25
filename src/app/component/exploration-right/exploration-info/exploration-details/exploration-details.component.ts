@@ -13,7 +13,11 @@ import { LoginService } from '../../../login/login.service';
   styleUrls: ['./exploration-details.component.scss']
 })
 export class ExplorationDetailsComponent implements OnInit {
-  
+  LIMIT_LOGIN = 10;//列表每页显示数量
+  startPage = 1;//列表开始的页数
+  limit = 10;//列表每页的行数
+  detailTotal;//勘查阶段详情总数
+
   explorationProject: ExplorationProject = new ExplorationProject();//一条探矿权项目数据
   reportCategory;//报告分类数据
   mineralOwner;//矿权人信息
@@ -34,6 +38,8 @@ export class ExplorationDetailsComponent implements OnInit {
   modifyStage = false;//是否修改勘查阶段信息
   explorationStage: ExplorationStage = new ExplorationStage();//勘查阶段单行数据
   explorationTitle;//弹出框标题
+  buttonType = false;//点击跳转按钮的类型
+
 
   modifyButton = false;//编辑按钮显示
   addStageButton = false;//勘查阶段新增按钮显示
@@ -45,13 +51,21 @@ export class ExplorationDetailsComponent implements OnInit {
               private confirmationService: ConfirmationService,
               private explorationInfoService: ExplorationInfoService,
               private router: Router,
-              private loginService: LoginService) { 
+              private loginService: LoginService,
+              public route: ActivatedRoute) { 
+                
   }
 
   ngOnInit() {
     this.explorationProject = this.explorationInfoService.explorationProject;
     this.reportCategory = this.explorationInfoService.reportCategory;
     this.mineralOwner = this.explorationInfoService.mineralOwner;
+    this.route.queryParams.subscribe(params => {
+      if(params['type']=='modify'){
+        this.buttonType = true;
+      }
+
+    });
     this.setTableValue();
   }
 
@@ -63,6 +77,7 @@ export class ExplorationDetailsComponent implements OnInit {
       {label: '探矿权报告', icon: 'fa fa-fw fa-bar-chart'}
     ];
     this.explorationDetailTitle = [
+      { field: 'number', header: '序号' },
       { field: 'ownerId', header: '矿权人' },
       { field: 'investigationStartTime', header: '开始时间' },
       { field: 'investigationEndTime', header: '结束时间' },
@@ -93,7 +108,7 @@ export class ExplorationDetailsComponent implements OnInit {
       if(element.uri ==='/mineral-explore-stage' && element.method =='PUT'){
         this.modifyStageButton =true;
       }
-      if(element.uri ==='/mineral-explore-stage' && element.method =='GET'){
+      if(element.uri ==='/mineral-explore-stage' && element.method =='DELETE'){
         this.deleteStageButton =true;
       }
     });
@@ -107,12 +122,14 @@ export class ExplorationDetailsComponent implements OnInit {
   /* 获取勘查阶段详情 */
   getStageInfo(){
     /* 获取探矿权勘查阶段详情 */
-    this.httpUtil.get('mineral-explore-stage/project/'+this.explorationProject.id).then(value=>{
+    this.httpUtil.get('mineral-explore-stage/project/'+this.explorationProject.id+'/'+this.startPage+'/'+this.limit).then(value=>{
       if (value.meta.code === 6666) {
-        let data = value.data.stageInfos;
-        for(let i in data){
+        let data = value.data.explorationStages.list;
+        this.detailTotal = value.data.explorationStages.total;
+        for(let i=0; i<data.length;i++){
           data[i].investigationStartTime = data[i].investigationStartTime? new Date(data[i].investigationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i].investigationEndTime =  data[i].investigationEndTime?new Date(data[i].investigationEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           for(let j in this.mineralOwner){
               if(data[i].ownerId == this.mineralOwner[j].id){
                   data[i].ownerId = this.mineralOwner[j].ownerName;
@@ -125,7 +142,6 @@ export class ExplorationDetailsComponent implements OnInit {
   }
  /* 点击tab页面切换按钮 */
  menuClick(event){
-  this.explorationDetailValue;
   if(event ==='项目详情'){
     this.projectDetailDisplay = true;
     this.reportDetailDisplay = false;
@@ -307,5 +323,11 @@ saveExplorationStage(){
   goBack(){
     this.router.navigate(['/layout/explorationRight/explorationInfo']);
     this.explorationInfoService.goBack();
+  }
+
+  pageChange(event){
+    this.startPage = event.page+1;//列表开始的页数
+    this.limit = event.rows;//列表每页的行数
+    this.getStageInfo();
   }
 }

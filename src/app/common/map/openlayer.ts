@@ -119,16 +119,16 @@ export class Openlayer {
             target: this.mapDivId,
             layers: [
               new TileLayer({
-                source: new OSM()/* TileWMS({
-                    url: 'http://47.108.139.202:8080/geoserver/gwc/service/wms',
+                source: new /* OSM() */TileWMS({
+                    url: 'http://192.168.101.113:8781/geoserver/mineral/wms',
                     params: {'FORMAT': 'image/jpeg', 
-                   'VERSION': '1.1.1',
+                   'VERSION': '1.1.0',
                      tiled: true,
                     "LAYERS": 'cite:chinaosm',
                     "exceptions": 'application/vnd.ogc.se_inimage',
                     tilesOrigin: 73.2467041015625 + "," + 15.149866104126
                         }
-                }) */
+                })
               }),
               vector
             ],

@@ -6,6 +6,7 @@ import { HttpUtil } from '../../../common/util/http-util';
 import { MessageService, DynamicDialogConfig } from 'primeng/api';
 import * as ProjectionUtil from 'ol/proj';
 import { FALSE } from 'ol/functions';
+import { MineralManageService } from '../mineral-manage.service';
 @Component({
   selector: 'app-project-map',
   templateUrl: './project-map.component.html',
@@ -24,11 +25,12 @@ export class ProjectMapComponent implements OnInit {
   modifyAreaDisplay = false;//修改地图区域
   mineralAreaDisplay = false;
   mineralProject;//矿权项目数据
-
+  addLocationArea = false;//新增项目区域
   constructor(private map2dService: Map2dService,
               private httpUtil: HttpUtil,
               private messageService: MessageService,
-              public config: DynamicDialogConfig,) { 
+              public config: DynamicDialogConfig,
+              private mineralManageService: MineralManageService) { 
     //接受地图画图区域后返回的值
       this.map2dService.areaLocationCommon$.subscribe(value=>{
         let coordinates = {
@@ -49,6 +51,7 @@ export class ProjectMapComponent implements OnInit {
       {code: 'Polygon', name: '多边形'}
     ];
     this.mineralProject = this.config.data.mineralProject;
+    this.addLocationArea = this.config.data.addLocationArea;
     this.mineralProject.areaCoordinates = this.mineralProject.areaCoordinates.length>0?JSON.parse(this.mineralProject.areaCoordinates):this.mineralProject.areaCoordinates;
     
   }
@@ -90,6 +93,20 @@ export class ProjectMapComponent implements OnInit {
   }
    /* 保存地图区域 */
    saveArea(type?){
+     if(this.addLocationArea){
+       let areaCoordinates = {
+          zoom:this.OlFloorMap.map.getView().getZoom(),
+          coordinates:JSON.parse(this.mineralProject.areaCoordinates).coordinates
+        }
+        this.mineralManageService.getAddArea({
+          "areaBackground": this.mineralProject.areaBackground,
+          "areaCoordinates":JSON.stringify(areaCoordinates),
+          "areaOpacity": this.mineralProject.areaOpacity.toString(),
+        });
+        this.modifyAreaDisplay = false;
+        this.areaDialogDisplay = false;
+        return;
+     }
     if(type=='cancel'){
       if(!this.modifyAreaDisplay){
 

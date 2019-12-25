@@ -11,6 +11,7 @@ import { Map2dService } from '../../common/map/map2-d/map2-d.service';
 import { DynamicDialogModule } from 'primeng/components/dynamicdialog/dynamicdialog';
 import { ElModule  } from 'element-angular';
 import { ProjectMapComponent } from './project-map/project-map.component'
+import { MineralManageService } from './mineral-manage.service';
 
 @NgModule({
     imports: [
@@ -31,9 +32,12 @@ import { ProjectMapComponent } from './project-map/project-map.component'
       ElModule.forRoot()
     ],
     declarations:[MineralProjectComponent, ProjectMapComponent],
-    providers:[Map2dService,DialogService],
+    providers:[Map2dService,DialogService,MineralManageService],
     entryComponents: [
       ProjectMapComponent
     ],
+    exports:[
+      ProjectMapComponent
+    ]
 })
 export class MineralManageModule { }

@@ -36,6 +36,10 @@ export class MiningInfoComponent implements OnInit {
   isClickSearch = false;//点击搜索按钮
   loading: boolean;//列表加载动画显示
   filteredOwnerName;//矿权人名称
+  miningInfoDisplay =false;//新增采矿权弹出框
+  miningStartTime = new Date();//采矿权首立时间
+  explorationStartTime;//探矿权首立时间
+  modifyButton = false;//修改按钮
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
@@ -54,6 +58,7 @@ export class MiningInfoComponent implements OnInit {
   public setTableValue(){
     
     this.miningInfoTitle=[
+      { field: 'number', header: '序号' },
       { field: 'projectName', header: '项目名称' },
       { field: 'owner_id', header: '矿权人' },
       { field: 'miningStartTime', header: '采矿权首立时间' },
@@ -75,6 +80,9 @@ export class MiningInfoComponent implements OnInit {
       if(element.uri ==='/mineral-project/search/*/*' && element.method =='POST'){
         this.queryDisplay =true;
       }
+      if(element.uri ==='/mineral-project' && element.method =='PUT'){
+        this.modifyButton =true;
+      }
 
     });
     
@@ -90,8 +98,9 @@ export class MiningInfoComponent implements OnInit {
       if (value.meta.code === 6666) {
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
           data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           if( data[i].lastestProjectOwner){
             data[i]['owner_id'] = data[i].lastestProjectOwner.ownerName;
           }
@@ -119,9 +128,9 @@ export class MiningInfoComponent implements OnInit {
 
    /* 获取报告分类 */
   getReportCategory(){
-    this.httpUtil.get('mineral-project-category/list/1/1000').then(value=>{
+    this.httpUtil.get('mineral-report-category/list/1/1000').then(value=>{
       if (value.meta.code === 6666) {
-        let data = value.data.projectReports.list;
+        let data = value.data.reportCategories.list;
         for(var i = data.length - 1; i >= 0; i--){
           data[i]['label'] = data[i].reportCategory;
           data[i]['value'] = data[i].id;
@@ -163,8 +172,13 @@ export class MiningInfoComponent implements OnInit {
   }
 
   /* 查看项目详情 */
-  goDetails(data){
-    this.router.navigate(['/layout/miningRight/miningDetails'],{ skipLocationChange: true });
+  goDetails(data,type){
+    if(type=='detail'){
+      this.router.navigate(['/layout/miningRight/miningDetails'],{ skipLocationChange: true,queryParams:{'type':'detail'}  });
+    }else{
+      this.router.navigate(['/layout/miningRight/miningDetails'],{ skipLocationChange: true,queryParams:{'type':'modify'}  });
+    }
+    
     this.explorationInfoService.explorationProject = data;
     this.explorationInfoService.reportCategory = this.reportCategory;
     this.explorationInfoService.mineralOwner = this.mineralOwner;
@@ -178,6 +192,11 @@ export class MiningInfoComponent implements OnInit {
   setMining(type,value?){
     if(type=='filtered'){
       this.getSearchProject();
+      return;
+    }
+    if(type=='add'){
+      this.miningInfoDisplay = true;
+      this.miningProject= new ExplorationProject();
       return;
     }
     /* 项目文件的删除 */
@@ -228,5 +247,23 @@ export class MiningInfoComponent implements OnInit {
           this.filteredProject.push(brand);
       }
     }
+  }
+
+  /* 保存采矿权项目 */
+  saveProject(){
+    if(!this.miningProject.projectName){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '项目名称不能为空'});
+      return;
+    }
+    this.miningProject.explorationStartTime = this.explorationStartTime?this.explorationStartTime.getTime()/1000:0;
+    this.miningProject.miningStartTime = this.miningStartTime?parseInt((this.miningStartTime.getTime()/1000).toString()):0;
+  /* 增加采矿权项目 */
+    this.httpUtil.post('mineral-project',this.miningProject).then(value=>{
+      if (value.meta.code === 6666) {
+        this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
+        this.miningInfoDisplay = false;
+        this.getMiningInfo();
+      }
+    })
   }
 }

@@ -67,7 +67,7 @@ export class RoleManagementComponent implements OnInit {
   //初始化列表数据
   getTableValue(){
     this.roleTitle = [
-      { field: 'id', header: 'ID' },
+      { field: 'number', header: '序号' },
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
       { field: 'status', header: '状态' },
@@ -76,6 +76,7 @@ export class RoleManagementComponent implements OnInit {
 
     ];
     this.roleLink = [
+      {label: 'number', value: '序号'},
       {label: '授权API', value: '授权API'},
       {label: '授权菜单', value: '授权菜单'},
       {label: '关联用户', value: '关联用户'}
@@ -133,7 +134,8 @@ export class RoleManagementComponent implements OnInit {
         let data = value.data.data.list;
         this.roleTotal = value.data.data.total;
 
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           if(data[i].status==1){
             data[i].status = '正常';
           }else{
@@ -164,7 +166,8 @@ export class RoleManagementComponent implements OnInit {
         let data = value.data.roles.list;
         this.roleTotal = value.data.roles.total;
 
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           if(data[i].status==1){
             data[i].status = '正常';
           }else{
@@ -207,7 +210,8 @@ export class RoleManagementComponent implements OnInit {
       if (value.meta.code === 6666) {
         let data = value.data.data.list;
 
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           if(data[i].status==1){
             data[i].status = '有效'
           }
@@ -243,7 +247,8 @@ export class RoleManagementComponent implements OnInit {
         let data = value.data.data.list;
         this.linkTotal = value.data.data.total;
 
-        for(let i in data){
+        for(let i=0; i< data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           if(data[i].status==1){
             data[i].status = '有效'
           }
@@ -365,7 +370,8 @@ export class RoleManagementComponent implements OnInit {
           let data = value.data.data.list;
           this.addLinkTotal = value.data.data.total;
 
-          for(let i in data){
+          for(let i=0; i<data.length;i++){
+            data[i].number = (this.startPage-1)*this.limit+i +1;
             if(data[i].status==1){
               if(this.selectedLinkModule==='关联用户'){
                 data[i].status = '正常';
@@ -416,7 +422,7 @@ export class RoleManagementComponent implements OnInit {
     if(this.selectedLinkModule==='授权API'){
       this.addLinkUrl = 'role/api/';
       this.addLinkTitle = [
-        { field: 'id', header: 'ID' },
+        { field: 'number', header: '序号' },
         { field: 'name', header: '名称' },  
         { field: 'uri', header: 'URI' },
         { field: 'method', header: '访问方式' },
@@ -426,7 +432,7 @@ export class RoleManagementComponent implements OnInit {
     }else if(this.selectedLinkModule==='授权菜单'){
       this.addLinkUrl = 'role/menu/';
       this.addLinkTitle = [
-        { field: 'id', header: 'ID' },
+        { field: 'number', header: '序号' },
         { field: 'name', header: '名称' },  
         { field: 'code', header: '编码' },
         { field: 'uri', header: 'URI' },
@@ -436,7 +442,7 @@ export class RoleManagementComponent implements OnInit {
     }else{
       this.addLinkUrl = 'role/user/';
       this.addLinkTitle = [
-        { field: 'uid', header: 'UID' },
+        { field: 'number', header: '序号' },
         { field: 'username', header: '名称' },  
         { field: 'phone', header: '电话' },
         { field: 'email', header: '邮箱' },

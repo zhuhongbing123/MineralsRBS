@@ -61,7 +61,7 @@ export class ApiManageComponent implements OnInit {
   /* 列表初始化 */
   getTableValue(){
     this.apiTableTitle = [
-      { field: 'id', header: 'ID' },
+      { field: 'number', header: '序号' },
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
       { field: 'uri', header: 'URI' },
@@ -155,7 +155,8 @@ export class ApiManageComponent implements OnInit {
         let data = value.data.data.list;
         this.apiTotal = value.data.data.total;
 
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.currentPage-1)*this.pageSize+i +1;
           if(data[i].status==1){
             data[i].status = '正常'
           }
@@ -191,7 +192,8 @@ export class ApiManageComponent implements OnInit {
         let data = value.data.resources.list;
         this.apiTotal = value.data.resources.total;
 
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.currentPage-1)*this.pageSize+i +1;
           if(data[i].status==1){
             data[i].status = '正常'
           }

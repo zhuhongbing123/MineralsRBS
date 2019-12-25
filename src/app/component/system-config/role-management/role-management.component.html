@@ -31,6 +31,11 @@
                     </td>
                 </tr>
             </ng-template>
+            <ng-template pTemplate="summary">
+                <div style="text-align: right;">
+                   共{{roleTotal}}条
+                </div>
+            </ng-template>
         </p-table>
         <p-paginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="rolePageChange($event)"></p-paginator>
     </div>    
@@ -62,6 +67,11 @@
                                     </td>
                                     
                                 </tr>
+                            </ng-template>
+                            <ng-template pTemplate="summary">
+                                    <div style="text-align: right;">
+                                       共{{linkTotal}}条
+                                    </div>
                             </ng-template>
                         </p-table>
                         <p-paginator [hidden]="!linkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'link')"></p-paginator>
@@ -120,6 +130,11 @@
                             {{rowData[col.field]}}
                         </td>
                     </tr>
+                </ng-template>
+                <ng-template pTemplate="summary">
+                        <div style="text-align: right;">
+                           共{{addLinkTotal}}条
+                        </div>
                 </ng-template>
             </p-table>
             <p-paginator [hidden]="!addLinkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="addLinkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'add')"></p-paginator>

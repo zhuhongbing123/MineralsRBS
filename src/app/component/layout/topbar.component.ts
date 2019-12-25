@@ -23,7 +23,7 @@ import { LoginService } from '../login/login.service';
                 </a>
                 
                 <ul class="topbar-items fadeInDown" [ngClass]="{'topbar-items-visible': app.topbarMenuActive}">
-                    <span style='color:white'>{{loginName}}</span>
+                    <span style='color:white'>用户：{{loginName}}</span>
                     <li #profile class="profile-item" *ngIf="app.profileMode==='top'||app.isHorizontal()"
                         [ngClass]="{'active-top-menu':app.activeTopbarItem === profile}">
 
@@ -101,7 +101,7 @@ import { LoginService } from '../login/login.service';
 })
 export class TopBarComponent {
 
-   public loginName =   sessionStorage.getItem('name');
+   public loginName =   localStorage.getItem('uid');
   constructor(public app: LayoutComponent,
     public loginService: LoginService
   ) { }

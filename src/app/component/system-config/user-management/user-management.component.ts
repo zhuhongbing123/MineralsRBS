@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpUtil } from '../../../common/util/http-util';
-import { MessageService, ConfirmationService } from 'primeng/api';
+import { MessageService, ConfirmationService, MenuItem } from 'primeng/api';
 import { LoginService } from '../../login/login.service';
+import { RegisterService } from '../../register/register.service';
 
 @Component({
   selector: 'app-user-management',
@@ -9,7 +10,7 @@ import { LoginService } from '../../login/login.service';
   styleUrls: ['./user-management.component.scss']
 })
 export class UserManagementComponent implements OnInit {
-
+  items: MenuItem[];
   public userTableTitle;//用户列表标题
   public userTableValue;//用户列表数据
   public userTotal;//用户列表总数
@@ -35,10 +36,16 @@ export class UserManagementComponent implements OnInit {
   filteredUser:any[];//搜索框下拉的用户名
   allUserName;//所有用户名字
   loading: boolean;//列表加载动画显示
+  userDisplay = false;//用户弹出框
+  accountName;//账户名名称
+  userName;//用户 名称
+  password;//密码
+  userRowData;//用户当行数据
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
-              private loginService: LoginService) { }
+              private loginService: LoginService,
+              private registerService: RegisterService) { }
 
   ngOnInit() {
     this.getTableValue();
@@ -47,17 +54,27 @@ export class UserManagementComponent implements OnInit {
   /* 用户列表初始化 */
   getTableValue(){
     this.userTableTitle =[
-      { field: 'uid', header: 'UID' },
+      { field: 'number', header: '序号' },
       { field: 'username', header: '用户名' },
       { field: 'role', header: '角色' },
       { field: 'createTime', header: '创建时间' },
       { field: 'operation', header: '操作' },
     ];
     this.roleTitle = [
-      { field: 'id', header: 'ID' },
+      { field: 'number', header: '序号' },
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
       { field: 'status', header: '状态' },
+    ];
+
+    this.items = [
+      {label: '删除角色', command: (e) => {
+        this.setUserRole('','deleteRole')
+      }},
+      {label: '修改用户', command: () => {
+          //this.delete();
+      }},
+      {label: '删除用户',  url: 'http://angular.io'}
     ];
     this.loading = true;
     //获取授权的API资源
@@ -82,6 +99,9 @@ export class UserManagementComponent implements OnInit {
       }
       
     });
+    if(!this.deleteDisplay){
+      this.items.splice(1,this.items.length)
+    }
     if(!this.modifyDisplay && !this.deleteDisplay){
       this.userTableTitle.splice(this.userTableTitle.length-1,1);
     }
@@ -95,7 +115,8 @@ export class UserManagementComponent implements OnInit {
         if (value.meta.code === 6666) {
           let data = value.data.pageInfo.list;
           this.userTotal = value.data.pageInfo.total;
-          for(let i in data){
+          for(let i=0; i<data.length;i++){
+            data[i].number = (this.pageNumber-1)*this.pageSize+i +1;
             if(data[i].succeed==1){
               data[i].succeed = '成功'
             }
@@ -125,7 +146,8 @@ export class UserManagementComponent implements OnInit {
       if (value.meta.code === 6666) {
         let data = value.data.data.list;
         this.roleTotal = value.data.data.total;
-        for(let i in data){
+        for(let i=0; i< data.length;i++){
+          data[i].number = (this.pageNumber-1)*this.pageSize+i +1;
           if(data[i].status==1){
             data[i].status = '正常'
           }else{
@@ -152,7 +174,8 @@ export class UserManagementComponent implements OnInit {
     }).then(value=>{
       let data = value.data.users.list;
       this.userTotal = value.data.users.total;
-      for(let i in data){
+      for(let i=0; i<data.length;i++){
+        data[i].number = (this.pageNumber-1)*this.pageSize+i +1;
           if(data[i].succeed==1){
             data[i].succeed = '成功'
           }
@@ -166,13 +189,26 @@ export class UserManagementComponent implements OnInit {
 
   /* 获取用户角色 */
   setUserRole(value,type){
+    if(!value){
+      value = this.userRowData;
+    }
     this.selectUser = value;
     /* 搜索用户名 */
     if(type=='filtered'){
       this.getFilteredUser();
       return;
     }
-    if(type =='delete'){
+
+    if(type=='add'){
+      this.userDisplay = true;
+      return;
+    }
+    if(type=='modify'){
+      this.userName = value.userName;
+      this.accountName = value.uid;
+      return;
+    }
+    if(type =='deleteRole'){
       this.confirmationService.confirm({
         message: '确认删除该用户('+value.username+')的角色('+value.role+')吗?',
         header: '删除角色',
@@ -254,5 +290,40 @@ export class UserManagementComponent implements OnInit {
           this.filteredUser.push(brand);
       }
     }
+  }
+
+  /* 添加用户 */
+  saveOwner(){
+    this.password = this.password
+    const getToken$ = this.registerService.getTokenKey().subscribe(
+      data => {
+
+        if (data.data.tokenKey !== undefined) {
+          const tokenKey = data.data.tokenKey;
+          const userKey = data.data.userKey;
+          getToken$.unsubscribe();
+            const register$ = this.registerService.register(this.accountName, this.userName, this.password, tokenKey, userKey).subscribe(
+              data2=> {
+                // 注册成功返回
+                if (data2.meta.code === 2002) {
+                  this.getUserValue();
+                  this.messageService.add({key: 'tc', severity:'success', summary: '提示', detail: '用户添加成功'});
+                  this.userDisplay = false;
+                  register$.unsubscribe();
+                } else {
+                  this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该用户已存在'});
+                  register$.unsubscribe();
+                }
+              },
+              () => {
+                this.messageService.add({key: 'tc', severity:'error', summary: '警告', detail: '服务器开小差了'});
+                register$.unsubscribe();
+              })
+          }
+      })
+  }
+
+  aaa(event){
+    let aa;
   }
 }

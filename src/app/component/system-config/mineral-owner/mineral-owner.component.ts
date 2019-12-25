@@ -44,6 +44,7 @@ export class MineralOwnerComponent implements OnInit {
   /* 初始化表格 */
   setTableValue(){
     this.mineralOwnerTitle = [
+      { field: 'number', header: '序号' },
       { field: 'ownerName', header: '矿权人名称' },
       { field: 'operation', header: '操作' },
     ];
@@ -82,7 +83,12 @@ export class MineralOwnerComponent implements OnInit {
   getMineralOwnerValue(){
     this.httpUtil.get('mineral-owner/list/'+this.startPage+'/'+this.limit).then(value=>{
       if (value.meta.code === 6666) {
-          this.mineralOwnerValue = value.data.mineralOwners.list;
+          let data = value.data.mineralOwners.list;
+          for(let i=0; i<data.length;i++){
+            data[i].number = (this.startPage-1)*this.limit+i +1;
+          }
+        
+          this.mineralOwnerValue = data;
           this.ownerTotal = value.data.mineralOwners.total;
           this.loading = false;
       }
@@ -105,7 +111,11 @@ export class MineralOwnerComponent implements OnInit {
       ownerName: this.filteredOwnerName?this.filteredOwnerName:''
     }).then(value=>{
       if (value.meta.code === 6666) {
-        this.mineralOwnerValue = value.data.mineralOwners.list;
+        let data = value.data.mineralOwners.list;
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
+        }
+        this.mineralOwnerValue = data;
         this.ownerTotal = value.data.mineralOwners.total;
         this.loading = false;
       }

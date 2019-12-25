@@ -76,7 +76,7 @@ export class ExplorationReport{
   "id": number;
   "projectId": number;//项目ID
   "reportCategoryId": any;//报告分类ID
-  "reportTime": any;//报告日期
+  "reportTime": any;//报告上传日期
   "reportFilePath": string;//报告文件夹路径
   "reportDescription": string;//文件详情描述
   "reportUploader": string;//文件上传用户

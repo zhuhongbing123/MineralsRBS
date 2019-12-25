@@ -12,6 +12,8 @@ export class LoginLogComponent implements OnInit {
   public loginLogValue: any;// 登录日志列表数据
   public loginLogTotal;//登录日志列表总数
   public LIMIT_LOGIN=10;//登录日志列表每页显示数量
+  page: number = 1;//当前页码
+  rows: number = 10;//分页总数
   loading: boolean;//列表加载动画显示
   constructor(private httpUtil: HttpUtil) { }
 
@@ -22,7 +24,7 @@ export class LoginLogComponent implements OnInit {
   //初始化列表数据
   getTableValue(){
     this.loginLogTitle = [
-      { field: 'id', header: 'ID' },
+      { field: 'number', header: '序号' },
       { field: 'logName', header: '日志类型' },
       { field: 'userId', header: '用户标识' },
       { field: 'ip', header: '用户终端IP' },
@@ -34,9 +36,13 @@ export class LoginLogComponent implements OnInit {
     this.getLoginLog();
   }
   getLoginLog(){
-    this.httpUtil.get('log/accountLog/1/10').then(value=>{
+    this.httpUtil.get('log/accountLog/'+this.page+'/'+this.rows).then(value=>{
       if (value.meta.code === 6666) {
-        this.loginLogValue = value.data.data.list;
+        let data = value.data.data.list;
+        for(let i= 0; i<data.length;i++){
+          data[i].number = (this.page-1)*this.rows+i +1;
+        }
+        this.loginLogValue = data;
         this.loginLogTotal = value.data.data.total;
         this.setTableValue(value.data.data.list);
       }
@@ -60,14 +66,8 @@ export class LoginLogComponent implements OnInit {
 
   /* 表格切换页码 */
   pageChange(event){
-    let page = event.page+1;
-    let rows = event.rows;
-    this.httpUtil.get('log/accountLog/'+page+'/'+rows).then(value=>{
-      if (value.meta.code === 6666) {
-        this.loginLogValue = value.data.data.list;
-        this.loginLogTotal = value.data.data.total;
-        this.setTableValue(value.data.data.list);
-      }
-    })
+    this.page = event.page+1;
+    this.rows = event.rows;
+    this.getLoginLog();
   }
 }

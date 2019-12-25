@@ -48,8 +48,13 @@
                             
                         </tr>
                     </ng-template>
+                    <ng-template pTemplate="summary">
+                            <div style="text-align: right;">
+                               共{{operationLogTotal}}条
+                            </div>
+                    </ng-template>
             </p-table>
         </div>
+        <p-paginator [hidden]="!operationLogTotal" [rows]="LIMIT_LOGIN" [totalRecords]="operationLogTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
 </div>
 
-<p-paginator [hidden]="!operationLogTotal" [rows]="LIMIT_LOGIN" [totalRecords]="operationLogTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>

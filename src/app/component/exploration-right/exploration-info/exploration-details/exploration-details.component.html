@@ -67,7 +67,7 @@
                     </tr>
                 </tbody>
             </table>
-            <button type="button" [hidden]="!modifyButton" pButton (click)="modifyProject()" label="编辑"></button>
+            <button type="button" [hidden]="!modifyButton || !buttonType" pButton (click)="modifyProject()" label="修改"></button>
             <button style="margin-left:20px" type="button" pButton  (click)="goBack()" label="返回" class="ui-button-secondary"></button>
         </div>
     </div>
@@ -75,11 +75,11 @@
     <!--  勘查详情-->
     <div style="clear: both;" class="p-table" [hidden]="!stageDetailDisplay">
         <div class="ui-g-12 ui-md-4">
-            <button pButton type="button" [hidden]="!addStageButton" label="新增" (click)="setExplorationt('addStage')"></button>
+            <button pButton type="button" [hidden]="!addStageButton || !buttonType" label="新增" (click)="setExplorationt('addStage')"></button>
         </div>
         <button style="float: right;top: 5px;" type="button" pButton  (click)="goBack()" label="返回"></button>
         <div style="clear:both">
-            <p-table [columns]="explorationDetailTitle" [value]="explorationDetailValue" [paginator]="true" [rows]="10">
+            <p-table [columns]="explorationDetailTitle" [value]="explorationDetailValue">
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th *ngFor="let col of columns">
@@ -91,17 +91,23 @@
                 <tr>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'operation' && modifyStageButton" class="operation-icon"  (click)="setExplorationt('modifyStage',rowData)">修改</span>
-                        <span *ngIf = "col.field == 'operation' && deleteStageButton" class="operation-icon"  (click)="setExplorationt('deleteStage',rowData)">删除</span>
+                        <span *ngIf = "col.field == 'operation' && modifyStageButton && buttonType" class="operation-icon"  (click)="setExplorationt('modifyStage',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation' && deleteStageButton && buttonType" class="operation-icon"  (click)="setExplorationt('deleteStage',rowData)">删除</span>
                     </td>
                 </tr>
             </ng-template>
+            <ng-template pTemplate="summary">
+                    <div style="text-align: right;">
+                       共{{detailTotal}}条
+                    </div>
+            </ng-template>
             </p-table>
+            <p-paginator [hidden]="!detailTotal" [rows]="LIMIT_LOGIN" [totalRecords]="detailTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
         </div>
     </div>
 
     <!-- 矿权报告 -->
-    <app-report-file [type]="'exploration'"></app-report-file>
+    <app-report-file [type]="'exploration'" [buttonType]="buttonType"></app-report-file>
 
   <div class="dialog-class textarea-style">
       <!-- 探矿权项目增加、修改弹出框 -->
