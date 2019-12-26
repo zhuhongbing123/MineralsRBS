@@ -110,12 +110,12 @@ export class ExplorationFileComponent implements OnInit {
     }
     if(type==='modify'){
       this.setReporteDisplay  = true;
-      this.reportCategoryName = value.reportCategory; 
-      this.reportTitle = '修改分类('+value.reportCategory+')';
+      this.reportCategoryName = value.reportCategoryName; 
+      this.reportTitle = '修改分类('+value.reportCategoryName+')';
     }
     if(type == 'delete'){
       this.confirmationService.confirm({
-        message: '确认删除该分类('+value.reportCategory+')吗?',
+        message: '确认删除该分类('+value.reportCategoryName+')吗?',
         header: '删除分类',
         icon: 'pi pi-exclamation-triangle',
         acceptLabel:'确定',
@@ -145,7 +145,7 @@ export class ExplorationFileComponent implements OnInit {
     if(this.reportType =='add'){
       this.httpUtil.post('mineral-report-category',{
         "reportType": this.reportTypeNumber,
-        "reportCategory": this.reportCategoryName
+        "reportCategoryName": this.reportCategoryName
       }).then(value=>{
         if (value.meta.code === 6666) {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
@@ -156,7 +156,7 @@ export class ExplorationFileComponent implements OnInit {
     }else{
       this.httpUtil.put('mineral-report-category',{
         "reportType": this.reportTypeNumber,
-        "reportCategory": this.reportCategoryName,
+        "reportCategoryName": this.reportCategoryName,
         "id":this.reportValue.id
       }).then(value=>{
         if (value.meta.code === 6666) {

@@ -146,7 +146,7 @@ export class ExplorationInfoComponent implements OnInit {
       if (value.meta.code === 6666) {
         let data = value.data.reportCategories.list;
         for(var i = data.length - 1; i >= 0; i--){
-          data[i]['label'] = data[i].reportCategory;
+          data[i]['label'] = data[i].reportCategoryName;
           data[i]['value'] = data[i].id;
           if(data[i].reportType!==1){
               data.splice(i,1);
