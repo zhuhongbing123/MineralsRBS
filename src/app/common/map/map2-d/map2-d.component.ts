@@ -146,7 +146,8 @@ export class Map2DComponent implements OnInit {
   /* 删除临时图层 */
   removeTemporary(){
         //删除添加的临时图层
-    this.OlFloorMap.map.removeLayer(this.OlFloorMap.vectorLayer[this.OlFloorMap.vectorLayer.length-1])
+    this.OlFloorMap.map.removeLayer(this.OlFloorMap.vectorLayer[this.OlFloorMap.vectorLayer.length-1]);
+
   }
 
   /* 清除地图所有图层 */
@@ -154,7 +155,6 @@ export class Map2DComponent implements OnInit {
     //this.OlFloorMap.map.getLayers().get
     let layer = this.OlFloorMap.vectorLayer;
     for(let i in layer){
-      let aa = layer[i].getSource().featureChangeKeys_['29'];
       this.OlFloorMap.map.removeLayer(layer[i])
     }
   }

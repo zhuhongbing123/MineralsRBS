@@ -9,14 +9,21 @@ import { HttpUrl } from './http-url';
 import { RequestOptions} from '@angular/http'; 
 @Injectable()
 export class HttpUtil {
-    private baseUrl: string;
+    private baseUrl;
     headers;
     options;
     constructor( private http: HttpClient,private router: Router) {
-        this.baseUrl = HttpUrl.apiBaseUrl;
+        /* this.http.get('assets/server.json').subscribe(res=>{
+          let aa;
+        }) */
+        
+             
+        this.baseUrl = localStorage.getItem('IP');
         this.headers = new HttpHeaders({ 'appId': localStorage.getItem('uid')?localStorage.getItem('uid'):'','token': localStorage.getItem('token')?localStorage.getItem('token'):''});
         this.options = new RequestOptions({ headers: this.headers });
     }
+
+    
     public getLogin(url: string): Observable<ResponseVO> {
         const uri = url;
         return this.http.get<ResponseVO>(uri).pipe(
@@ -87,10 +94,16 @@ export class HttpUtil {
         });
     }
 
-    public delete(url) {
+    public delete(url,body?) {
+      const options = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+        }),
+        body:body
+      };
       return this.http
         .delete(
-          this.baseUrl + url
+          this.baseUrl + url,options
         )
         .toPromise()
         .then(res => {

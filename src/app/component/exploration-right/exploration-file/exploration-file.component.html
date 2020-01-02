@@ -17,6 +17,7 @@
       <p-table [columns]="explorationInfoTitle" [value]="explorationValue"  [loading]="loading">
         <ng-template pTemplate="header" let-columns>
             <tr>
+                <th style="width:8%">序号</th>
                 <th *ngFor="let col of columns">
                     {{col.header}}
                 </th>
@@ -24,6 +25,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
             <tr>
+                <td>{{rowData.number}}</td>
                 <td *ngFor="let col of columns">
                     <span  *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                     <span  *ngIf = "col.field == 'operation' && modifyButton"   class="operation-icon" (click)="setReport('modify',rowData)">修改</span>

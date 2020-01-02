@@ -17,6 +17,7 @@
         <p-table [columns]="userTableTitle" [value]="userTableValue" [loading]="loading">
             <ng-template pTemplate="header" let-columns>
                 <tr>
+                    <th style="width:8%">序号</th>
                     <th *ngFor="let col of columns">
                         {{col.header}}
                     </th>
@@ -24,18 +25,15 @@
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
+                    <td>{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                         <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
                         <span *ngIf = "col.field == 'operation' && modifyDisplay"  (click)="setUserRole(rowData,'modifyRole')" class="operation-icon"> 角色管理</span>
-                        <span *ngIf = "col.field == 'operation'" >
-                              
-                            <p-splitButton label="更多" [model]="items" styleClass="ui-button-info" (onDropdownClick)="userRowData=rowData"></p-splitButton>
-
-                        </span> 
-<!--                         <span *ngIf = "col.field == 'operation' && deleteDisplay && rowData.role"  (click)="setUserRole(rowData,'deleteRole')" class="operation-icon"> 删除角色</span>
-                        <span *ngIf = "col.field == 'operation' && deleteDisplay && rowData.role"  (click)="setUserRole(rowData,'modify')" class="operation-icon"> 修改</span>
-                        <span *ngIf = "col.field == 'operation' && deleteDisplay && rowData.role"  (click)="setUserRole(rowData,'delete')" class="operation-icon"> 删除</span> -->
+             
+                        <span *ngIf = "col.field == 'operation' && deleteRoleDisplay && rowData.role"  (click)="setUserRole(rowData,'deleteRole')" class="operation-icon"> 删除角色</span>
+                        <span *ngIf = "col.field == 'operation' && deleteUserDisplay"  (click)="setUserRole(rowData,'modify')" class="operation-icon"> 重置密码</span>
+                        <span *ngIf = "col.field == 'operation' && modifyPassword "  (click)="setUserRole(rowData,'delete')" class="operation-icon"> 删除用户</span>
                     </td>
                 </tr>
             </ng-template>
@@ -57,6 +55,7 @@
                   <ng-template pTemplate="header" let-columns>
                       <tr>
                           <th style="width: 3em"></th>
+                          <th style="width:8%">序号</th>
                           <th *ngFor="let col of columns">
                               {{col.header}}
                           </th>
@@ -67,6 +66,7 @@
                             <td>
                                     <p-tableRadioButton [value]="rowData"></p-tableRadioButton>
                             </td>
+                            <td>{{rowData.number}}</td>
                           <td *ngFor="let col of columns">
                               <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                               <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
@@ -95,21 +95,80 @@
                 <form>
                     <div class="form-group has-feedback">
                         <label class="control-label">账户名称</label>
-                        <input  type="text"   [(ngModel)]="accountName" name="accountName"  class="form-control">
+                        <input  
+                            type="text"   
+                            [(ngModel)]="accountName" 
+                            name="accountName"  
+                            class="form-control"
+                            maxlength = '100'
+                        >
                     </div>
                     <div class="form-group has-feedback">
                         <label class="control-label">用户名</label>
-                        <input  type="text"   [(ngModel)]="userName" name="userName"  class="form-control">
+                        <input  
+                            type="text"   
+                            [(ngModel)]="userName" 
+                            name="userName" 
+                            class="form-control"
+                            maxlength = '100'
+                         >
                     </div>
                     <div class="form-group has-feedback">
                         <label class="control-label">密码</label>
-                        <input  type="text"   [(ngModel)]="password" name="password"  class="form-control">
+                        <input  
+                            type="password"   
+                            [(ngModel)]="password" 
+                            name="password"  
+                            class="form-control"
+                            maxlength = '100'
+                        >
                     </div>
+                    <div class="form-group has-feedback">
+                        <label class="control-label">确认密码</label>
+                        <input  
+                            type="password"   
+                            [(ngModel)]="comfirmPassword" 
+                            name="comfirmPassword"  
+                            class="form-control"
+                            maxlength = '100'
+                        >
+                    </div>
+
                 </form>
                 <p-footer>
-                    <button type="button" pButton  (click)="saveOwner()" label="保存"></button>
+                    <button type="button" pButton  (click)="saveOwner('add')" label="保存"></button>
                     <button type="button" pButton  (click)="userDisplay=false" label="取消" class="ui-button-secondary"></button>
                  </p-footer>   
+        </p-dialog>
+        <p-dialog header="重置密码" [(visible)]="modifyPasswordDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
+            <form>
+               
+                <div class="form-group has-feedback">
+                    <label class="control-label">新密码</label>
+                    <input  
+                        type="password"   
+                        [(ngModel)]="newPassword" 
+                        name="newPassword" 
+                        class="form-control"
+                        maxlength = '100'
+                     >
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label">确认新密码</label>
+                    <input  
+                        type="password"   
+                        [(ngModel)]="comfirmPassword" 
+                        name="password" 
+                        class="form-control"
+                        maxlength = '100'
+                    >
+                </div>
+                
+            </form>
+            <p-footer>
+                <button type="button" pButton  (click)="saveOwner('modify')" label="保存"></button>
+                <button type="button" pButton  (click)="userDisplay=false" label="取消" class="ui-button-secondary"></button>
+             </p-footer>   
         </p-dialog>
 </div>                
     

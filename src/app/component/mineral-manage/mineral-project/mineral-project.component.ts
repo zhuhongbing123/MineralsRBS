@@ -8,6 +8,7 @@ import { Map2dService } from '../../../common/map/map2-d/map2-d.service';
 
 import { ProjectMapComponent } from '../project-map/project-map.component';
 import { MineralManageService } from '../mineral-manage.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -40,8 +41,9 @@ export class MineralProjectComponent implements OnInit {
   isClickSearch = false;//是否点击查询按钮
   loading: boolean;//列表加载动画显示
   ownerName;//矿权人名称
-
-  
+  addProjectArea = false;//新增项目区域
+  addAreaCommon: Subscription;
+  mineralOwner:any[];//矿权人
 
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
@@ -50,7 +52,7 @@ export class MineralProjectComponent implements OnInit {
               private map2dService: Map2dService,
               public dialogService: DialogService,
               private mineralManageService: MineralManageService) {
-                this.mineralManageService.addAreaCommon$.subscribe((value)=>{
+               this.addAreaCommon =  this.mineralManageService.addAreaCommon$.subscribe((value)=>{
                   this.mineralProject.areaBackground = value.areaBackground;
                   this.mineralProject.areaCoordinates = value.areaCoordinates;
                   this.mineralProject.areaOpacity = value.areaOpacity;
@@ -62,6 +64,7 @@ export class MineralProjectComponent implements OnInit {
     this.getProjectName();
   }
   ngAfterViewInit(){
+    this.addAreaCommon.unsubscribe();
     /* this.OlFloorMap = new Openlayer(this.map2dService);
     this.OlFloorMap.mapDivId = 'projectMapss';
     this.OlFloorMap.fullMap = false;
@@ -87,7 +90,6 @@ export class MineralProjectComponent implements OnInit {
   public setTableValue(){
     
     this.mineralProjectTitle=[
-      { field: 'number', header: '序号' },
       { field: 'projectName', header: '项目名称' },
       { field: 'owner_id', header: '矿权人' },
       { field: 'explorationStartTime', header: '探矿权首立时间' },
@@ -123,7 +125,8 @@ export class MineralProjectComponent implements OnInit {
     if(!this.deleteDisplay){
       this.mineralProjectTitle.splice(this.mineralProjectTitle.length-1,1)
     }
-    this.getExplorationInfo()
+
+    this.getMineralOwner();
   }
 
   /* 获取矿权项目数据 */
@@ -136,8 +139,10 @@ export class MineralProjectComponent implements OnInit {
           data[i].number = (this.startPage-1)*this.limit+i +1;
           data[i].explorationStartTime =  data[i].explorationStartTime!==0?new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i].miningStartTime =  data[i].miningStartTime!==0?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-          if(data[i].lastestProjectOwner){
-            data[i]['owner_id']= data[i].lastestProjectOwner.ownerName;
+          for(let j in this.mineralOwner){
+            if(data[i].ownerId == this.mineralOwner[j].id){
+              data[i]['owner_id']  = this.mineralOwner[j].ownerName;
+            }
           }
         }
         
@@ -152,6 +157,21 @@ export class MineralProjectComponent implements OnInit {
     this.httpUtil.get('mineral-project/name/0').then(value=>{
       if (value.meta.code === 6666) {
         this.allProjectName = value.data.projectNames;
+      }
+    })
+  }
+
+  /*  获取矿权人*/
+  getMineralOwner(){
+    this.httpUtil.get('mineral-owner/list/1/10000').then(value=>{
+      if (value.meta.code === 6666) {
+        let data = value.data.mineralOwners.list;
+        for(let i in data){
+          data[i]['label'] = data[i].ownerName;
+          data[i]['value'] = data[i].id;
+        }
+        this.mineralOwner = data;
+        this.getExplorationInfo();
       }
     })
   }
@@ -188,6 +208,7 @@ export class MineralProjectComponent implements OnInit {
       this.miningStartTime = value.miningStartTime?new Date(value.miningStartTime):'';
       this.mineralProject = value;
       this.mineralProjectDisplay = true;
+      this.addProjectArea = false;
       this.isModify = true;
 
       return;
@@ -202,6 +223,7 @@ export class MineralProjectComponent implements OnInit {
       this.miningStartTime = '';
       this.explorationStartTime = '';
       this.mineralProjectDisplay = true;
+      this.addProjectArea = true;
     }else{
       this.confirmationService.confirm({
         message: '确认删除该项目('+value.projectName+')吗?',
@@ -287,6 +309,7 @@ export class MineralProjectComponent implements OnInit {
       // baseZIndex: 1000,
       data: {
         isIndoorMap: false,
+        addProjectArea: this.addProjectArea,
         mineralProject:this.mineralProject
       },
     });

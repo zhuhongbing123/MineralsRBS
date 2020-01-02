@@ -35,6 +35,7 @@ export class RoleManagementComponent implements OnInit {
   public addLinkValue;//添加关联模块列表的数据
   public addLinkTitle;//添加关联模块列表标题
   public selectedAddLink;//已选择添加关联模块列表值
+  public selectedDeleteLink = [];//已选择删除关联模块列表值
   public addLinkHeader;//添加角色关联模块弹出框标题
   public addLinkTotal;//添加角色列表总数
   public addLinkUrl = 'role/api';//添加角色列表获取数据的url
@@ -67,7 +68,6 @@ export class RoleManagementComponent implements OnInit {
   //初始化列表数据
   getTableValue(){
     this.roleTitle = [
-      { field: 'number', header: '序号' },
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
       { field: 'status', header: '状态' },
@@ -76,7 +76,6 @@ export class RoleManagementComponent implements OnInit {
 
     ];
     this.roleLink = [
-      {label: 'number', value: '序号'},
       {label: '授权API', value: '授权API'},
       {label: '授权菜单', value: '授权菜单'},
       {label: '关联用户', value: '关联用户'}
@@ -358,10 +357,40 @@ export class RoleManagementComponent implements OnInit {
   setLink(type,value?){
     let title =  this.selectedLinkModule.slice(2);
     this.addLinkHeader = this.clickRoleName+'--添加'+title;
-    
+    //批量删除
+    if(type=='deleteMore'){
+      let resourceIds = [];
+      for(let i in  this.selectedDeleteLink){
+        resourceIds.push(this.selectedDeleteLink[i].id);
+      }
+      this.confirmationService.confirm({
+        message: '确认删除授权的API吗?',
+        header: '删除'+title,
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel:'确定',
+        rejectLabel:'取消',
+        accept: () => {
+          this.httpUtil.delete('role/authority/resources',{
+            "resourceIds": resourceIds,
+            "roleId": this.selectedRole.id
+          
+          }).then(value=>{
+            if (value.meta.code === 6666) {
+              this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '删除成功'});
+              this.getLinkValue(this.selectedRole.id,'delete');
+            }
+          })
+        },
+        reject: () => {
+        
+        }
+      });
+      return;
+    }
     if(value){
       this.selectedLink = value;
     }
+    
     this.getLinkUrl();
     if(type=='add'){
       this.httpUtil.get(this.addLinkUrl+'-/'+this.selectedRole.id+'/1/10').then(value=>{
@@ -422,7 +451,6 @@ export class RoleManagementComponent implements OnInit {
     if(this.selectedLinkModule==='授权API'){
       this.addLinkUrl = 'role/api/';
       this.addLinkTitle = [
-        { field: 'number', header: '序号' },
         { field: 'name', header: '名称' },  
         { field: 'uri', header: 'URI' },
         { field: 'method', header: '访问方式' },
@@ -432,7 +460,6 @@ export class RoleManagementComponent implements OnInit {
     }else if(this.selectedLinkModule==='授权菜单'){
       this.addLinkUrl = 'role/menu/';
       this.addLinkTitle = [
-        { field: 'number', header: '序号' },
         { field: 'name', header: '名称' },  
         { field: 'code', header: '编码' },
         { field: 'uri', header: 'URI' },
@@ -442,7 +469,6 @@ export class RoleManagementComponent implements OnInit {
     }else{
       this.addLinkUrl = 'role/user/';
       this.addLinkTitle = [
-        { field: 'number', header: '序号' },
         { field: 'username', header: '名称' },  
         { field: 'phone', header: '电话' },
         { field: 'email', header: '邮箱' },
@@ -458,9 +484,13 @@ export class RoleManagementComponent implements OnInit {
       if(this.selectedAddLink){
         if(this.addLinkUrl =='role/user/'){
           url = 'user/authority/role';
+          let uid = [];
+          for(let i in this.selectedAddLink){
+            uid.push(parseInt(this.selectedAddLink[i].uid));
+          }
           body = {
-            uid:this.selectedAddLink.uid.toString(),
-            roleId:this.selectedRole.id.toString()
+            uid:uid,
+            roleId:this.selectedRole.id
           }
         }else{
           //添加API
@@ -495,6 +525,7 @@ export class RoleManagementComponent implements OnInit {
     this.deleteAPI = false;
     this.addUser = false;
     this.deleteUser = false;
+    this.selectedDeleteLink = [];
     JSON.parse(localStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/role/authority/resource' && element.method =='POST' && type=='授权API'){
         this.addAPI =true;
@@ -505,7 +536,7 @@ export class RoleManagementComponent implements OnInit {
       if(element.uri ==='/user/authority/role' && element.method =='POST' && type=='关联用户'){
         this.addUser =true;
       }
-      if(element.uri ==='/user/authority/role' && element.method =='DELETE' && type=='关联用户'){
+      if(element.uri ==='/user/authority/role/*/*' && element.method =='DELETE' && type=='关联用户'){
         this.deleteUser =true;
       }
     })

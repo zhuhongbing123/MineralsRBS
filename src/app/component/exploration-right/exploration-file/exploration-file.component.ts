@@ -42,7 +42,6 @@ export class ExplorationFileComponent implements OnInit {
   //初始化表格
   public setTableValue(){
     this.explorationInfoTitle=[
-      { field: 'number', header: '序号' },
       { field: 'reportCategoryName', header: '报告分类名称' },
       { field: 'reportType', header: '报告种类' },
       { field: 'operation', header: '操作' }

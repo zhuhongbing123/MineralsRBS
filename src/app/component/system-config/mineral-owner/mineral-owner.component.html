@@ -13,6 +13,7 @@
         <p-table [columns]="mineralOwnerTitle" [value]="mineralOwnerValue"  [rows]="10" [loading]="loading">
             <ng-template pTemplate="header" let-columns>
                 <tr>
+                    <th style="width:8%">序号</th>
                     <th *ngFor="let col of columns">
                         {{col.header}}
                     </th>
@@ -20,6 +21,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
+                    <td>{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                         <span *ngIf = "col.field == 'operation' && modifyDisplay" class="operation-icon"  (click)="setOwner('modify',rowData)">修改</span>
@@ -43,7 +45,7 @@
             <form>
                 <div class="form-group has-feedback">
                     <label class="control-label">矿权人名称</label>
-                    <input  type="text"   [(ngModel)]="mineralOwner.ownerName" name="ownerName"  class="form-control">
+                    <input  type="text"    maxlength = '100' [(ngModel)]="mineralOwner.ownerName" name="ownerName"  class="form-control">
                 </div>
             </form>
             <p-footer>

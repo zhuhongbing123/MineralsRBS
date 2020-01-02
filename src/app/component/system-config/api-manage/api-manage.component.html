@@ -12,13 +12,15 @@
     <p-table [columns]="apiTableTitle" [value]="apiTableValue" [loading]="loading">
       <ng-template pTemplate="header" let-columns>
           <tr>
-              <th *ngFor="let col of columns">
-                  {{col.header}}
-              </th>
+            <th style="width:8%">序号</th>
+            <th *ngFor="let col of columns">
+                {{col.header}}
+            </th>
           </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
           <tr>
+              <td>{{rowData.number}}</td>
               <td *ngFor="let col of columns">
                   <span *ngIf = "col.field !== 'operation' && col.field !== 'link'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                   <span  *ngIf = "col.field == 'operation' && modifyDisplay"  (click)="setApi('modify',rowData)" class="operation-icon"> 修改</span>
@@ -41,15 +43,36 @@
                 <form>
                         <div class="form-group has-feedback">
                           <label class="control-label">编码</label>
-                          <input [(ngModel)]="apiEditor.code" style="width:700px !important" type="text" name="code" class="form-control">
+                          <input 
+                            [(ngModel)]="apiEditor.code" 
+                            style="width:700px !important" 
+                            type="text" 
+                            name="code" 
+                            class="form-control"
+                            maxlength = '100'
+                          >
                         </div>
                         <div class="form-group has-feedback">
                             <label class="control-label">名称</label>
-                            <input [(ngModel)]="apiEditor.name" style="width:700px !important" type="text" name="name" class="form-control">
+                            <input 
+                                [(ngModel)]="apiEditor.name" 
+                                style="width:700px !important" 
+                                type="text" 
+                                name="name" 
+                                class="form-control"
+                                maxlength = '100'
+                            >
                         </div>
                         <div class="form-group has-feedback">
                             <label class="control-label">URI</label>
-                            <input [(ngModel)]="apiEditor.uri" style="width:700px !important" type="text" name="uri" class="form-control">
+                            <input 
+                                [(ngModel)]="apiEditor.uri" 
+                                style="width:700px !important" 
+                                type="text" 
+                                name="uri" 
+                                class="form-control"
+                                maxlength = '200'
+                            >
                         </div>
                         <div class="form-group has-feedback">
                             <label class="control-label">API类别</label>
@@ -78,8 +101,8 @@
                 </form>
                
                 <p-footer>
-                    <button type="button" pButton icon="pi pi-check" (click)="saveAPI()" label="保存"></button>
-                    <button type="button" pButton icon="pi pi-close" (click)="apiEditorDisplay=false" label="取消" class="ui-button-secondary"></button>
+                    <button type="button" pButton  (click)="saveAPI()" label="保存"></button>
+                    <button type="button" pButton  (click)="apiEditorDisplay=false" label="取消" class="ui-button-secondary"></button>
                 </p-footer>
         </p-dialog>
 </div>

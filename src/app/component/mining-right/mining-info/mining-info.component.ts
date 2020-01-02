@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
+import { MenuItem, MessageService, ConfirmationService, DialogService } from 'primeng/api';
 import { HttpUtil } from '../../../common/util/http-util';
 import { ExplorationProject,MiningMonitoring,ExplorationReport, MiningStage } from '../../../common/util/app-config';
 import * as XLSX from 'xlsx';
@@ -8,6 +8,8 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/login.service';
 import { FALSE } from 'ol/functions';
+import { ProjectMapComponent } from '../../exploration-right/exploration-info/project-map/project-map.component';
+
 declare let PDFObject;
 @Component({
   selector: 'app-mining-info',
@@ -40,25 +42,33 @@ export class MiningInfoComponent implements OnInit {
   miningStartTime = new Date();//采矿权首立时间
   explorationStartTime;//探矿权首立时间
   modifyButton = false;//修改按钮
+  addAreaCommon: Subscription;
+
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private explorationInfoService: ExplorationInfoService,
     private router: Router,
-    private loginService: LoginService) { 
-
+    private loginService: LoginService,
+    private dialogService: DialogService) { 
+      this.addAreaCommon =  this.explorationInfoService.addAreaCommon$.subscribe((value)=>{
+        this.miningProject.areaBackground = value.areaBackground;
+        this.miningProject.areaCoordinates = value.areaCoordinates;
+        this.miningProject.areaOpacity = value.areaOpacity;
+      })
     }
 
   ngOnInit() {
     this.setTableValue();
   }
   
-
+  ngOnDestroy(){
+    this.addAreaCommon.unsubscribe();
+  }
   //初始化表格
   public setTableValue(){
     
     this.miningInfoTitle=[
-      { field: 'number', header: '序号' },
       { field: 'projectName', header: '项目名称' },
       { field: 'owner_id', header: '矿权人' },
       { field: 'miningStartTime', header: '采矿权首立时间' },
@@ -86,7 +96,7 @@ export class MiningInfoComponent implements OnInit {
 
     });
     
-    this.getMiningInfo();
+    
     this.getMineralOwner();
     this.getReportCategory();
     this.getProjectName();
@@ -101,8 +111,11 @@ export class MiningInfoComponent implements OnInit {
         for(let i=0; i<data.length;i++){
           data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i].number = (this.startPage-1)*this.limit+i +1;
-          if( data[i].lastestProjectOwner){
-            data[i]['owner_id'] = data[i].lastestProjectOwner.ownerName;
+    
+          for(let j in this.mineralOwner){
+            if(data[i].ownerId == this.mineralOwner[j].id){
+              data[i]['owner_id']  = this.mineralOwner[j].ownerName;
+            }
           }
         }
         
@@ -122,6 +135,7 @@ export class MiningInfoComponent implements OnInit {
           data[i]['value'] = data[i].id;
         }
         this.mineralOwner = data;
+        this.getMiningInfo();
       }
     })
   }
@@ -162,7 +176,8 @@ export class MiningInfoComponent implements OnInit {
         this.isClickSearch = true;
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
-        for(let i in data){
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
           data[i].miningStartTime = data[i].miningStartTime? new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
         }
         
@@ -265,5 +280,53 @@ export class MiningInfoComponent implements OnInit {
         this.getMiningInfo();
       }
     })
+  }
+
+   /* 显示地图区域 */
+ viewMap(){
+    this.dialogService.open(ProjectMapComponent, {
+      header: '新增项目区域',
+      width: '70%',
+      baseZIndex:2000,
+      // height: "50%",
+      // baseZIndex: 1000,
+      data: {
+        isIndoorMap: false,
+        addLocationArea: true,
+        mineralProject:[]
+      },
+    });
+  }
+
+   /* 列表导出到Excel */
+   exportExcel(){
+    import("xlsx").then(xlsx => {
+      const worksheet = xlsx.utils.json_to_sheet(this.getProject());
+      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+      this.saveAsExcelFile(excelBuffer, "primengTable");
+    });
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    import("file-saver").then(FileSaver => {
+        let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        let EXCEL_EXTENSION = '.xlsx';
+        const data: Blob = new Blob([buffer], {
+            type: EXCEL_TYPE
+        });
+        FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+    });
+  }
+
+  getProject() {
+    let exploration = [];
+    let data = JSON.parse(JSON.stringify(this.miningInfoValue));
+    for(let car of data) {
+        delete car.id;
+        delete car.ownerId;
+        exploration.push(car);
+    }
+    return exploration;
   }
 }

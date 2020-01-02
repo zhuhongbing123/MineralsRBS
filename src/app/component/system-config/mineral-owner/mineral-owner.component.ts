@@ -44,7 +44,6 @@ export class MineralOwnerComponent implements OnInit {
   /* 初始化表格 */
   setTableValue(){
     this.mineralOwnerTitle = [
-      { field: 'number', header: '序号' },
       { field: 'ownerName', header: '矿权人名称' },
       { field: 'operation', header: '操作' },
     ];

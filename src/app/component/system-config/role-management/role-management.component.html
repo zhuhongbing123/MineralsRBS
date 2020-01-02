@@ -14,6 +14,7 @@
         <p-table [columns]="roleTitle" [value]="roleValue" [loading]="loading">
             <ng-template pTemplate="header" let-columns>
                 <tr>
+                    <th style="width:8%">序号</th>
                     <th *ngFor="let col of columns">
                         {{col.header}}
                     </th>
@@ -21,13 +22,14 @@
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
+                    <td>{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'operation' && col.field !== 'link'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                         <span *ngIf = "col.field == 'operation' && modifyDisplay"  (click)="setRole('modify',rowData)" class="operation-icon">修改 </span>
                         <span *ngIf = "col.field == 'operation' && deleteDisplay"  (click)="setRole('delete',rowData)" class="operation-icon"> 删除</span>
                         <span *ngIf = "col.field == 'link' && viewAPI"  (click)="clickLink(rowData,'授权API')" class="operation-icon">授权API</span>
                         <!-- <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'授权菜单')" class="operation-icon">授权菜单</span> -->
-                        <span *ngIf = "col.field == 'link' && viewUser"  (click)="clickLink(rowData,'关联用户')" class="operation-icon">关联用户</span>
+<!--                         <span *ngIf = "col.field == 'link' && viewUser"  (click)="clickLink(rowData,'关联用户')" class="operation-icon">关联用户</span> -->
                     </td>
                 </tr>
             </ng-template>
@@ -47,23 +49,32 @@
     <p-dialog header="{{clickRoleName}}--{{selectedLinkModule}}" [(visible)]="linkTableDisplay" [modal]="true" [responsive]="true" [style]="{width: '1000px'}">
             <div class="p-table" >
                     
-                    <div style="clear:both" class="ui-g-12 ui-md-4">
+                    <div style="clear:both;width: 100%" class="ui-g-12 ui-md-4">
                         <button pButton type="button" [hidden]="!addAPI && !addUser" label="新增" (click)="setLink('add')"></button>
+                        <button pButton type="button" style="float:right" [disabled]="selectedDeleteLink.length<1" label="批量删除" (click)="setLink('deleteMore',selectedDeleteLink)"></button>
                     </div>
                     <div style="float:left;height: 600px;">
-                        <p-table [columns]="addLinkTitle" [value]="linkTableValue"  [scrollable]="true">
+                        <p-table [columns]="addLinkTitle" [value]="linkTableValue" [(selection)]="selectedDeleteLink">
                             <ng-template pTemplate="header" let-columns>
                                 <tr>
+                                    <th style="width: 3em">
+                                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                                    <th style="width:8%">序号</th>
                                     <th *ngFor="let col of columns">
                                         {{col.header}}
                                     </th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                
                                 <tr>
+                                    <td>
+                                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                                    </td>
+                                    <td>{{rowData.number}}</td>
                                     <td *ngFor="let col of columns">
                                         <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                                        <button pButton type="button"  [hidden]="!deleteAPI && !deleteUser" *ngIf = "col.field == 'operation'"  (click)="setLink('delete',rowData)" label="删除"> </button>
+                                        <button pButton type="button"  [hidden]="!deleteAPI" *ngIf = "col.field == 'operation'"  (click)="setLink('delete',rowData)" label="删除"> </button>
                                     </td>
                                     
                                 </tr>
@@ -85,11 +96,25 @@
             <form>
                     <div class="form-group has-feedback">
                       <label class="control-label">编码</label>
-                      <input [(ngModel)]="roleCode" style="width:700px !important;" type="text" name="code" class="form-control">
+                      <input 
+                        [(ngModel)]="roleCode" 
+                        style="width:700px !important;" 
+                        type="text" 
+                        name="code" 
+                        class="form-control"
+                        maxlength = '100'
+                      >
                     </div>
                     <div class="form-group has-feedback">
                         <label class="control-label">名称</label>
-                        <input [(ngModel)]="roleName" style="width:700px !important;" type="text" name="roleName" class="form-control">
+                        <input 
+                            [(ngModel)]="roleName" 
+                            style="width:700px !important;" 
+                            type="text" 
+                            name="roleName" 
+                            class="form-control"
+                            maxlength = '100'
+                        >
                     </div>
                     <div class="form-group has-feedback">
                         <label class="control-label">状态</label>
@@ -104,8 +129,8 @@
 
     
             <p-footer>
-                <button type="button" pButton icon="pi pi-check" (click)="saveRole()" label="保存"></button>
-                <button type="button" pButton icon="pi pi-close" (click)="roleOpreationDisplay=false" label="取消" class="ui-button-secondary"></button>
+                <button type="button" pButton  (click)="saveRole()" label="保存"></button>
+                <button type="button" pButton  (click)="roleOpreationDisplay=false" label="取消" class="ui-button-secondary"></button>
             </p-footer>
     </p-dialog>
     <!-- 添加角色关联模块 -->
@@ -116,6 +141,7 @@
                     <tr>
                         <th style="width: 3em">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                        <th style="width:8%">序号</th>    
                         <th *ngFor="let col of columns">
                             {{col.header}}
                         </th>
@@ -126,6 +152,7 @@
                         <td>
                             <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
                         </td>
+                        <td>{{rowData.number}}</td>
                         <td *ngFor="let col of columns">
                             {{rowData[col.field]}}
                         </td>
@@ -141,8 +168,8 @@
         </div>
 
         <p-footer>
-            <button type="button" pButton icon="pi pi-check" (click)="saveAddLink()" label="保存"></button>
-            <button type="button" pButton icon="pi pi-close" (click)="addLinkDisplay=false" label="取消" class="ui-button-secondary"></button>
+            <button type="button" pButton  (click)="saveAddLink()" label="保存"></button>
+            <button type="button" pButton  (click)="addLinkDisplay=false" label="取消" class="ui-button-secondary"></button>
         </p-footer>
     </p-dialog>
 

@@ -2,11 +2,12 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ExplorationProject, ExplorationStage } from '../../../../common/util/app-config';
 import { ExplorationInfoService } from '../exploration-info.service';
 import { HttpUtil } from '../../../../common/util/http-util';
-import { MessageService, ConfirmationService, MenuItem } from 'primeng/api';
+import { MessageService, ConfirmationService, MenuItem, DialogService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../../../login/login.service';
+import { ProjectMapComponent } from 'src/app/component/exploration-right/exploration-info/project-map/project-map.component';
 @Component({
   selector: 'app-exploration-details',
   templateUrl: './exploration-details.component.html',
@@ -52,7 +53,8 @@ export class ExplorationDetailsComponent implements OnInit {
               private explorationInfoService: ExplorationInfoService,
               private router: Router,
               private loginService: LoginService,
-              public route: ActivatedRoute) { 
+              public route: ActivatedRoute,
+              private dialogService: DialogService) { 
                 
   }
 
@@ -60,6 +62,12 @@ export class ExplorationDetailsComponent implements OnInit {
     this.explorationProject = this.explorationInfoService.explorationProject;
     this.reportCategory = this.explorationInfoService.reportCategory;
     this.mineralOwner = this.explorationInfoService.mineralOwner;
+
+    for(let i in  this.mineralOwner){
+      if(this.explorationProject.ownerId ==  this.mineralOwner[i].id){
+        this.explorationProject['ownerName'] = this.mineralOwner[i].ownerName;
+      }
+    }
     this.route.queryParams.subscribe(params => {
       if(params['type']=='modify'){
         this.buttonType = true;
@@ -77,7 +85,6 @@ export class ExplorationDetailsComponent implements OnInit {
       {label: '探矿权报告', icon: 'fa fa-fw fa-bar-chart'}
     ];
     this.explorationDetailTitle = [
-      { field: 'number', header: '序号' },
       { field: 'ownerId', header: '矿权人' },
       { field: 'investigationStartTime', header: '开始时间' },
       { field: 'investigationEndTime', header: '结束时间' },
@@ -113,7 +120,7 @@ export class ExplorationDetailsComponent implements OnInit {
       }
     });
 
-    if(!this.modifyStageButton && !this.deleteStageButton){
+    if(!this.modifyStageButton && !this.deleteStageButton || !this.buttonType){
       this.explorationDetailTitle.splice(this.explorationDetailTitle.length-1,1);
     }
     this.getStageInfo();
@@ -175,6 +182,8 @@ modifyProject(){
   this.explorationStartTime = this.explorationProject.explorationStartTime?new Date(this.explorationProject.explorationStartTime):'';
   this.miningStartTime = new Date(this.explorationProject.miningStartTime);
 }
+
+ 
 /* 保存增加、修改的探矿权信息 */
   saveExplorationProject(type){
     if(type ==='cancel' && this.modifyExploration){
@@ -190,32 +199,19 @@ modifyProject(){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '项目名称不能为空'});
       return;
     }
-    let projectInfo = {
-      "areaGeologicBackground": this.explorationProject.areaGeologicBackground,
-      "explorationArea": this.explorationProject.explorationArea,
-      "explorationStartTime": this.explorationStartTime?this.explorationStartTime.getTime()/1000:'',
-      "geophysicalGeochemical": this.explorationProject.geophysicalGeochemical,
-      "investigationFinalStage": this.explorationProject.investigationFinalStage,
-      "majorAchievement": this.explorationProject.majorAchievement,
-      "mineralBeltGeologic": this.explorationProject.mineralBeltGeologic,
-      "mineralBeltOwner": this.explorationProject.mineralBeltOwner,
-      "mineralCharacteristics": this.explorationProject.mineralCharacteristics,
-      "mineralGeologicalMagmatite": this.explorationProject.mineralGeologicalMagmatite,
-      "mineralGeologicalStratum": this.explorationProject.mineralGeologicalStratum,
-      "mineralGeologicalStructure": this.explorationProject.mineralGeologicalStructure,
-      "miningArea": this.explorationProject.miningArea,
-      "miningStartTime":this.miningStartTime?this.miningStartTime.getTime()/1000:'',
-      "preliminaryUnderstanding": this.explorationProject.preliminaryUnderstanding,
-      "projectName": this.explorationProject.projectName,
-      "remarks": this.explorationProject.remarks,
-      "rockAlteration": this.explorationProject.rockAlteration,
-      "id": this.explorationProject.id
-    };
+    this.explorationProject.explorationStartTime = this.explorationStartTime?this.explorationStartTime.getTime()/1000:0;
+    this.explorationProject.miningStartTime = this.miningStartTime?this.miningStartTime.getTime()/1000:0;
+
     if(this.modifyExploration){
       /* 修改项目信息 */
-        this.httpUtil.put('mineral-project',projectInfo).then(value=>{
+        this.httpUtil.put('mineral-project',this.explorationProject).then(value=>{
           if (value.meta.code === 6666) {
             this.explorationProject.explorationStartTime = new Date(this.explorationStartTime).toLocaleDateString().replace(/\//g, "-");
+            for(let i in  this.mineralOwner){
+              if(this.explorationProject.ownerId ==  this.mineralOwner[i].id){
+                this.explorationProject['ownerName'] = this.mineralOwner[i].ownerName;
+              }
+            }
             this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
             this.explorationtDisplay = false;
           }
@@ -329,5 +325,23 @@ saveExplorationStage(){
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
     this.getStageInfo();
+  }
+
+  /* 显示地图区域 */
+ viewMap(){
+    this.dialogService.open(ProjectMapComponent, {
+      header: '新增项目区域',
+      height: '400px',
+    width: '600px',
+      baseZIndex:2000,
+      styleClass:'dialog-class',
+      
+      // baseZIndex: 1000,
+      data: {
+        isIndoorMap: false,
+        addLocationArea: false,
+        mineralProject:this.explorationProject
+      },
+    });
   }
 }

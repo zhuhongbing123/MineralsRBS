@@ -35,7 +35,6 @@ export class OperationLogComponent implements OnInit {
   //初始化列表数据
   getTableValue(){
     this.operationLogTitle = [
-      { field: 'number', header: '序号' },
       { field: 'logName', header: '日志类型' },
       { field: 'userId', header: '用户标识' },
       { field: 'api', header: '调用API' },

@@ -9,7 +9,7 @@
   <div class="right-operation" [hidden]="!mapDrawDisplay">
     <div>
         <span>区域设定</span>
-        <span class="right-operation-close fa fa-close" (click)="mapDrawDisplay = false"></span>
+        <button class="right-operation-close" pButton type="button" icon="pi pi-times" label="关闭" (click)="mapDrawDisplay = false"></button>
     </div>
     <div [hidden]="!addAreaDisplay">
         <p-dropdown 
@@ -21,7 +21,7 @@
         ></p-dropdown>
     </div>
     <div style="clear: both;" class="p-table">
-        <p-table [columns]="areaLocationTitle" [value]="areaLocationValue"  [rows]="10">
+        <p-table [columns]="areaLocationTitle" [value]="areaLocationValue" [scrollable]="true" scrollHeight="300px"  [resizableColumns]="true">
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th *ngFor="let col of columns">
@@ -40,7 +40,7 @@
                 </tr>
             </ng-template>
         </p-table>
-        <p-paginator [hidden]="!areaTotal" [rows]="LIMIT_LOGIN" [totalRecords]="areaTotal" [rowsPerPageOptions]="[10,20,30]" ></p-paginator>
+        <p-paginator [hidden]="!areaTotal" [rows]="LIMIT_LOGIN" [totalRecords]="areaTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'area')"></p-paginator>
     </div>
   </div>
   
@@ -48,12 +48,12 @@
     <div class="right-operation" [hidden]="!locationIconDisplay">
         <div>
             <span>地点标注</span>
-            <span class="right-operation-close fa fa-close" (click)="locationIconDisplay = false"></span>
+            <button class="right-operation-close" pButton type="button" icon="pi pi-times" label="关闭" (click)="locationIconDisplay = false"></button>
         </div>
         <button pButton  type="button" label="新增" (click)="openSignPoint()" [hidden]="!addPoiDisplay"></button>
 
         <div style="clear: both;" class="p-table">
-                <p-table [columns]="locationLabelTitle" [value]="locationLabelValue"  [rows]="10" >
+                <p-table [columns]="locationLabelTitle" [value]="locationLabelValue" [scrollable]="true" scrollHeight="300px"  [resizableColumns]="true" >
                     <ng-template pTemplate="header" let-columns>
                         <tr>
                             <th *ngFor="let col of columns">
@@ -72,16 +72,18 @@
                         </tr>
                     </ng-template>
                 </p-table>
-                <p-paginator [hidden]="!labelTotal" [rows]="LIMIT_LOGIN" [totalRecords]="labelTotal" [rowsPerPageOptions]="[10,20,30]" ></p-paginator>
+                <p-paginator [hidden]="!labelTotal" [rows]="LIMIT_LOGIN" [totalRecords]="labelTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'label')"></p-paginator>
         </div>
     </div>
        <!-- 项目列表 -->
     <div class="right-operation" [hidden]="!locationMineralDisplay">
             <div>
-                    <span class="right-operation-close fa fa-close" (click)="locationMineralDisplay = false"></span>
+                <span>项目列表</span>
+                <button class="right-operation-close" pButton type="button" icon="pi pi-times" label="关闭" (click)="locationMineralDisplay = false"></button>
+
             </div>
             <div style="clear: both;" class="p-table">
-                    <p-table [columns]="mineralLocationTitle" [value]="mineralLocationValue"  [rows]="10" >
+                    <p-table [columns]="mineralLocationTitle" [value]="mineralLocationValue" [scrollable]="true" scrollHeight="300px"  [resizableColumns]="true">
                         <ng-template pTemplate="header" let-columns>
                             <tr>
                                 <th *ngFor="let col of columns">
@@ -101,7 +103,7 @@
                             </tr>
                         </ng-template>
                     </p-table>
-                    <p-paginator [hidden]="!mineralTotal" [rows]="LIMIT_LOGIN" [totalRecords]="mineralTotal" [rowsPerPageOptions]="[10,20,30]" ></p-paginator>
+                    <p-paginator [hidden]="!mineralTotal" [rows]="LIMIT_LOGIN" [totalRecords]="mineralTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'mineral')"></p-paginator>
             </div>
             
     </div>
@@ -146,7 +148,7 @@
         </p-selectButton>
         <p-footer>
             <button type="button" pButton  (click)="signPoint()" label="添加标注"></button>
-            <button type="button" pButton icon="pi pi-close" (click)="selectIconDisplay = false" label="取消" class="ui-button-secondary"></button>
+            <button type="button" pButton  (click)="selectIconDisplay = false" label="取消" class="ui-button-secondary"></button>
         </p-footer>
   </p-dialog>
 
@@ -162,7 +164,7 @@
     </div>
     <p-footer>
         <button type="button" pButton  (click)="saveLocationPoint('save')" label="确认"></button>
-        <button type="button" pButton icon="pi pi-close" (click)="saveLocationPoint('cancel')" label="取消" class="ui-button-secondary"></button>
+        <button type="button" pButton  (click)="saveLocationPoint('cancel')" label="取消" class="ui-button-secondary"></button>
     </p-footer>
 </p-dialog>
 
@@ -188,7 +190,7 @@
     </div>
     <p-footer>
         <button type="button" pButton  (click)="saveLocationArea('save')" label="确认"></button>
-        <button type="button" pButton icon="pi pi-close" (click)="saveLocationArea('cancel')" label="取消" class="ui-button-secondary"></button>
+        <button type="button" pButton  (click)="saveLocationArea('cancel')" label="取消" class="ui-button-secondary"></button>
     </p-footer>
 </p-dialog>
 <p-dialog header="项目区域信息" [(visible)]="mineralInfoDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px', minWidth: '300px'}" [minY]="70" 
@@ -208,7 +210,7 @@
     </div>
     <p-footer>
         <button type="button" pButton  (click)="saveLocationMineral('save')" label="确认"></button>
-        <button type="button" pButton icon="pi pi-close" (click)="saveLocationMineral('cancel')" label="取消" class="ui-button-secondary"></button>
+        <button type="button" pButton  (click)="saveLocationMineral('cancel')" label="取消" class="ui-button-secondary"></button>
     </p-footer>
 </p-dialog>
 </div>

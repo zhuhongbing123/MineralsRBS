@@ -61,7 +61,6 @@ export class ApiManageComponent implements OnInit {
   /* 列表初始化 */
   getTableValue(){
     this.apiTableTitle = [
-      { field: 'number', header: '序号' },
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
       { field: 'uri', header: 'URI' },

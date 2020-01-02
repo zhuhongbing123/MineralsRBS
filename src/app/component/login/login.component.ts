@@ -13,6 +13,7 @@ import {
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { LoginService } from './login.service';
 import { HttpUtil } from '../../common/util/http-util';
+import { HttpUrl } from '../../common/util/http-url';
 
 @Component({
   selector: 'app-login',
@@ -46,44 +47,47 @@ export class LoginComponent implements OnInit {
       }
       this.loadingDisplay = true;
     // 获取tokenKey秘钥
-    const getToken$ = this.loginService.getTokenKey().subscribe(
-      data => {
-        if (data.data.tokenKey !== undefined) {
-          const tokenKey = data.data.tokenKey;
-          const userKey = data.data.userKey;
-          localStorage.setItem('tokenKey', data.data.tokenKey);
-          localStorage.setItem('userKey', data.data.userKey);
-          getToken$.unsubscribe();
-          const login$ = this.loginService.login(this.username, this.password, tokenKey, userKey).subscribe(
-            data2 => {
-              // 认证成功返回jwt
-              if (data2.meta.code === 1003 && data2.data.jwt != null) {
-                
-                localStorage.setItem('token', data2.data.jwt);
-                localStorage.setItem('uid', this.username);
-                localStorage.setItem('roleId', data2.data.user.roleId);
-                localStorage.setItem('roleCode', data2.data.user.roleCode);
-                this.getRoleApi(data2.data.user.roleId);
+
+      const getToken$ = this.loginService.getTokenKey().subscribe(
+        data => {
+          if (data.data.tokenKey !== undefined) {
+            const tokenKey = data.data.tokenKey;
+            const userKey = data.data.userKey;
+            localStorage.setItem('tokenKey', data.data.tokenKey);
+            localStorage.setItem('userKey', data.data.userKey);
+            getToken$.unsubscribe();
+            const login$ = this.loginService.login(this.username, this.password, tokenKey, userKey).subscribe(
+              data2 => {
+                // 认证成功返回jwt
+                if (data2.meta.code === 1003 && data2.data.jwt != null) {
+                  
+                  localStorage.setItem('token', data2.data.jwt);
+                  localStorage.setItem('uid', this.username);
+                  localStorage.setItem('roleId', data2.data.user.roleId);
+                  localStorage.setItem('roleCode', data2.data.user.roleCode);
+                  this.getRoleApi(data2.data.user.roleId);
+                  login$.unsubscribe();
+                  //this.router.navigate(['/menu']);
+                  
+                  
+                } else {
+                  this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '用户名密码错误'});
+                  this.loadingDisplay = false;
+                  login$.unsubscribe();
+                }
+              },
+              error => {
+                console.error(error);
                 login$.unsubscribe();
-                //this.router.navigate(['/menu']);
-                
-                
-              } else {
-                this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '用户名密码错误'});
+                this.messageService.add({key: 'tc', severity:'error', summary: '警告', detail: '服务器开小差啦'});
                 this.loadingDisplay = false;
-                login$.unsubscribe();
               }
-            },
-            error => {
-              console.error(error);
-              login$.unsubscribe();
-              this.messageService.add({key: 'tc', severity:'error', summary: '警告', detail: '服务器开小差啦'});
-              this.loadingDisplay = false;
-            }
-          );
+            );
+          }
         }
-      }
-    );
+      );
+    
+    
     }
   }
   keyUpSearch() {
@@ -91,7 +95,13 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    window.sessionStorage.setItem('HTTP', window.location.hostname)
+    window.sessionStorage.setItem('HTTP', window.location.hostname);
+    /* 获取IP地址 */
+    this.loginService.getIP().then(res=>{
+      localStorage.setItem('IP', res[0].serverIP);
+      localStorage.setItem('fileIP', res[0].fileIP);
+      localStorage.setItem('mapIP', res[0].fileIP);
+    })
   }
   check() {
     if (!this.username) {

@@ -43,7 +43,7 @@ export class RegisterComponent implements OnInit {
             const tokenKey = data.data.tokenKey;
             const userKey = data.data.userKey;
             getToken$.unsubscribe();
-            const register$ = this.registerService.register(this.uid, this.username, this.password, tokenKey, userKey).subscribe(
+            const register$ = this.registerService.register('account/register',this.uid, this.username, this.password, tokenKey, userKey).subscribe(
               data2 => {
                 // 注册成功返回
                 if (data2.meta.code === 2002) {
@@ -55,7 +55,7 @@ export class RegisterComponent implements OnInit {
                   }, 1800 );
                   register$.unsubscribe();
                 } else {
-                  this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该用户已存在'});
+                  this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: data2.meta.msg});
                   register$.unsubscribe();
                 }
               },

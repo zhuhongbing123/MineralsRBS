@@ -10,8 +10,12 @@
             <table  class="table table-bordered" style=" color: #fff;">
                 <tbody>
                     <tr>
-                        <td>项目名称</td>
+                        <td style="width:20%">项目名称</td>
                         <td>{{explorationProject.projectName}}</td>
+                    </tr>
+                    <tr>
+                        <td>矿权人</td>
+                        <td>{{explorationProject.ownerName}}</td>
                     </tr>
                     <tr>
                         <td>探矿权首立时间</td>
@@ -77,11 +81,12 @@
         <div class="ui-g-12 ui-md-4">
             <button pButton type="button" [hidden]="!addStageButton || !buttonType" label="新增" (click)="setExplorationt('addStage')"></button>
         </div>
-        <button style="float: right;top: 5px;" type="button" pButton  (click)="goBack()" label="返回"></button>
+        <button style="float: right;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回"></button>
         <div style="clear:both">
             <p-table [columns]="explorationDetailTitle" [value]="explorationDetailValue">
             <ng-template pTemplate="header" let-columns>
                 <tr>
+                    <th style="width:8%">序号</th>
                     <th *ngFor="let col of columns">
                         {{col.header}}
                     </th>
@@ -89,10 +94,11 @@
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
+                    <td>{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'operation' && modifyStageButton && buttonType" class="operation-icon"  (click)="setExplorationt('modifyStage',rowData)">修改</span>
-                        <span *ngIf = "col.field == 'operation' && deleteStageButton && buttonType" class="operation-icon"  (click)="setExplorationt('deleteStage',rowData)">删除</span>
+                        <span *ngIf = "col.field == 'operation' && modifyStageButton " class="operation-icon"  (click)="setExplorationt('modifyStage',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation' && deleteStageButton " class="operation-icon"  (click)="setExplorationt('deleteStage',rowData)">删除</span>
                     </td>
                 </tr>
             </ng-template>
@@ -115,8 +121,24 @@
               <form>
                   <div class="form-group has-feedback">
                       <label class="control-label">项目名称</label>
-                      <input  type="text" style="width:700px !important"  [(ngModel)]="explorationProject.projectName" name="projectName"  class="form-control">
+                      <input  type="text" style="width:700px !important"  maxlength = '100' [(ngModel)]="explorationProject.projectName" name="projectName"  class="form-control">
                   </div>
+                  <div class="form-group has-feedback">
+                    <label class="control-label">矿权人</label>
+                    <div class="search">
+                        <p-dropdown [options]="mineralOwner" [style]="{'width':'700px'}" name="ownerName" [(ngModel)]="explorationProject.ownerId" placeholder="请选择一个矿权人" filter="true">
+                            <ng-template let-car pTemplate="item">
+                                <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+                                    <div style="font-size:14px;float:left;margin-top:4px">{{car.label}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                    </div>
+                  </div>
+                  <div class="form-group has-feedback">
+                    <label class="control-label">项目定位区域</label>
+                    <button type="button" pButton (click)="viewMap()" label="查看"></button>
+                  </div>  
                   <div class="form-group has-feedback">
                       <label class="control-label">探矿权首立时间</label>
                       <div>
@@ -133,7 +155,7 @@
                   </div>
                   <div class="form-group has-feedback" [hidden]="modifyExploration">
                       <label class="control-label">探矿权范围</label>
-                      <input type="text" style="width:700px !important" name="explorationArea" class="form-control" [(ngModel)]="explorationProject.explorationArea">
+                      <input type="text" style="width:700px !important"  maxlength = '200' name="explorationArea" class="form-control" [(ngModel)]="explorationProject.explorationArea">
                   </div>
                   <div class="form-group has-feedback" [hidden]="modifyExploration">
                       <label class="control-label">采矿权首立时间</label>
@@ -151,7 +173,7 @@
                   </div>
                   <div class="form-group has-feedback" [hidden]="modifyExploration">
                       <label class="control-label">采矿权范围</label>
-                      <input type="text" style="width:700px !important" name="miningArea" class="form-control" [(ngModel)]="explorationProject.miningArea" [ngModelOptions]="{standalone: true}">
+                      <input type="text" style="width:700px !important"  maxlength = '200' name="miningArea" class="form-control" [(ngModel)]="explorationProject.miningArea" [ngModelOptions]="{standalone: true}">
                   </div>
                   <div class="form-group has-feedback"  [hidden]="modifyExploration">
                       <label class="control-label">勘查阶段/报告成果</label>
@@ -163,6 +185,7 @@
                             [(ngModel)]="explorationProject.investigationFinalStage" 
                             name="investigationFinalStage"
                             class="text-style"
+                            maxlength = '500'
                           ></textarea>
                       </div>    
                   </div>
@@ -176,6 +199,7 @@
                             [(ngModel)]="explorationProject.areaGeologicBackground" 
                             name="areaGeologicBackground"
                             class="text-style"
+                            maxlength = '500'
                           ></textarea>
                       </div>
                   </div>
@@ -189,6 +213,7 @@
                             [(ngModel)]="explorationProject.geophysicalGeochemical" 
                             name="geophysicalGeochemical"
                             class="text-style"
+                            maxlength = '500'
                           ></textarea>
                       </div>    
                   </div>
@@ -198,6 +223,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
+                            maxlength = '500'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.mineralGeologicalStratum" 
                             name="mineralGeologicalStratum"
@@ -211,6 +237,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
+                            maxlength = '500'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.mineralGeologicalStructure" 
                             name="mineralGeologicalStructure"
@@ -224,6 +251,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
+                            maxlength = '500'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.mineralGeologicalMagmatite" 
                             name="mineralGeologicalMagmatite"
@@ -233,7 +261,7 @@
                   </div>
                   <div class="form-group has-feedback">
                       <label class="control-label">成矿带归属</label>
-                      <input type="text" style="width:700px !important" name="uri" class="form-control" [(ngModel)]="explorationProject.mineralBeltOwner" name="mineralBeltOwner">
+                      <input type="text" style="width:700px !important"  maxlength = '200' name="uri" class="form-control" [(ngModel)]="explorationProject.mineralBeltOwner" name="mineralBeltOwner">
                   </div>
                   <div class="form-group has-feedback">
                       <label class="control-label">成矿带地质背景</label>
@@ -241,6 +269,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
+                            maxlength = '500'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.mineralBeltGeologic" 
                             name="mineralBeltGeologic"
@@ -254,6 +283,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
+                            maxlength = '500'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.rockAlteration" 
                             name="rockAlteration"
@@ -267,6 +297,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
+                            maxlength = '500'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.mineralCharacteristics" 
                             name="mineralCharacteristics"
@@ -280,6 +311,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
+                            maxlength = '500'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.majorAchievement" 
                             name="majorAchievement"
@@ -293,6 +325,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
+                            maxlength = '500'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.preliminaryUnderstanding" 
                             name="preliminaryUnderstanding"
@@ -306,6 +339,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
+                            maxlength = '500'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.remarks" 
                             name="remarks"
@@ -316,7 +350,7 @@
               </form>
               <p-footer>
                   <button type="button" pButton (click)="saveExplorationProject('save')" label="保存"></button>
-                  <button type="button" pButton icon="pi pi-close" (click)="saveExplorationProject('cancel')" label="取消" class="ui-button-secondary"></button>
+                  <button type="button" pButton  (click)="saveExplorationProject('cancel')" label="取消" class="ui-button-secondary"></button>
               </p-footer>
       </p-dialog>
   
@@ -369,6 +403,7 @@
                       <textarea 
                         rows="5" 
                         cols="30" 
+                        maxlength = '500'
                         pInputTextarea 
                         [(ngModel)]="explorationStage.projectArea" 
                         name="projectArea"
@@ -377,11 +412,12 @@
                   </div>    
               </div>
               <div class="form-group has-feedback">
-                  <label class="control-label">勘查单位</label>
+                  <label class="control-label">勘查单位(平方公里)</label>
                   <div>
                       <textarea 
                         rows="5" 
                         cols="30" 
+                        maxlength = '500'
                         pInputTextarea 
                         [(ngModel)]="explorationStage.investigationOrganization" 
                         name="investigationOrganization"
@@ -392,43 +428,43 @@
               <div class="form-group has-feedback">
                   <label class="control-label">类别</label>
                   <div>
-                      <input type="text" style="width:700px !important" name="investigationCategory" class="form-control" [(ngModel)]="explorationStage.investigationCategory">
+                      <input type="text"  maxlength = '200' style="width:700px !important" name="investigationCategory" class="form-control" [(ngModel)]="explorationStage.investigationCategory">
                   </div>    
               </div>
               <div class="form-group has-feedback">
-                  <label class="control-label">面积</label>
+                  <label class="control-label">面积(平方公里)</label>
                   <div>
-                      <input type="text" style="width:700px !important" name="investigationArea" class="form-control" [(ngModel)]="explorationStage.investigationArea">
+                      <input type="text" maxlength = '200' style="width:700px !important" name="investigationArea" class="form-control" [(ngModel)]="explorationStage.investigationArea">
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">勘查矿种</label>
                   <div>
-                      <input type="text" style="width:700px !important" name="investigationMineralType" class="form-control" [(ngModel)]="explorationStage.investigationMineralType">
+                      <input type="text"  maxlength = '200' style="width:700px !important" name="investigationMineralType" class="form-control" [(ngModel)]="explorationStage.investigationMineralType">
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">勘查阶段</label>
                   <div>
-                      <input type="text" style="width:700px !important" name="investigationStage" class="form-control" [(ngModel)]="explorationStage.investigationStage">
+                      <input type="text"  maxlength = '200' style="width:700px !important" name="investigationStage" class="form-control" [(ngModel)]="explorationStage.investigationStage">
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">勘查工作量</label>
                   <div>
-                      <input type="text" style="width:700px !important" name="investigationWorkload" class="form-control" [(ngModel)]="explorationStage.investigationWorkload">
+                      <input type="text"  maxlength = '200' style="width:700px !important" name="investigationWorkload" class="form-control" [(ngModel)]="explorationStage.investigationWorkload">
                   </div>    
               </div>
               <div class="form-group has-feedback">
-                  <label class="control-label">投入金额</label>
+                  <label class="control-label">投入金额(万元)</label>
                   <div>
-                      <input type="text" style="width:700px !important" name="investigationInvestment" class="form-control" [(ngModel)]="explorationStage.investigationInvestment">
+                      <input type="text"  maxlength = '200' style="width:700px !important" name="investigationInvestment" class="form-control" [(ngModel)]="explorationStage.investigationInvestment">
                   </div>    
               </div>
           </form>     
           <p-footer>
               <button type="button" pButton (click)="saveExplorationStage()" label="保存"></button>
-              <button type="button" pButton icon="pi pi-close" (click)="stageDisplay = false" label="取消" class="ui-button-secondary"></button>
+              <button type="button" pButton  (click)="stageDisplay = false" label="取消" class="ui-button-secondary"></button>
           </p-footer>   
       </p-dialog>
   

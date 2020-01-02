@@ -9,7 +9,7 @@ import { HttpUrl } from '../../common/util/http-url';
 export class SystemConfigService {
     private baseUrl: string;//通用的URL地址
   constructor(private httpUtil: HttpUtil) {
-    this.baseUrl = HttpUrl.apiBaseUrl;
+    this.baseUrl = localStorage.getItem('IP');
   }
 
   getTokenKey() {

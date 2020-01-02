@@ -24,7 +24,6 @@ export class LoginLogComponent implements OnInit {
   //初始化列表数据
   getTableValue(){
     this.loginLogTitle = [
-      { field: 'number', header: '序号' },
       { field: 'logName', header: '日志类型' },
       { field: 'userId', header: '用户标识' },
       { field: 'ip', header: '用户终端IP' },

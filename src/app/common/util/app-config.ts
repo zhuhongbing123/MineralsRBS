@@ -28,7 +28,8 @@ export class AppConfig {
 }
 /* 矿权项目参数 */
 export class ExplorationProject {
-
+  "ownerId":string;//矿权人
+  "ownerName": string;//矿权人名称
   "areaGeologicBackground": string;//区域地质背景
   "areaCoordinates":string;//矿权定位区域
   "areaBackground":string;//矿权定位区域背景色
@@ -75,8 +76,8 @@ export class ExplorationStage{
 export class ExplorationReport{
   "id": number;
   "projectId": number;//项目ID
+  "reportName": string;//报告名称
   "reportCategoryId": any;//报告分类ID
-  "reportTime": any;//报告上传日期
   "reportFilePath": string;//报告文件夹路径
   "reportDescription": string;//文件详情描述
   "reportUploader": string;//文件上传用户

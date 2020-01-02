@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Openlayer } from '../../../common/map/openlayer';
-import { Map2dService } from '../../../common/map/map2-d/map2-d.service';
+
 import Map from 'ol/Map';
-import { HttpUtil } from '../../../common/util/http-util';
+
 import { MessageService, DynamicDialogConfig } from 'primeng/api';
 import * as ProjectionUtil from 'ol/proj';
 import { FALSE } from 'ol/functions';
-import { MineralManageService } from '../mineral-manage.service';
+import { ExplorationInfoService } from '../exploration-info.service';
+import { Openlayer } from '../../../../common/map/openlayer';
+import { Map2dService } from '../../../../common/map/map2-d/map2-d.service';
+import { HttpUtil } from '../../../../common/util/http-util';
+
 @Component({
   selector: 'app-project-map',
   templateUrl: './project-map.component.html',
@@ -25,12 +28,12 @@ export class ProjectMapComponent implements OnInit {
   modifyAreaDisplay = false;//修改地图区域
   mineralAreaDisplay = false;
   mineralProject;//矿权项目数据
-  addProjectArea = false;//新增项目区域
+  addLocationArea = false;//新增项目区域
   constructor(private map2dService: Map2dService,
               private httpUtil: HttpUtil,
               private messageService: MessageService,
               public config: DynamicDialogConfig,
-              private mineralManageService: MineralManageService) { 
+              private explorationInfoService: ExplorationInfoService) { 
     //接受地图画图区域后返回的值
       this.map2dService.areaLocationCommon$.subscribe(value=>{
         let coordinates = {
@@ -51,11 +54,11 @@ export class ProjectMapComponent implements OnInit {
       {code: 'Polygon', name: '多边形'}
     ];
     this.mineralProject = this.config.data.mineralProject;
-    this.addProjectArea = this.config.data.addProjectArea;
+    this.addLocationArea = this.config.data.addLocationArea;
     if(this.mineralProject.areaCoordinates){
       this.mineralProject.areaCoordinates = this.mineralProject.areaCoordinates.length>0?JSON.parse(this.mineralProject.areaCoordinates):this.mineralProject.areaCoordinates;
     }
-    
+   
     
   }
 
@@ -112,19 +115,19 @@ export class ProjectMapComponent implements OnInit {
       this.areaDialogDisplay = false;
       return;
     }
-    //新增区域
-     if(this.addProjectArea){
-       let coordinates;
-       if(this.modifyAreaDisplay){
+    /* 新增区域 */
+     if(this.addLocationArea){
+        let coordinates;
+        if(this.modifyAreaDisplay){
         coordinates = this.mineralProject.areaCoordinates.coordinates;
-       }else{
+        }else{
         coordinates = JSON.parse(this.mineralProject.areaCoordinates).coordinates;
-       }
+        }
        let areaCoordinates = {
           zoom:this.OlFloorMap.map.getView().getZoom(),
           coordinates:coordinates
         }
-        this.mineralManageService.getAddArea({
+        this.explorationInfoService.getAddArea({
           "areaBackground": this.mineralProject.areaBackground,
           "areaCoordinates":JSON.stringify(areaCoordinates),
           "areaOpacity": this.mineralProject.areaOpacity.toString(),

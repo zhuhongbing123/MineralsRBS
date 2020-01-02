@@ -9,65 +9,69 @@
           <table  class="table table-bordered" style=" color: #fff;">
               <tbody>
                   <tr>
-                      <td>项目名称</td>
+                      <td class="table-td">项目名称</td>
                       <td>{{miningProject.projectName}}</td>
                   </tr>
                   <tr>
-                      <td>采矿权首立时间</td>
+                    <td class="table-td">矿权人</td>
+                    <td>{{miningProject.ownerName}}</td>
+                  </tr>
+                  <tr>
+                      <td class="table-td">采矿权首立时间</td>
                       <td>{{miningProject.miningStartTime}}</td>
                   </tr>
                   <tr>
-                      <td>区域地质背景</td>
+                      <td class="table-td">区域地质背景</td>
                       <td>{{miningProject.areaGeologicBackground}}</td>
                   </tr>
                   <tr>
-                      <td>地球物理及地球化学特征</td>
+                      <td class="table-td">地球物理及地球化学特征</td>
                       <td>{{miningProject.geophysicalGeochemical}}</td>
                   </tr>
                   <tr>
-                      <td>矿区地质背景:地层</td>
+                      <td class="table-td">矿区地质背景:地层</td>
                       <td>{{miningProject.mineralGeologicalStratum}}</td>
                   </tr>
                   <tr>
-                      <td>矿区地质背景:构造</td>
+                      <td class="table-td">矿区地质背景:构造</td>
                       <td>{{miningProject.mineralGeologicalStructure}}</td>
                   </tr>
                   <tr>
-                      <td>矿区地质背景:岩浆层</td>
+                      <td class="table-td">矿区地质背景:岩浆层</td>
                       <td>{{miningProject.mineralGeologicalMagmatite}}</td>
                   </tr>
                   <tr>
-                      <td>成矿带归属</td>
+                      <td class="table-td">成矿带归属</td>
                       <td>{{miningProject.mineralBeltOwner}}</td>
                   </tr>
                   <tr>
-                      <td>成矿地质背景</td>
+                      <td class="table-td">成矿地质背景</td>
                       <td>{{miningProject.mineralBeltGeologic}}</td>
                   </tr>
                   <tr>
-                      <td>围岩及蚀变</td>
+                      <td class="table-td">围岩及蚀变</td>
                       <td>{{miningProject.rockAlteration}}</td>
                   </tr>
                   <tr>
-                      <td>矿（化）体特征</td>
+                      <td class="table-td">矿（化）体特征</td>
                       <td>{{miningProject.mineralCharacteristics}}</td>
                   </tr>
                   <tr>
-                      <td>主要成果</td>
+                      <td class="table-td">主要成果</td>
                       <td>{{miningProject.majorAchievement}}</td>
                   </tr>
                   <tr>
-                      <td>初步认识</td>
+                      <td class="table-td">初步认识</td>
                       <td>{{miningProject.preliminaryUnderstanding}}</td>
                   </tr>
                   <tr>
-                      <td>存在的问题及下一步工作建议</td>
+                      <td class="table-td">存在的问题及下一步工作建议</td>
                       <td>{{miningProject.remarks}}</td>
                   </tr>
               </tbody>
           </table>
           <button type="button" [hidden]="!modifyButton || !buttonType" pButton (click)="modifyProject()" label="修改"></button>
-          <button style="margin-left:20px" type="button" pButton  (click)="goBack()" label="返回" class="ui-button-secondary"></button>
+          <button style="margin-left:20px;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回" class="ui-button-secondary"></button>
       </div>
   </div>
 
@@ -77,11 +81,12 @@
           <button pButton type="button" [hidden]="!addStageButton || !buttonType" label="新增" (click)="setMining('addStage')"></button>
           
       </div>
-      <button style="float: right;top: 5px;" type="button" pButton  (click)="goBack()" label="返回"></button>
+      <button style="float: right;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回"></button>
       <div style="clear:both">
           <p-table [columns]="stageDetailTitle" [value]="stageDetailValue" >
           <ng-template pTemplate="header" let-columns>
               <tr>
+                    <th style="width:8%">序号</th>
                   <th *ngFor="let col of columns">
                       {{col.header}}
                   </th>
@@ -89,6 +94,7 @@
           </ng-template>
           <ng-template pTemplate="body" let-rowData let-columns="columns">
               <tr>
+                    <td>{{rowData.number}}</td>
                   <td *ngFor="let col of columns">
                       <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                       <span *ngIf = "col.field == 'operation' && modifyStageButton && buttonType" class="operation-icon"  (click)="setMining('modifyStage',rowData)">修改</span>
@@ -112,23 +118,25 @@
           <div class="ui-g-12 ui-md-4">
               <button pButton type="button" [hidden]="!addValidationButton ||! buttonType" label="新增" (click)="setMining('addMonitoring')"></button>
           </div>
-          <button style="float: right;top: 5px;" type="button" pButton  (click)="goBack()" label="返回"></button>
+          <button style="float: right;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回"></button>
           <div style="clear:both">
               <p-table [columns]="monitoringTitle" [value]="monitoringValue">
               <ng-template pTemplate="header" let-columns>
                   <tr>
-                      <th *ngFor="let col of columns">
-                          {{col.header}}
-                      </th>
+                    <th style="width:8%">序号</th>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
                   </tr>
               </ng-template>
               <ng-template pTemplate="body" let-rowData let-columns="columns">
                   <tr>
-                      <td *ngFor="let col of columns">
-                          <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                          <span *ngIf = "col.field == 'operation' && modifyValidationButton && buttonType" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)">修改</span>
-                          <span *ngIf = "col.field == 'operation' && deleteValidationButton && buttonType" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)">删除</span>
-                      </td>
+                    <td>{{rowData.number}}</td>
+                    <td *ngFor="let col of columns">
+                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        <span *ngIf = "col.field == 'operation' && modifyValidationButton && buttonType" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)">修改</span>
+                        <span *ngIf = "col.field == 'operation' && deleteValidationButton && buttonType" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)">删除</span>
+                    </td>
                   </tr>
               </ng-template>
               <ng-template pTemplate="summary">
@@ -152,8 +160,31 @@
           <form>
               <div class="form-group has-feedback">
                   <label class="control-label">项目名称</label>
-                  <input  type="text" style="width:700px !important"  [(ngModel)]="miningProject.projectName" name="projectName"  class="form-control">
+                  <input  
+                    type="text" 
+                    style="width:700px !important"  
+                    [(ngModel)]="miningProject.projectName" 
+                    name="projectName"  
+                    class="form-control"
+                    maxlength = '100'
+                  >
               </div>
+              <div class="form-group has-feedback">
+                <label class="control-label">矿权人</label>
+                <div class="search">
+                    <p-dropdown [options]="mineralOwner" [style]="{'width':'700px'}" name="ownerName" [(ngModel)]="miningProject.ownerId" placeholder="请选择一个矿权人" filter="true">
+                        <ng-template let-car pTemplate="item">
+                            <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+                                <div style="font-size:14px;float:left;margin-top:4px">{{car.label}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+              </div>
+              <div class="form-group has-feedback">
+                <label class="control-label">项目定位区域</label>
+                <button type="button" pButton (click)="viewMap()" label="查看"></button>
+              </div>  
               <div class="form-group has-feedback">
                   <label class="control-label">采矿权首立时间</label>
                   <div>
@@ -178,6 +209,7 @@
                         [(ngModel)]="miningProject.areaGeologicBackground" 
                         name="areaGeologicBackground"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>
               </div>
@@ -191,6 +223,7 @@
                         [(ngModel)]="miningProject.geophysicalGeochemical" 
                         name="geophysicalGeochemical"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>    
               </div>
@@ -204,6 +237,7 @@
                         [(ngModel)]="miningProject.mineralGeologicalStratum" 
                         name="mineralGeologicalStratum"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>    
               </div>
@@ -217,6 +251,7 @@
                         [(ngModel)]="miningProject.mineralGeologicalStructure" 
                         name="mineralGeologicalStructure"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>    
               </div>
@@ -230,12 +265,21 @@
                         [(ngModel)]="miningProject.mineralGeologicalMagmatite" 
                         name="mineralGeologicalMagmatite"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">成矿带归属</label>
-                  <input type="text" style="width:700px !important" name="uri" class="form-control" [(ngModel)]="miningProject.mineralBeltOwner" name="mineralBeltOwner">
+                  <input 
+                    type="text" 
+                    style="width:700px !important" 
+                    name="uri" 
+                    class="form-control" 
+                    [(ngModel)]="miningProject.mineralBeltOwner" 
+                    name="mineralBeltOwner"
+                    maxlength = '200'
+                  >
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">成矿带地质背景</label>
@@ -247,6 +291,7 @@
                         [(ngModel)]="miningProject.mineralBeltGeologic" 
                         name="mineralBeltGeologic"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>    
               </div>
@@ -260,6 +305,7 @@
                         [(ngModel)]="miningProject.rockAlteration" 
                         name="rockAlteration"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>    
               </div>
@@ -273,6 +319,7 @@
                         [(ngModel)]="miningProject.mineralCharacteristics" 
                         name="mineralCharacteristics"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>    
               </div>
@@ -286,6 +333,7 @@
                         [(ngModel)]="miningProject.majorAchievement" 
                         name="majorAchievement"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>    
               </div>
@@ -299,6 +347,7 @@
                         [(ngModel)]="miningProject.preliminaryUnderstanding" 
                         name="preliminaryUnderstanding"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>    
               </div>
@@ -312,13 +361,14 @@
                         [(ngModel)]="miningProject.remarks" 
                         name="remarks"
                         style="width:700px !important"
+                        maxlength = '500'
                       ></textarea>
                   </div>    
               </div>
           </form>
           <p-footer>
               <button type="button" pButton (click)="saveMiningProject('save')" label="保存"></button>
-              <button type="button" pButton icon="pi pi-close" (click)="saveMiningProject('cancel')" label="取消" class="ui-button-secondary"></button>
+              <button type="button" pButton  (click)="saveMiningProject('cancel')" label="取消" class="ui-button-secondary"></button>
           </p-footer>
   </p-dialog>
 
@@ -375,6 +425,7 @@
                     [(ngModel)]="miningStage.projectArea" 
                     name="projectArea"
                     style="width:700px !important"
+                    maxlength = '500'
                   ></textarea>
               </div>    
           </div>
@@ -388,38 +439,68 @@
                     [(ngModel)]="miningStage.miningMineralType" 
                     name="investigationOrganization"
                     style="width:700px !important"
+                    maxlength = '500'
                   ></textarea>
               </div>    
           </div>
           <div class="form-group has-feedback">
-              <label class="control-label">生产规模</label>
+              <label class="control-label">生产规模(吨/年)</label>
               <div>
-                  <input type="text" style="width:700px !important" name="investigationCategory" class="form-control" [(ngModel)]="miningStage.miningProductionScale">
+                  <input 
+                    type="text" 
+                    style="width:700px !important" 
+                    name="investigationCategory" 
+                    class="form-control" 
+                    [(ngModel)]="miningStage.miningProductionScale"
+                    maxlength = '200'
+                  >
               </div>    
           </div>
           <div class="form-group has-feedback">
-              <label class="control-label">开采面积</label>
+              <label class="control-label">开采面积(平方公里)</label>
               <div>
-                  <input type="text" style="width:700px !important" name="miningArea" class="form-control" [(ngModel)]="miningStage.miningArea">
+                  <input 
+                    type="text" 
+                    style="width:700px !important" 
+                    name="miningArea" 
+                    class="form-control" 
+                    [(ngModel)]="miningStage.miningArea"
+                    maxlength = '200'
+                  >
               </div>    
           </div>
           <div class="form-group has-feedback">
               <label class="control-label">开采工作投入量</label>
               <div>
-                  <input type="text" style="width:700px !important" name="miningWorkload" class="form-control" [(ngModel)]="miningStage.miningWorkload">
+                  <input 
+                    type="text" 
+                    style="width:700px !important" 
+                    name="miningWorkload" 
+                    class="form-control" 
+                    [(ngModel)]="miningStage.miningWorkload"
+                    maxlength = '200'
+                  >
               </div>    
           </div>
           <div class="form-group has-feedback">
-              <label class="control-label">开采投入金额</label>
+              <label class="control-label">开采投入金额(万元)</label>
               <div>
-                  <input type="text" style="width:700px !important" name="miningInvestment" class="form-control" [(ngModel)]="miningStage.miningInvestment">
+                  <input 
+                    type="text" 
+                    style="width:700px 
+                    !important" 
+                    name="miningInvestment" 
+                    class="form-control" 
+                    [(ngModel)]="miningStage.miningInvestment"
+                    maxlength = '200'
+                  >
               </div>    
           </div>
           
       </form>     
       <p-footer>
           <button type="button" pButton (click)="saveMiningStage()" label="保存"></button>
-          <button type="button" pButton icon="pi pi-close" (click)="stageDisplay = false" label="取消" class="ui-button-secondary"></button>
+          <button type="button" pButton  (click)="stageDisplay = false" label="取消" class="ui-button-secondary"></button>
       </p-footer>   
   </p-dialog>
 
@@ -436,12 +517,12 @@
                 [monthNavigator]="true" 
                 [yearNavigator]="true" 
                 yearRange="1970:2030"
-                dateFormat="yy.mm.dd"
+                dateFormat="yy"
               ></p-calendar>
           </div>    
       </div>
       <div class="form-group has-feedback">
-          <label class="control-label">年度动用资源量</label>
+          <label class="control-label">年度动用资源量(千吨)</label>
           <div>
             <textarea 
                 rows="5" 
@@ -454,7 +535,7 @@
         </div>  
       </div>    
       <div class="form-group has-feedback">
-          <label class="control-label">年末保有资源量</label>
+          <label class="control-label">年末保有资源量(千吨)</label>
           <div>
               <textarea 
                 rows="5" 
@@ -494,7 +575,7 @@
       </div>
       <p-footer>
           <button type="button" pButton (click)="saveMiningMonitoring()" label="保存"></button>
-          <button type="button" pButton icon="pi pi-close" (click)="monitoringDisplay = false" label="取消" class="ui-button-secondary"></button>
+          <button type="button" pButton  (click)="monitoringDisplay = false" label="取消" class="ui-button-secondary"></button>
       </p-footer>  
   </p-dialog>
   

@@ -35,9 +35,6 @@ import { MineralManageService } from './mineral-manage.service';
     providers:[Map2dService,DialogService,MineralManageService],
     entryComponents: [
       ProjectMapComponent
-    ],
-    exports:[
-      ProjectMapComponent
     ]
 })
 export class MineralManageModule { }

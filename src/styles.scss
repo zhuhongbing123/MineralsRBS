@@ -260,3 +260,20 @@ body .ui-selectbutton .ui-button.ui-state-active{
 body .ui-widget-overlay{
   z-index: 0 !important;
 }
+
+body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon{
+  color: white !important;
+}
+body .ui-button{
+  background-color: #007ad9 !important;
+}
+body .ui-button.ui-state-default.ui-button-secondary, body .ui-buttonset.ui-button-secondary > .ui-button.ui-state-default{
+  background-color: #f4f4f4 !important;
+}
+/* 下拉框字体颜色 */
+body .ui-dropdown-panel .ui-dropdown-items .ui-dropdown-item{
+  color: white !important;
+}
+body .ui-dropdown-panel .ui-dropdown-items .ui-dropdown-item:not(.ui-state-highlight):not(.ui-state-disabled):hover{
+  color: #333333 !important;
+}

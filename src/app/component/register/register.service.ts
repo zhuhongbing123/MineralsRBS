@@ -12,7 +12,7 @@ export class RegisterService {
     private baseUrl: string;//通用的URL地址
     constructor(private http: HttpClient, private router: Router,
                 private httpUtil: HttpUtil) {
-                    this.baseUrl = HttpUrl.apiBaseUrl;
+                    this.baseUrl = localStorage.getItem('IP');;
                  }
 
     getTokenKey() {
@@ -21,8 +21,8 @@ export class RegisterService {
         return this.httpUtil.getLogin(url);
     }
 
-    register(uid: string, username: string, password: string, tokenKey: string, userKey: string) {
-        const url = this.baseUrl+'account/register';
+    register(url:string, uid: string, username: string, password: string, tokenKey: string, userKey: string) {
+
         tokenKey = CryptoJS.enc.Utf8.parse(tokenKey);
         password = CryptoJS.enc.Utf8.parse(password);
         // AES CBC加密模式
@@ -36,7 +36,8 @@ export class RegisterService {
           .append('userKey', userKey)
           .append('timestamp', new Date().toUTCString());
     
-        const body = {
+        let body; 
+        body= {
           'uid': uid,
           'username': username,
           'password': password,
@@ -44,8 +45,16 @@ export class RegisterService {
           'userKey': userKey,
           'timestamp': new Date().toUTCString()
         };
+        //重置密码
+        if(url=='user/password'){
+          body = {
+            "password": password,
+            "userId": uid,
+            "userKey": userKey
+          }
+        }
     
-        return this.httpUtil.postLogin(url, body);
+        return this.httpUtil.postLogin(this.baseUrl+url, body);
       }
 
      

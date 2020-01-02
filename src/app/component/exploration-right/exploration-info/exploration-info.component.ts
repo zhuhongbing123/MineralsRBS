@@ -7,8 +7,9 @@ import { ExplorationInfoService } from './exploration-info.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/login.service';
-import { ProjectMapComponent } from '../../mineral-manage/project-map/project-map.component';
+
 import { MineralManageService } from '../../mineral-manage/mineral-manage.service';
+import { ProjectMapComponent } from 'src/app/component/exploration-right/exploration-info/project-map/project-map.component';
 
 @Component({
   selector: 'app-exploration-info',
@@ -42,6 +43,7 @@ export class ExplorationInfoComponent implements OnInit {
   deleteButton = false;//删除按钮显示
   queryDisplay  = false;//查询按钮显示
   backCommon: Subscription;
+  addAreaCommon:Subscription;
 
   filteredProjectName;//项目名称
   filteredOwnerName;//矿权人名称
@@ -56,10 +58,17 @@ export class ExplorationInfoComponent implements OnInit {
               private confirmationService: ConfirmationService,
               private explorationInfoService: ExplorationInfoService,
               private loginService:LoginService,
-              private router: Router) { 
+              private router: Router,
+              private dialogService: DialogService) { 
                this.backCommon =  this.explorationInfoService.backCommon$.subscribe(()=>{
                   this.setTableValue();
                 });
+
+               this.addAreaCommon =  this.explorationInfoService.addAreaCommon$.subscribe((value)=>{
+                  this.explorationProject.areaBackground = value.areaBackground;
+                  this.explorationProject.areaCoordinates = value.areaCoordinates;
+                  this.explorationProject.areaOpacity = value.areaOpacity;
+                })
                
               }
 
@@ -68,15 +77,19 @@ export class ExplorationInfoComponent implements OnInit {
   }
   ngOnDestroy(){
     this.backCommon.unsubscribe();
+    this.addAreaCommon.unsubscribe();
   }
   //初始化表格
   public setTableValue(){
     
     this.explorationInfoTitle=[
-      { field: 'number', header: '序号' },
       { field: 'projectName', header: '项目名称' },
       { field: 'owner_id', header: '矿权人' },
       { field: 'explorationStartTime', header: '探矿权首立时间' },
+      { field: 'explorationArea', header: '矿权范围' },
+      { field: 'explorationArea', header: '面积' },
+      { field: 'explorationArea', header: '勘查阶段' },
+      { field: 'explorationArea', header: '矿权范围' },
       { field: 'explorationArea', header: '矿权范围' },
       { field: 'operation', header: '操作' }
     ];
@@ -100,7 +113,7 @@ export class ExplorationInfoComponent implements OnInit {
     
   }
   ngAfterViewInit(){
-    this.getExplorationInfo();
+
     this.getMineralOwner();
     this.getReportCategory();
     this.getProjectName();
@@ -113,8 +126,13 @@ export class ExplorationInfoComponent implements OnInit {
         this.projectTotal = value.data.mineralProjects.total;
         for(let i=0; i<data.length;i++){
           data[i].explorationStartTime = data[i].explorationStartTime!==0? new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-          data[i]['owner_id'] = data[i].lastestProjectOwner?data[i].lastestProjectOwner.ownerName:'';
+         
           data[i].number = (this.startPage-1)*this.limit+i +1;
+          for(let j in this.mineralOwner){
+              if(data[i].ownerId == this.mineralOwner[j].id){
+                data[i]['owner_id']  = this.mineralOwner[j].ownerName;
+              }
+          }
         }
         
         this.explorationInfoValue = data;
@@ -135,6 +153,7 @@ export class ExplorationInfoComponent implements OnInit {
           data[i]['value'] = data[i].id;
         }
         this.mineralOwner = data;
+        this.getExplorationInfo();
       }
     })
   }
@@ -298,7 +317,7 @@ export class ExplorationInfoComponent implements OnInit {
 
   }
  /* 显示地图区域 */
-  /* viewMap(){
+  viewMap(){
     this.dialogService.open(ProjectMapComponent, {
       header: '新增项目区域',
       width: '70%',
@@ -308,9 +327,42 @@ export class ExplorationInfoComponent implements OnInit {
       data: {
         isIndoorMap: false,
         addLocationArea: true,
+        
         mineralProject:[]
       },
     });
-  } */
+  }
+
+  /* 列表导出到Excel */
+  exportExcel(){
+    import("xlsx").then(xlsx => {
+      const worksheet = xlsx.utils.json_to_sheet(this.getProject());
+      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+      this.saveAsExcelFile(excelBuffer, "primengTable");
+    });
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    import("file-saver").then(FileSaver => {
+        let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        let EXCEL_EXTENSION = '.xlsx';
+        const data: Blob = new Blob([buffer], {
+            type: EXCEL_TYPE
+        });
+        FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+    });
+  }
+
+  getProject() {
+    let exploration = [];
+    let data = JSON.parse(JSON.stringify(this.explorationInfoValue));
+    for(let car of data) {
+        delete car.id;
+        delete car.ownerId;
+        exploration.push(car);
+    }
+    return exploration;
+  }
     
 }

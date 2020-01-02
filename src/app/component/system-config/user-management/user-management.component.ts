@@ -10,7 +10,7 @@ import { RegisterService } from '../../register/register.service';
   styleUrls: ['./user-management.component.scss']
 })
 export class UserManagementComponent implements OnInit {
-  items: MenuItem[];
+
   public userTableTitle;//用户列表标题
   public userTableValue;//用户列表数据
   public userTotal;//用户列表总数
@@ -29,8 +29,10 @@ export class UserManagementComponent implements OnInit {
 
   addDisplay = false;//添加用户角色
   modifyDisplay = false;//修改用户角色
-  deleteDisplay = false;//删除用户角色
+  deleteRoleDisplay = false;//删除用户角色
   searchDisplay = false;//搜索用户按钮
+  deleteUserDisplay = false;//删除用户按钮
+  modifyPassword = false;//重置密码按钮
 
   filteredUserName;//输入的用户名
   filteredUser:any[];//搜索框下拉的用户名
@@ -41,6 +43,10 @@ export class UserManagementComponent implements OnInit {
   userName;//用户 名称
   password;//密码
   userRowData;//用户当行数据
+  oldPassword;//原密码
+  comfirmPassword;//确认密码
+  newPassword;//新密码
+  modifyPasswordDisplay = false;//修改密码弹出框
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
@@ -54,28 +60,17 @@ export class UserManagementComponent implements OnInit {
   /* 用户列表初始化 */
   getTableValue(){
     this.userTableTitle =[
-      { field: 'number', header: '序号' },
       { field: 'username', header: '用户名' },
       { field: 'role', header: '角色' },
       { field: 'createTime', header: '创建时间' },
       { field: 'operation', header: '操作' },
     ];
     this.roleTitle = [
-      { field: 'number', header: '序号' },
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
       { field: 'status', header: '状态' },
     ];
 
-    this.items = [
-      {label: '删除角色', command: (e) => {
-        this.setUserRole('','deleteRole')
-      }},
-      {label: '修改用户', command: () => {
-          //this.delete();
-      }},
-      {label: '删除用户',  url: 'http://angular.io'}
-    ];
     this.loading = true;
     //获取授权的API资源
     if(!localStorage.getItem('api')){
@@ -92,17 +87,20 @@ export class UserManagementComponent implements OnInit {
         this.modifyDisplay =true;
       };
       if(element.uri ==='/user/authority/role/*/*' && element.method =='DELETE'){
-        this.deleteDisplay =true;
+        this.deleteRoleDisplay =true;
       };
       if(element.uri ==='/user/search/*/*' && element.method =='POST'){
         this.searchDisplay =true;
-      }
-      
+      };
+      if(element.uri ==='/user/*' && element.method =='DELETE'){
+        this.deleteUserDisplay =true;
+      };
+      if(element.uri ==='/user/password' && element.method =='POST'){
+        this.modifyPassword =true;
+      };
     });
-    if(!this.deleteDisplay){
-      this.items.splice(1,this.items.length)
-    }
-    if(!this.modifyDisplay && !this.deleteDisplay){
+
+    if(!this.modifyDisplay && !this.deleteRoleDisplay){
       this.userTableTitle.splice(this.userTableTitle.length-1,1);
     }
     this.getUserValue();
@@ -113,8 +111,8 @@ export class UserManagementComponent implements OnInit {
   getUserValue(){
       this.httpUtil.get('user/list/'+this.pageNumber+'/'+this.pageSize).then(value=>{
         if (value.meta.code === 6666) {
-          let data = value.data.pageInfo.list;
-          this.userTotal = value.data.pageInfo.total;
+          let data = value.data.users.list;
+          this.userTotal = value.data.users.total;
           for(let i=0; i<data.length;i++){
             data[i].number = (this.pageNumber-1)*this.pageSize+i +1;
             if(data[i].succeed==1){
@@ -200,12 +198,39 @@ export class UserManagementComponent implements OnInit {
     }
 
     if(type=='add'){
+      this.password = '';
+      this.userName = '';
+      this.accountName = '';
+      this.comfirmPassword = '';
       this.userDisplay = true;
       return;
     }
     if(type=='modify'){
       this.userName = value.userName;
       this.accountName = value.uid;
+      this.modifyPasswordDisplay = true;
+      return;
+    }
+    /* 删除用户 */
+    if(type=='delete'){
+      this.confirmationService.confirm({
+        message: '确认删除该用户('+value.username+')吗?',
+        header: '删除用户',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel:'确定',
+        rejectLabel:'取消',
+        accept: () => {
+          this.httpUtil.delete('user/'+value.uid).then(value=>{
+            if (value.meta.code === 6666) {
+              this.getUserValue();
+              this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '删除用户成功'});
+            }
+          })
+        },
+        reject: () => {
+        
+        }
+      });
       return;
     }
     if(type =='deleteRole'){
@@ -293,8 +318,26 @@ export class UserManagementComponent implements OnInit {
   }
 
   /* 添加用户 */
-  saveOwner(){
-    this.password = this.password
+  saveOwner(type){
+    let url = 'account/register';
+    if(type=='modify'){
+      if(this.newPassword !== this.comfirmPassword){
+        this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '输入的新密码不一致,请重新输入'});
+       
+        return;
+      }
+      url = 'user/password';
+      this.password = this.newPassword;
+    }else{
+      if(this.password !== this.comfirmPassword){
+        if(this.newPassword !== this.comfirmPassword){
+          this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '输入的密码不一致,请重新输入'});
+         
+          return;
+        }
+      }
+    }
+   
     const getToken$ = this.registerService.getTokenKey().subscribe(
       data => {
 
@@ -302,8 +345,14 @@ export class UserManagementComponent implements OnInit {
           const tokenKey = data.data.tokenKey;
           const userKey = data.data.userKey;
           getToken$.unsubscribe();
-            const register$ = this.registerService.register(this.accountName, this.userName, this.password, tokenKey, userKey).subscribe(
+            const register$ = this.registerService.register(url,this.accountName, this.userName, this.password, tokenKey, userKey).subscribe(
               data2=> {
+                if(data2.meta.code === 6666){
+                  this.messageService.add({key: 'tc', severity:'success', summary: '提示', detail: '密码重置成功'});
+                  this.modifyPasswordDisplay = false;
+                  register$.unsubscribe();
+                  return;
+                }
                 // 注册成功返回
                 if (data2.meta.code === 2002) {
                   this.getUserValue();
@@ -311,7 +360,7 @@ export class UserManagementComponent implements OnInit {
                   this.userDisplay = false;
                   register$.unsubscribe();
                 } else {
-                  this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该用户已存在'});
+                  this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: data2.meta.msg});
                   register$.unsubscribe();
                 }
               },
@@ -323,7 +372,4 @@ export class UserManagementComponent implements OnInit {
       })
   }
 
-  aaa(event){
-    let aa;
-  }
 }

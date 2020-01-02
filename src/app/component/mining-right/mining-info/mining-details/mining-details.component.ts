@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
+import { MenuItem, MessageService, ConfirmationService, DialogService } from 'primeng/api';
 import { ExplorationProject, MiningStage, MiningMonitoring, ExplorationReport } from '../../../../common/util/app-config';
 import { HttpUtil } from '../../../../common/util/http-util';
 import { ExplorationInfoService } from '../../../exploration-right/exploration-info/exploration-info.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LoginService } from '../../../login/login.service';
+import { ProjectMapComponent } from '../../../exploration-right/exploration-info/project-map/project-map.component';
 
 @Component({
   selector: 'app-mining-details',
@@ -64,12 +65,18 @@ export class MiningDetailsComponent implements OnInit {
     private explorationInfoService: ExplorationInfoService,
     private router: Router,
     private loginService: LoginService,
-    public route: ActivatedRoute) { }
+    public route: ActivatedRoute,
+    private dialogService: DialogService) { }
 
   ngOnInit() {
     this.miningProject = this.explorationInfoService.explorationProject;
     this.reportCategory = this.explorationInfoService.reportCategory;
     this.mineralOwner = this.explorationInfoService.mineralOwner;
+    for(let i in  this.mineralOwner){
+      if(this.miningProject.ownerId ==  this.mineralOwner[i].id){
+        this.miningProject['ownerName'] = this.mineralOwner[i].ownerName;
+      }
+    }
     this.route.queryParams.subscribe(params => {
       if(params['type']=='modify'){
         this.buttonType = true;
@@ -89,7 +96,6 @@ export class MiningDetailsComponent implements OnInit {
       {label: '采矿权报告', icon: 'fa fa-fw fa-bar-chart'}
     ];
     this.stageDetailTitle = [
-      { field: 'number', header: '序号' },
       { field: 'ownerId', header: '矿权人' },
       { field: 'miningStartTime', header: '开始时间' },
       { field: 'miningEndTime', header: '结束时间' },
@@ -102,7 +108,6 @@ export class MiningDetailsComponent implements OnInit {
       { field: 'operation', header: '操作' },
     ];
     this.monitoringTitle = [
-      { field: 'number', header: '序号' },
       { field: 'validationYear', header: '监测报告年份' },
       { field: 'resourceUsed', header: '年度动用资源量' },
       { field: 'resourceMaintained', header: '年末保有资源量' },
@@ -142,10 +147,10 @@ export class MiningDetailsComponent implements OnInit {
 
     });
 
-    if(!this.modifyStageButton && !this.deleteStageButton){
+    if(!this.modifyStageButton && !this.deleteStageButton || this.buttonType){
       this.stageDetailTitle.splice(this.stageDetailTitle.length-1,1);
     }
-    if(!this.modifyValidationButton && !this.deleteValidationButton){
+    if(!this.modifyValidationButton && !this.deleteValidationButton || this.buttonType){
       this.monitoringTitle.splice(this.stageDetailTitle.length-1,1);
     }
 
@@ -426,31 +431,17 @@ saveMiningProject(type){
     this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '项目名称不能为空'});
     return;
   }
-  let projectInfo = {
-    "areaGeologicBackground": this.miningProject.areaGeologicBackground,
-    "explorationArea": this.miningProject.explorationArea,
-    "explorationStartTime": this.miningProject.explorationStartTime,
-    "geophysicalGeochemical": this.miningProject.geophysicalGeochemical,
-    "investigationFinalStage": this.miningProject.investigationFinalStage,
-    "majorAchievement": this.miningProject.majorAchievement,
-    "mineralBeltGeologic": this.miningProject.mineralBeltGeologic,
-    "mineralBeltOwner": this.miningProject.mineralBeltOwner,
-    "mineralCharacteristics": this.miningProject.mineralCharacteristics,
-    "mineralGeologicalMagmatite": this.miningProject.mineralGeologicalMagmatite,
-    "mineralGeologicalStratum": this.miningProject.mineralGeologicalStratum,
-    "mineralGeologicalStructure": this.miningProject.mineralGeologicalStructure,
-    "miningArea": this.miningProject.miningArea,
-    "miningStartTime":this.miningStartTime?this.miningStartTime.getTime()/1000:'',
-    "preliminaryUnderstanding": this.miningProject.preliminaryUnderstanding,
-    "projectName": this.miningProject.projectName,
-    "remarks": this.miningProject.remarks,
-    "rockAlteration": this.miningProject.rockAlteration,
-    "id": this.miningProject.id
-  };
+  this.miningProject.miningStartTime = this.miningStartTime?this.miningStartTime.getTime()/1000:0;
+ 
    /* 修改项目信息 */
-   this.httpUtil.put('mineral-project',projectInfo).then(value=>{
+   this.httpUtil.put('mineral-project',this.miningProject).then(value=>{
     if (value.meta.code === 6666) {
       this.miningProject.miningStartTime = new Date(this.miningStartTime).toLocaleDateString().replace(/\//g, "-");
+      for(let i in  this.mineralOwner){
+        if(this.miningProject.ownerId ==  this.mineralOwner[i].id){
+          this.miningProject['ownerName'] = this.mineralOwner[i].ownerName;
+        }
+      }
       this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
       this.miningDisplay = false;
     }
@@ -477,4 +468,19 @@ saveMiningProject(type){
     }
     
   }
+   /* 显示地图区域 */
+ viewMap(){
+  this.dialogService.open(ProjectMapComponent, {
+    header: '新增项目区域',
+    width: '70%',
+    baseZIndex:2000,
+    // height: "50%",
+    // baseZIndex: 1000,
+    data: {
+      isIndoorMap: false,
+      addLocationArea: false,
+      mineralProject: this.miningProject
+    },
+  });
+}
 }

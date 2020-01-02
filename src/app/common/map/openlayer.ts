@@ -119,7 +119,7 @@ export class Openlayer {
             target: this.mapDivId,
             layers: [
               new TileLayer({
-                source: new /* OSM() */TileWMS({
+                source: new OSM()/* TileWMS({
                     url: 'http://192.168.101.113:8781/geoserver/mineral/wms',
                     params: {'FORMAT': 'image/jpeg', 
                    'VERSION': '1.1.0',
@@ -128,7 +128,7 @@ export class Openlayer {
                     "exceptions": 'application/vnd.ogc.se_inimage',
                     tilesOrigin: 73.2467041015625 + "," + 15.149866104126
                         }
-                })
+                }) */
               }),
               vector
             ],
@@ -136,7 +136,7 @@ export class Openlayer {
             controls: defaultControls().extend([mousePositionControl]),
         
             view: new View({
-              center: [11052473, 4057007],
+              center: [12475533, 4984682],
               zoom: 8,
               minZoom: 4
             })
@@ -504,9 +504,10 @@ export class Openlayer {
                 source: source,
                 type: type
             });
+            this.map.addInteraction(this.draw);
         }
         
-        this.map.addInteraction(this.draw);
+        
         let that = this;
         
         this.draw.on('drawend',function(evt) {

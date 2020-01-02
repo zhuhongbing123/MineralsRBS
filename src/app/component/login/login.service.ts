@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 
 import * as CryptoJS from 'crypto-js';
-import {HttpParams} from '@angular/common/http';
+import {HttpParams, HttpClient} from '@angular/common/http';
 import { HttpUtil } from '../../common/util/http-util';
 import { HttpUrl } from '../../common/util/http-url';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -13,11 +13,21 @@ export class LoginService {
   constructor(private httpUtil: HttpUtil,
               private confirmationService: ConfirmationService,
               private router: Router,
-              private messageService: MessageService) {
-    this.baseUrl = HttpUrl.apiBaseUrl;
+              private messageService: MessageService,
+              private http: HttpClient) {
+    this.baseUrl = localStorage.getItem('IP');
+    
+    
   }
-
+  getIP(){
+    return this.http.get<any>('assets/server.json')
+                  .toPromise()
+                  .then(res => res.data)
+                  
+    
+  }
   getTokenKey() {
+    
     const url =this.baseUrl +  'account/login?tokenKey=get';
     // 先向后台申请加密tokenKey tokenKey=get
     return this.httpUtil.getLogin(url);

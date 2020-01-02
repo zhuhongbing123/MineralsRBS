@@ -12,7 +12,8 @@ export class ExplorationInfoService {
     public  backCommon$ = this.backCommon.asObservable();// 触发返回项目信息的方法
     private goDetailsCommon = new Subject<any>();
     public  goDetailsCommon$ = this.goDetailsCommon.asObservable();// 触发查看项目详情的方法
-
+    private addAreaCommon = new Subject<any>();
+    public  addAreaCommon$ = this.addAreaCommon.asObservable();// 触发新增项目区域
     constructor(){}
     getReportFile(value){
         this.reportFileCommon.next(value);
@@ -26,4 +27,12 @@ export class ExplorationInfoService {
     goDetails(){
         this.goDetailsCommon.next()
     }
+
+
+
+
+    getAddArea(value){
+        this.addAreaCommon.next(value);
+    }
+
 }

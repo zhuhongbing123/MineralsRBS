@@ -17,7 +17,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authToken = localStorage.getItem('token');
-    const uid =  localStorage.getItem('uid')
+    const uid =  localStorage.getItem('uid');
     let authReq: any;
     if (authToken != null && uid != null) {
       authReq = req.clone({
@@ -36,9 +36,12 @@ export class AuthInterceptor implements HttpInterceptor {
         // 返回response
         if (event instanceof HttpResponse) {
           if (event.status === 200) {
+            /* if(event.body.serverIP){
+              return;
+            } */
             // 若返回JWT过期但refresh token未过期,返回新的JWT 状态码为1005
             
-            if (event.body.meta.code === 1005) {
+            if (event.body.meta && event.body.meta.code === 1005) {
               
               const jwt = event.body.data.jwt;
               // 更新AuthorizationToken
@@ -55,29 +58,32 @@ export class AuthInterceptor implements HttpInterceptor {
 
             }
             // jwt过期  清空本地信息跳转登录界面
-            if (event.body.meta.code === 1006) {
+            if (event.body.meta &&  event.body.meta.code === 1006) {
               this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '长时间未操作，请重新登录'});
               localStorage.clear();
               this.loginService.exit();
+              return;
             }
             // err jwt 情况本地信息跳转登录界面
-            if (event.body.meta.code === 1007) {
+            if (event.body.meta && event.body.meta.code === 1007) {
               this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '长时间未操作，请重新登录'});
               localStorage.clear();
               this.loginService.exit();
+              return;
             }
             //注销之后跳转登录界面
-            if (event.body.meta.code === 2004) {
+            if (event.body.meta && event.body.meta.code === 2004) {
               this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '长时间未操作，请重新登录'});
               localStorage.clear();
               this.loginService.exit();
+              return;
             }
           }
-          if (event.status === 404) {
+          if (event.body.meta && event.status === 404) {
             // go to 404 html
             this.router.navigateByUrl('/404');
           }
-          if (event.status === 500) {
+          if (event.body.meta && event.status === 500) {
             // go to 500 html
             this.router.navigateByUrl('/500');
           }

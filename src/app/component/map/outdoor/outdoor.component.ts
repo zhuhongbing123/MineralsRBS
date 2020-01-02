@@ -15,7 +15,7 @@ import { LoginService } from 'src/app/component/login/login.service';
 })
 export class OutdoorComponent implements OnInit {
   @ViewChildren ('2dMap') twoMap: QueryList<Map2DComponent>
-  LIMIT_LOGIN = 10;//列表每页显示数量
+  LIMIT_LOGIN = 10;//;
   startPage = 1;//列表开始的页数
   limit = 10;//列表每页的行数
 
@@ -53,6 +53,7 @@ export class OutdoorComponent implements OnInit {
   projectColor = "#ff0044";//项目背景色
   areaOpacity = 1;//区域透明度
   projectInfo;//项目信息
+  mineralOwner:any[];//矿权人
   modifyMineral = false;//是否修改项目
 
   projectDisplay = false;//项目定位按钮显示
@@ -65,6 +66,7 @@ export class OutdoorComponent implements OnInit {
   addPoiDisplay = false;//新增地点标注按钮
   modifyPoiDisplay = false;//修改地点标注按钮
   deletePoiDisplay = false;//删除地点标注按钮
+
 
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
@@ -149,7 +151,7 @@ export class OutdoorComponent implements OnInit {
     this.locationMineralDisplay = true;
     this.getMapLocationLabelAll();
     this.getMapLocationAreaAll();
-    this.getMineralLocation();
+    this.getMineralOwner();
     //this.getMieralLocation();
    }
   /* 获取所有地图点位标注 */
@@ -245,14 +247,31 @@ export class OutdoorComponent implements OnInit {
         for(let i in data){
           /* data[i].explorationStartTime =  data[i].explorationStartTime?new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):''; */
-          if(data[i].lastestProjectOwner){
-            data[i]['owner_id']= data[i].lastestProjectOwner.ownerName;
+          for(let j in this.mineralOwner){
+            if(data[i].ownerId == this.mineralOwner[j].id){
+              data[i]['owner_id']  = this.mineralOwner[j].ownerName;
+            }
           }
           if(data[i].areaCoordinates){
             data[i].areaCoordinates = JSON.parse(data[i].areaCoordinates);
           }
         }
         this.mineralLocationValue = data;
+      }
+    })
+  }
+
+  /*  获取矿权人*/
+  getMineralOwner(){
+    this.httpUtil.get('mineral-owner/list/1/10000').then(value=>{
+      if (value.meta.code === 6666) {
+        let data = value.data.mineralOwners.list;
+        for(let i in data){
+          data[i]['label'] = data[i].ownerName;
+          data[i]['value'] = data[i].id;
+        }
+        this.mineralOwner = data;
+        this.getMineralLocation();
       }
     })
   }
@@ -652,5 +671,18 @@ export class OutdoorComponent implements OnInit {
         this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
       }
     })
+  }
+
+  /* 切换页码 */
+  pageChange(event,type){
+    this.startPage = event.page+1;//列表开始的页数
+    this.limit = event.rows;//列表每页的行数
+    if(type=='area'){
+      this.getMapLocationArea();
+    }else if(type=='label'){
+      this.getMapLocationLabel();
+    }else{
+      this.getMineralLocation();
+    }
   }
 }

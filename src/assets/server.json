@@ -1,0 +1,10 @@
+{
+    "data":[
+        {
+            "serverIP":"http://47.108.91.193:8080/minerals-server/",
+            "fileIP":"http://47.108.91.193:8080/",
+            "mapIP":"http://192.168.101.113:8781/geoserver/gwc/demo/mineral:chinaosm?gridSet=EPSG:4326&format=image/png"
+        }
+    ]
+    
+}

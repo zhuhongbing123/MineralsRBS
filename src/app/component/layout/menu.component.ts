@@ -38,21 +38,21 @@ export class MenuComponent implements OnInit {
       {
         label: '矿业权政策', icon: 'fa fa-file-text',
         items: [
-          { label: '矿业权政策文件分类', icon: 'fa fa-file-text-o', routerLink: ['/layout/mineralPolicy/policyFile'] },
+          { label: '矿业权政策报告分类', icon: 'fa fa-file-text-o', routerLink: ['/layout/mineralPolicy/policyFile'] },
           { label: '矿业权政策报告', icon: 'fa fa-file-text-o', routerLink: ['/layout/mineralPolicy/policyReport'] }
         ]
       },
       {
         label: '探矿权', icon: 'fa fa-fw  fa-tags',
         items: [
-          { label: '探矿权文件分类', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/explorationRight/explorationFile'] },
+          { label: '探矿权报告分类', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/explorationRight/explorationFile'] },
           { label: '探矿权信息', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/explorationRight/explorationInfo'] }
         ]
       },
       {
         label: '采矿权', icon: 'fa fa-fw  fa-tags',
         items: [
-          { label: '采矿权文件分类', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/miningRight/miningFile'] },
+          { label: '采矿权报告分类', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/miningRight/miningFile'] },
           { label: '采矿权信息', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/miningRight/miningInfo'] }
         ]
       },
