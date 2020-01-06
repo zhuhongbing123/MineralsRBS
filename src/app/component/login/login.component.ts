@@ -96,6 +96,9 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     window.sessionStorage.setItem('HTTP', window.location.hostname);
+    if( localStorage.getItem('token')){
+      this.router.navigate(['/layout/explorationRight/explorationInfo']);//跳转到探矿权
+    }
     /* 获取IP地址 */
     this.loginService.getIP().then(res=>{
       localStorage.setItem('IP', res[0].serverIP);

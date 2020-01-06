@@ -86,8 +86,7 @@ export class ExplorationDetailsComponent implements OnInit {
     ];
     this.explorationDetailTitle = [
       { field: 'ownerId', header: '矿权人' },
-      { field: 'investigationStartTime', header: '开始时间' },
-      { field: 'investigationEndTime', header: '结束时间' },
+      { field: 'investigationStartTime', header: '首立时间' },
       { field: 'projectArea', header: '矿权范围' },
       { field: 'investigationOrganization', header: '勘查单位' },
       { field: 'investigationCategory', header: '类别' },
@@ -281,8 +280,8 @@ saveExplorationStage(){
       "id": this.explorationStage.id,
       "projectId": this.explorationProject.id,//矿权项目ID，
       "ownerId": this.explorationStage.ownerId,//矿权人ID
-      "investigationStartTime": this.stageStartTime?this.stageStartTime.getTime()/1000:0,//开始时间
-      "investigationEndTime": this.stageEndTime?this.stageEndTime.getTime()/1000:0,//结束时间
+      "investigationStartTime": this.stageStartTime?this.stageStartTime.getTime()/1000:0,//首立时间
+      "investigationEndTime":0,//结束时间
       "projectArea": this.explorationStage.projectArea,//矿权范围
       "investigationOrganization": this.explorationStage.investigationOrganization,//勘查单位
       "investigationCategory": this.explorationStage.investigationCategory,//类别  

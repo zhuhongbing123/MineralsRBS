@@ -15,7 +15,7 @@
         <button pButton  type="button" label="查询" (click)="setMining('filtered')"></button>
 </div>
   <div style="clear: both;" class="p-table">
-      <p-table [columns]="miningInfoTitle" [value]="miningInfoValue" [resizableColumns]="true" [loading]="loading">
+      <p-table [columns]="miningInfoTitle" [value]="miningInfoValue" [resizableColumns]="true" [loading]="loading" columnResizeMode="expand" >
         <ng-template pTemplate="caption">
                 <div class="ui-helper-clearfix" style="text-align: right">
                     
@@ -47,7 +47,7 @@
                 </div>
         </ng-template>
       </p-table>
-      <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'project')"></p-paginator>
+      <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,50,100,500,1000]" (onPageChange)="pageChange($event,'project')"></p-paginator>
   </div>
 </div>
 

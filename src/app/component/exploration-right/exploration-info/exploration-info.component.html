@@ -18,7 +18,13 @@
     </div>
   <div style="clear: both;" class="p-table">
         
-      <p-table [columns]="explorationInfoTitle" [value]="explorationInfoValue" [resizableColumns]="true" [loading]="loading"  columnResizeMode="expand">
+      <p-table [columns]="explorationInfoTitle" 
+               [value]="explorationInfoValue" 
+               
+               [loading]="loading"  
+               columnResizeMode="expand"
+               
+               [resizableColumns]="true"  >
         <ng-template pTemplate="caption">
             <div class="ui-helper-clearfix" style="text-align: right">
                
@@ -35,7 +41,7 @@
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
             <tr>
-                <td>{{rowData.number}}</td>
+                <td style="width:8%">{{rowData.number}}</td>
                 <td *ngFor="let col of columns">
                     <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                     <span *ngIf = "col.field == 'operation'" class="operation-icon"  (click)="goDetails(rowData,'detail')">详情</span>
@@ -50,7 +56,7 @@
                 </div>
         </ng-template>
       </p-table>
-      <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'project')"></p-paginator>
+      <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,50,100,500,1000]" (onPageChange)="pageChange($event,'project')"></p-paginator>
   </div>
 </div>
 

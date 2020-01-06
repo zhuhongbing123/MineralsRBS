@@ -86,11 +86,12 @@ export class ExplorationInfoComponent implements OnInit {
       { field: 'projectName', header: '项目名称' },
       { field: 'owner_id', header: '矿权人' },
       { field: 'explorationStartTime', header: '探矿权首立时间' },
-      { field: 'explorationArea', header: '矿权范围' },
-      { field: 'explorationArea', header: '面积' },
-      { field: 'explorationArea', header: '勘查阶段' },
-      { field: 'explorationArea', header: '矿权范围' },
-      { field: 'explorationArea', header: '矿权范围' },
+      { field: 'projectArea', header: '矿权范围' },
+      { field: 'investigationArea', header: '面积(平方公里)' },
+      { field: 'investigationStage', header: '勘查阶段' },
+      { field: 'investigationMineralType', header: '勘查矿种' },
+      { field: 'investigationWorkload', header: '工作量' },
+      { field: 'investigationInvestment', header: '投入金额(万元)' },
       { field: 'operation', header: '操作' }
     ];
     this.loading = true;
@@ -128,6 +129,16 @@ export class ExplorationInfoComponent implements OnInit {
           data[i].explorationStartTime = data[i].explorationStartTime!==0? new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
          
           data[i].number = (this.startPage-1)*this.limit+i +1;
+          if(data[i].latestExplorationStage){
+            for(let j in data[i].latestExplorationStage){
+              data[i]['projectArea'] = data[i].latestExplorationStage.projectArea;
+              data[i]['investigationArea'] = data[i].latestExplorationStage.investigationArea;
+              data[i]['investigationStage'] = data[i].latestExplorationStage.investigationStage;
+              data[i]['investigationWorkload'] = data[i].latestExplorationStage.investigationWorkload;
+              data[i]['investigationInvestment'] = data[i].latestExplorationStage.investigationInvestment;
+              data[i]['investigationMineralType'] = data[i].latestExplorationStage.investigationMineralType;
+            }
+          }
           for(let j in this.mineralOwner){
               if(data[i].ownerId == this.mineralOwner[j].id){
                 data[i]['owner_id']  = this.mineralOwner[j].ownerName;
@@ -339,7 +350,7 @@ export class ExplorationInfoComponent implements OnInit {
       const worksheet = xlsx.utils.json_to_sheet(this.getProject());
       const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
       const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-      this.saveAsExcelFile(excelBuffer, "primengTable");
+      this.saveAsExcelFile(excelBuffer, "探矿权项目列表数据");
     });
   }
 
@@ -350,17 +361,28 @@ export class ExplorationInfoComponent implements OnInit {
         const data: Blob = new Blob([buffer], {
             type: EXCEL_TYPE
         });
-        FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+        FileSaver.saveAs(data, fileName  + '('+new Date(new Date().toString()).toLocaleDateString().replace(/\//g, "-")+ ')'+EXCEL_EXTENSION);
     });
   }
 
   getProject() {
     let exploration = [];
     let data = JSON.parse(JSON.stringify(this.explorationInfoValue));
-    for(let car of data) {
-        delete car.id;
-        delete car.ownerId;
-        exploration.push(car);
+    for(let project of data) {
+
+        let info = {
+          '项目名称': project.projectName,
+          '矿权人 ': project.owner_id,
+          '探矿权首立时间': project.explorationStartTime,
+          '矿权范围': project.projectArea,
+          '面积(平方公里)': project.investigationArea,
+          '勘查阶段': project.investigationStage,
+          '勘查矿种': project.investigationMineralType,
+          '工作量': project.investigationWorkload,
+          '投入金额(万元)': project.investigationInvestment
+        }
+
+        exploration.push(info);
     }
     return exploration;
   }

@@ -147,11 +147,11 @@ export class MiningDetailsComponent implements OnInit {
 
     });
 
-    if(!this.modifyStageButton && !this.deleteStageButton || this.buttonType){
+    if(!this.modifyStageButton && !this.deleteStageButton || !this.buttonType){
       this.stageDetailTitle.splice(this.stageDetailTitle.length-1,1);
     }
-    if(!this.modifyValidationButton && !this.deleteValidationButton || this.buttonType){
-      this.monitoringTitle.splice(this.stageDetailTitle.length-1,1);
+    if(!this.modifyValidationButton && !this.deleteValidationButton || !this.buttonType){
+      this.monitoringTitle.splice(this.monitoringTitle.length-1,1);
     }
 
     this.getStageInfo();

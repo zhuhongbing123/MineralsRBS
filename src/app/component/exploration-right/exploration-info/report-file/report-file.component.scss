@@ -30,3 +30,28 @@ border: solid 1px #123;
 .file-path:hover{
     color: #0090ff;
 }
+
+.example-pdf{
+    bottom: 10px;
+    position: absolute;
+    width: 100%;
+    height: 90%;
+    top:75px;
+}
+.example-excel{
+    float: left;
+}
+
+#tiff{
+    width: 100%;
+    height: 90%;
+    overflow: auto;
+    border: 1px solid;
+}
+.example-image{
+    text-align: center;
+    border: 1px solid;
+    width: 100%;
+    height: 90%;
+    overflow: auto;
+}

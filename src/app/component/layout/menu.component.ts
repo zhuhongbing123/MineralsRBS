@@ -36,49 +36,49 @@ export class MenuComponent implements OnInit {
     this.models = [
      
       {
-        label: '矿业权政策', icon: 'fa fa-file-text',
+        label: '矿业权政策', icon: 'iconfont iconzhengce',
         items: [
-          { label: '矿业权政策报告分类', icon: 'fa fa-file-text-o', routerLink: ['/layout/mineralPolicy/policyFile'] },
-          { label: '矿业权政策报告', icon: 'fa fa-file-text-o', routerLink: ['/layout/mineralPolicy/policyReport'] }
+          { label: '矿业权政策报告分类', icon: 'iconfont iconbaogaoguanli', routerLink: ['/layout/mineralPolicy/policyFile'] },
+          { label: '矿业权政策报告', icon: 'iconfont iconbaogao', routerLink: ['/layout/mineralPolicy/policyReport'] }
         ]
       },
       {
-        label: '探矿权', icon: 'fa fa-fw  fa-tags',
+        label: '探矿权', icon: 'iconfont icontankuangquancaikuangquanpinggu',
         items: [
-          { label: '探矿权报告分类', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/explorationRight/explorationFile'] },
-          { label: '探矿权信息', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/explorationRight/explorationInfo'] }
+          { label: '探矿权报告分类', icon: 'iconfont iconbaogaoguanli', routerLink: ['/layout/explorationRight/explorationFile'] },
+          { label: '探矿权信息', icon: 'iconfont iconkuangquanleixinggengzheng', routerLink: ['/layout/explorationRight/explorationInfo'] }
         ]
       },
       {
-        label: '采矿权', icon: 'fa fa-fw  fa-tags',
+        label: '采矿权', icon: 'iconfont iconmineral',
         items: [
-          { label: '采矿权报告分类', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/miningRight/miningFile'] },
-          { label: '采矿权信息', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/miningRight/miningInfo'] }
+          { label: '采矿权报告分类', icon: 'iconfont iconbaogaoguanli', routerLink: ['/layout/miningRight/miningFile'] },
+          { label: '采矿权信息', icon: 'iconfont iconcaikuangquanzhaopaiguachurangjieguogongshi', routerLink: ['/layout/miningRight/miningInfo'] }
         ]
       },
       {
-        label: '矿权管理', icon: 'fa fa-fw  fa-tags',
+        label: '矿权管理', icon: 'iconfont iconironstone',
         items:[
-          {label: '矿权项目管理', icon: 'fa fa-fw  fa-tags',routerLink: ['/layout/mineralManage/mineralProject']},
-          {label: '矿权人管理', icon: 'fa fa-fw  fa-tags',routerLink: ['/layout/systemConfig/mineralOwner']} 
+          {label: '矿权项目管理', icon: 'iconfont iconxiangmu',routerLink: ['/layout/mineralManage/mineralProject']},
+          {label: '矿权人管理', icon: 'iconfont iconkuanggong',routerLink: ['/layout/systemConfig/mineralOwner']} 
         ]
         
       },
       {
         label: '地图', icon: 'fa fa-fw  fa-map',
         items: [
-          { label: '矿权地图', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/mapManage/outDoor'] }
+          { label: '矿权地图', icon: 'iconfont iconmap', routerLink: ['/layout/mapManage/outDoor'] }
         ]
       },
       {
-        label: '系统配置', icon: 'fa fa-fw  fa-tags', 
+        label: '系统配置', icon: 'iconfont iconxitongguanli', 
         items: [
-          { label: '角色管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/roleManage'] },
-          { label: '用户管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/userManage'] },
-          { label: 'API授权管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/apiManage'] },
+          { label: '角色管理', icon: 'iconfont iconjiaoseguanli', routerLink: ['/layout/systemConfig/roleManage'] },
+          { label: '用户管理', icon: 'iconfont icontenantuser', routerLink: ['/layout/systemConfig/userManage'] },
+          { label: 'API授权管理', icon: 'iconfont iconAPI', routerLink: ['/layout/systemConfig/apiManage'] },
           /* { label: '菜单管理', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/menuManage'] }, */
-          { label: '登录日志', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/loginLog'] },
-          { label: '操作日志', icon: 'fa fa-fw fa-tag', routerLink: ['/layout/systemConfig/operationLog'] }
+          { label: '登录日志', icon: 'iconfont icondenglurizhi-', routerLink: ['/layout/systemConfig/loginLog'] },
+          { label: '操作日志', icon: 'iconfont iconcaozuorizhi', routerLink: ['/layout/systemConfig/operationLog'] }
           
         ]
 

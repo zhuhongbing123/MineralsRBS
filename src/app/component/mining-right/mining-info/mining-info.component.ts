@@ -72,7 +72,13 @@ export class MiningInfoComponent implements OnInit {
       { field: 'projectName', header: '项目名称' },
       { field: 'owner_id', header: '矿权人' },
       { field: 'miningStartTime', header: '采矿权首立时间' },
-      { field: 'miningArea', header: '矿权范围' },
+      { field: 'stageStartTime', header: '开始时间' },
+      { field: 'stageEndTime', header: '结束时间' },
+      { field: 'projectArea', header: '矿权范围' },
+      { field: 'miningMineralType', header: '开采矿种' },
+      { field: 'miningProductionScale', header: '生产规模(吨/年)' },
+      { field: 'miningWorkload', header: '开采投入工作量' },
+      { field: 'miningInvestment', header: '开采投入金额(万元)' },
       { field: 'operation', header: '操作' }
     ];
     this.loading = true;
@@ -111,7 +117,17 @@ export class MiningInfoComponent implements OnInit {
         for(let i=0; i<data.length;i++){
           data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i].number = (this.startPage-1)*this.limit+i +1;
-    
+          if(data[i].latestMiningStage){
+            for(let j in data[i].latestMiningStage){
+              data[i]['projectArea'] = data[i].latestMiningStage.projectArea;
+              data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?new Date(data[i].latestMiningStage.miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+              data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?new Date(data[i].latestMiningStage.miningEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+              data[i]['miningMineralType'] = data[i].latestMiningStage.miningMineralType;
+              data[i]['miningProductionScale'] = data[i].latestMiningStage.miningProductionScale;
+              data[i]['miningWorkload'] = data[i].latestMiningStage.miningWorkload;
+              data[i]['miningInvestment'] = data[i].latestMiningStage.miningInvestment;
+            }
+          } 
           for(let j in this.mineralOwner){
             if(data[i].ownerId == this.mineralOwner[j].id){
               data[i]['owner_id']  = this.mineralOwner[j].ownerName;
@@ -304,7 +320,7 @@ export class MiningInfoComponent implements OnInit {
       const worksheet = xlsx.utils.json_to_sheet(this.getProject());
       const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
       const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-      this.saveAsExcelFile(excelBuffer, "primengTable");
+      this.saveAsExcelFile(excelBuffer, "采矿权项目列表数据");
     });
   }
 
@@ -315,17 +331,27 @@ export class MiningInfoComponent implements OnInit {
         const data: Blob = new Blob([buffer], {
             type: EXCEL_TYPE
         });
-        FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+        FileSaver.saveAs(data, fileName  + '('+new Date(new Date().toString()).toLocaleDateString().replace(/\//g, "-")+ ')'+EXCEL_EXTENSION);
     });
   }
 
   getProject() {
     let exploration = [];
     let data = JSON.parse(JSON.stringify(this.miningInfoValue));
-    for(let car of data) {
-        delete car.id;
-        delete car.ownerId;
-        exploration.push(car);
+    for(let project of data) {
+      let info = {
+        '项目名称': project.projectName,
+        '矿权人 ': project.owner_id,
+        '采矿权首立时间': project.miningStartTime,
+        '开始时间': project.stageStartTime,
+        '结束时间': project.stageEndTime,
+        '矿权范围': project.projectArea,
+        '开采矿种': project.miningMineralType,
+        '生产规模(吨/年)': project.miningProductionScale,
+        '开采投入工作量': project.miningWorkload,
+        '开采投入金额(万元)': project.miningInvestment
+      }
+        exploration.push(info);
     }
     return exploration;
   }

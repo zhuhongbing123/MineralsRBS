@@ -1,18 +1,18 @@
 
   <!--文件预览页面  -->       
   <p-sidebar [(visible)]="viewFileDisplay" [fullScreen]="true" [baseZIndex]="10000">
-    <h1 style="font-weight:normal">{{selectedFile.label}}</h1>
-    <div id="example-pdf" [hidden]="fileType!=='pdf'&&fileType!=='doc'">
+    <h1 style="font-weight:normal;width: 50%;float: left;">{{selectedFile.label}}</h1>
+    <button pButton type="button" style="float:right;top:20px;z-index: 999;" (click)="viewFileDisplay = false"  label="返回" ></button>
+    <div id="example-pdf" class="example-pdf" [hidden]="fileType!=='pdf'&&fileType!=='doc'">
 
     </div>
 
-    <div [hidden]="fileType!=='xlsx'">
+    <div [hidden]="fileType!=='xlsx'" class="example-excel">
         <p-tabMenu [model]="itemsExcel" [activeItem]="itemsExcel[0]" (click)="excelClick($event)"></p-tabMenu>
-        <div  id="result" style="width: 100em;overflow: auto;height: 40em;"></div>
+        <div  id="result" style="width: 100%;overflow: auto;height: 85%;"></div>
     </div>
 
-    <div [hidden]="fileType!=='png'&& fileType!=='jpg'"  style="text-align: center;border: 1px solid;width: 100%;
-    height: 80%;overflow: auto;">
+    <div [hidden]="fileType!=='png'&& fileType!=='jpg'" class="example-image">
         <img src="{{imgUrl}}" id="img" style="width:90%;"/>
     </div>
 
@@ -20,10 +20,10 @@
         <textarea rows="5" cols="30" style="width:100%" pInputTextarea disabled [(ngModel)]="txtTable" name="projectArea"></textarea>
     </div>
     
-    <div id='tiff'style="width: 100%;height: 80%;overflow: auto;" [hidden]="fileType!=='tif'"></div>
-    <button pButton type="button" (click)="viewFileDisplay = false"  label="返回" ></button>
+    <div id='tiff' [hidden]="fileType!=='tif'"></div>
+   
   </p-sidebar>
-<div  style="clear: both;" class="p-table" [hidden]="!reportDetailDisplay">
+<div  style="clear: 7;" class="p-table" [hidden]="!reportDetailDisplay">
     <div [hidden]="viewFileDisplay">
         <div style="float:left;margin-bottom: 10px;margin-top:10px">
             <button pButton type="button" label="新增" [hidden]="!addButton || !buttonType" (click)="setExplorationt('addReport')"></button>
@@ -63,7 +63,7 @@
         </div>
         
         <div style="clear:both">
-            <p-table [columns]="reportClassifyTitle" [value]="reportClassifyValue" [resizableColumns]="true">
+            <p-table [columns]="reportClassifyTitle" [value]="reportClassifyValue" [resizableColumns]="true" columnResizeMode="expand">
                 <ng-template pTemplate="header" let-columns>
                     <tr>
                         <th style="width:8%" pResizableColumn>序号</th>
@@ -123,11 +123,23 @@
             </div>
         </div>    
 
-        <div class="form-group has-feedback">
+        <div class="form-group has-feedback" [hidden]="type=='policy'">
             <label class="control-label">报告文件路径(以'\'隔开文件夹和文件)
                 <button type="button" pButton (click)="selectFolder()" label="选择文件夹"></button>
             </label>
             <input  type="text" style="width:700px !important" maxlength = '100'  [(ngModel)]="explorationReport.reportFilePath" name="reportFilePath"  class="form-control">
+        </div>    
+        <div class="form-group has-feedback" [hidden]="type!=='policy'">
+                <label class="control-label">选择报告文件
+                        <p-fileUpload  name="file" [url]="fileUrl" chooseLabel='选择'  uploadLabel='上传' cancelLabel='取消' [disabled]='fileDisabled' maxFileSize="1000000" (onUpload)="onUpload($event)">
+                            <ng-template pTemplate="content">
+                                <ul *ngIf="uploadedFiles.length">
+                                    <li *ngFor="let file of uploadedFiles">{{file.name}}</li>
+                                </ul>
+                            </ng-template>
+                        </p-fileUpload>
+                </label>
+
         </div>    
         <div class="form-group has-feedback">
             <label class="control-label">文件描述详情</label>

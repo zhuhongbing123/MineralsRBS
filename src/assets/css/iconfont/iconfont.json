@@ -1,0 +1,163 @@
+{
+  "id": "1598948",
+  "name": "矿产",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "693655",
+      "name": "操作日志",
+      "font_class": "caozuorizhi",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "742126",
+      "name": "角色管理",
+      "font_class": "jiaoseguanli",
+      "unicode": "ea62",
+      "unicode_decimal": 60002
+    },
+    {
+      "icon_id": "2210353",
+      "name": "矿业工程",
+      "font_class": "ironstone",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "2546498",
+      "name": "日志",
+      "font_class": "rizhi",
+      "unicode": "e69d",
+      "unicode_decimal": 59037
+    },
+    {
+      "icon_id": "4143505",
+      "name": "系统管理",
+      "font_class": "xitongguanli",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "4707457",
+      "name": "系统配置",
+      "font_class": "xitongpeizhi",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "4941945",
+      "name": "矿业",
+      "font_class": "mineral",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "5054801",
+      "name": "政策",
+      "font_class": "zhengce",
+      "unicode": "e6b9",
+      "unicode_decimal": 59065
+    },
+    {
+      "icon_id": "5271988",
+      "name": "用户管理",
+      "font_class": "tenantuser",
+      "unicode": "e66b",
+      "unicode_decimal": 58987
+    },
+    {
+      "icon_id": "5439379",
+      "name": "矿工",
+      "font_class": "kuanggong",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "5817927",
+      "name": "采矿权招拍挂出让结果公示",
+      "font_class": "caikuangquanzhaopaiguachurangjieguogongshi",
+      "unicode": "e6de",
+      "unicode_decimal": 59102
+    },
+    {
+      "icon_id": "6505135",
+      "name": "地图",
+      "font_class": "map",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "6527105",
+      "name": "报告",
+      "font_class": "baogao",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
+      "icon_id": "7171160",
+      "name": "项目管理",
+      "font_class": "xiangmu",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "7448221",
+      "name": "报告分类",
+      "font_class": "baogaoguanli",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    },
+    {
+      "icon_id": "7523444",
+      "name": "登录日志",
+      "font_class": "denglurizhi-",
+      "unicode": "e6b7",
+      "unicode_decimal": 59063
+    },
+    {
+      "icon_id": "8406406",
+      "name": "矿山机械",
+      "font_class": "kuangshanjixie",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "8642320",
+      "name": "API",
+      "font_class": "API",
+      "unicode": "e81d",
+      "unicode_decimal": 59421
+    },
+    {
+      "icon_id": "9283904",
+      "name": "金属矿山",
+      "font_class": "jinshukuangshanmetalMines",
+      "unicode": "e669",
+      "unicode_decimal": 58985
+    },
+    {
+      "icon_id": "11312105",
+      "name": "矿权类型更正",
+      "font_class": "kuangquanleixinggengzheng",
+      "unicode": "e71c",
+      "unicode_decimal": 59164
+    },
+    {
+      "icon_id": "11438875",
+      "name": "探矿权采矿权评估",
+      "font_class": "tankuangquancaikuangquanpinggu",
+      "unicode": "e6ac",
+      "unicode_decimal": 59052
+    },
+    {
+      "icon_id": "12319701",
+      "name": "采矿业",
+      "font_class": "caikuangye",
+      "unicode": "e63d",
+      "unicode_decimal": 58941
+    }
+  ]
+}
