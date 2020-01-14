@@ -1,0 +1,68 @@
+<div style="height: 86.5vh;">
+  <div id="main_content" #main_content >
+    <div id="cameraMaps" class="map">
+      <div id="popup" class="ol-popup">
+        <a href ='#' id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content" style="color:black"></div>
+      
+      </div>
+      <!-- 比例尺显示 -->
+      <div id="digitalScale" >
+        <select id="type" [hidden]="true">
+          <option value="LineString">Length (LineString)</option>
+        </select>
+      </div>
+    </div>
+    <!--地图左下角 测量工具-->
+    <div style="position: relative;bottom:120px;left:9px;width: 50px;">
+        <img src="./assets/img/mapStaff.png" alt="pic" style="width: 23px;cursor: pointer;" id="measure_location" >
+        <img src="./assets/img/delete.png" alt="pic" id="clear_measure_location" style="display: none;margin-left:10px;;cursor: pointer;">
+    </div>
+    <!-- 坐标显示 -->
+    <div id="mouse-position">
+    </div>
+    
+  </div>
+</div>
+
+<!-- 右侧菜单栏 -->
+<div class="fixed-control" style="right: 0px;z-index: 9999;">
+  <div class="right-operation">
+    <div>
+        <span>摄像头标注</span>
+       
+    </div>
+
+
+    <div style="clear: both;" class="p-table">
+            <p-table [columns]="cameraLabelTitle" [value]="cameraLabelValue" [scrollable]="true" scrollHeight="300px"  [resizableColumns]="true" >
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td *ngFor="let col of columns">
+                          <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                          <span *ngIf = "col.field == 'operation' " class="operation-icon"  (click)="setCameraMap('location',rowData)">定位</span>
+                          <span *ngIf = "col.field == 'operation' " class="operation-icon"  (click)="setCameraMap('open',rowData)">打开摄像头</span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            
+    </div>
+  </div>
+</div>
+<div class="dialog-class textarea-style">
+  <p-dialog header="摄像头监控区域" [(visible)]="cameraDisplay" [modal]="true" [responsive]="true" [style]="{width: '350px', minWidth: '200px'}" [minY]="70" 
+          [maximizable]="true" [baseZIndex]="10000">
+          <div style="height:200px;text-align: center">
+            <p-progressSpinner ></p-progressSpinner>
+            <div>连接中...</div>
+          </div>
+  </p-dialog>      
+</div>  

@@ -90,12 +90,12 @@ export class ExplorationDetailsComponent implements OnInit {
       { field: 'projectArea', header: '矿权范围' },
       { field: 'investigationOrganization', header: '勘查单位' },
       { field: 'investigationCategory', header: '类别' },
-      { field: 'investigationArea', header: '面积' },
+      { field: 'investigationArea', header: '面积(平方公里)' },
       { field: 'investigationMineralType', header: '勘查矿种' },
       { field: 'investigationStage', header: '勘查阶段' },
       { field: 'investigationWorkload', header: '工作量' },
-      { field: 'investigationInvestment', header: '投入金额' },
-      { field: 'operation', header: '操作' },
+      { field: 'investigationInvestment', header: '投入金额(万元)' },
+
     ];
     //获取授权的API资源
     if(!localStorage.getItem('api')){
@@ -285,11 +285,11 @@ saveExplorationStage(){
       "projectArea": this.explorationStage.projectArea,//矿权范围
       "investigationOrganization": this.explorationStage.investigationOrganization,//勘查单位
       "investigationCategory": this.explorationStage.investigationCategory,//类别  
-      "investigationArea": this.explorationStage.investigationArea?parseInt(this.explorationStage.investigationArea.toString()):null,//勘查面积
+      "investigationArea": this.explorationStage.investigationArea?parseFloat(this.explorationStage.investigationArea.toString()):null,//勘查面积
       "investigationMineralType": this.explorationStage.investigationMineralType,//勘查矿种
       "investigationStage": this.explorationStage.investigationStage,//勘查阶段
       "investigationWorkload": this.explorationStage.investigationWorkload,//勘查工作量
-      "investigationInvestment":  this.explorationStage.investigationInvestment?parseInt(this.explorationStage.investigationInvestment.toString()):null//勘查投入金额
+      "investigationInvestment":  this.explorationStage.investigationInvestment?parseFloat(this.explorationStage.investigationInvestment.toString()):null//勘查投入金额
     }
     if(this.modifyStage){
       this.httpUtil.put('mineral-explore-stage',stageInfo).then(value=>{

@@ -1,6 +1,6 @@
 .operation-icon{
     font-size: 14px;
-    margin-right: 10px;
+    margin-left: 10px;
     cursor: pointer;
     color: #ffffff;
     float: left;
@@ -40,18 +40,34 @@ border: solid 1px #123;
 }
 .example-excel{
     float: left;
+    width: 95%;
+    height: 90%;
+    overflow: auto;
+    position: absolute;
+    bottom: 10px;
 }
 
 #tiff{
-    width: 100%;
+    width: 95%;
     height: 90%;
     overflow: auto;
     border: 1px solid;
+    position: absolute;
+    bottom: 10px;
 }
 .example-image{
     text-align: center;
     border: 1px solid;
-    width: 100%;
+    width: 95%;
     height: 90%;
     overflow: auto;
+    position: absolute;
+    bottom: 10px;
+}
+
+.failed-file{
+    top: 20%;
+    position: absolute;
+    font-size: 30px;
+    color: red;
 }

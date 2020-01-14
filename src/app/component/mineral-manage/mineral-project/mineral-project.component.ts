@@ -56,6 +56,7 @@ export class MineralProjectComponent implements OnInit {
                   this.mineralProject.areaBackground = value.areaBackground;
                   this.mineralProject.areaCoordinates = value.areaCoordinates;
                   this.mineralProject.areaOpacity = value.areaOpacity;
+                  console.log(value)
                 })
                }
 
@@ -95,8 +96,7 @@ export class MineralProjectComponent implements OnInit {
       { field: 'explorationStartTime', header: '探矿权首立时间' },
       { field: 'miningStartTime', header: '采矿权首立时间' },
       { field: 'explorationArea', header: '探矿权范围' },
-      { field: 'miningArea', header: '采矿权范围' },
-      { field: 'operation', header: '操作' }
+      { field: 'miningArea', header: '采矿权范围' }
     ];
     
     this.loading = true;
@@ -254,7 +254,7 @@ export class MineralProjectComponent implements OnInit {
     }
     this.mineralProject.explorationStartTime = this.explorationStartTime?this.explorationStartTime.getTime()/1000:0;
     this.mineralProject.miningStartTime = this.miningStartTime?this.miningStartTime.getTime()/1000:0;
-  
+    this.mineralProject.areaCoordinates = JSON.stringify(this.mineralProject.areaCoordinates);
     if(this.isModify){
       /* 修改探矿权项目 */
       this.httpUtil.put('mineral-project',this.mineralProject).then(value=>{

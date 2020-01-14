@@ -83,22 +83,39 @@
       </div>
       <button style="float: right;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回"></button>
       <div style="clear:both">
-          <p-table [columns]="stageDetailTitle" [value]="stageDetailValue" >
+          <p-table 
+            [columns]="stageDetailTitle" 
+            [value]="stageDetailValue" 
+            columnResizeMode="expand"
+            [style]="{'min-width':'1200px'}"
+            [resizableColumns]="true" 
+            [scrollable]="true" 
+            scrollHeight="400px" 
+          >
+          <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+                <col *ngFor="let col of columns" [style.width]="col.width">
+            </colgroup>
+          </ng-template>
           <ng-template pTemplate="header" let-columns>
               <tr>
-                    <th style="width:8%">序号</th>
-                  <th *ngFor="let col of columns">
-                      {{col.header}}
-                  </th>
+                    <th style="width:8%" pResizableColumn>序号</th>
+                    <th *ngFor="let col of columns" pResizableColumn>
+                        {{col.header}}
+                    </th>
+                    <th style="width:15%" pResizableColumn>操作</th>
               </tr>
           </ng-template>
           <ng-template pTemplate="body" let-rowData let-columns="columns">
               <tr>
-                    <td>{{rowData.number}}</td>
+                    <td style="width:8%">{{rowData.number}}</td>
                   <td *ngFor="let col of columns">
-                      <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                      <span *ngIf = "col.field == 'operation' && modifyStageButton && buttonType" class="operation-icon"  (click)="setMining('modifyStage',rowData)">修改</span>
-                      <span *ngIf = "col.field == 'operation' && deleteStageButton && buttonType" class="operation-icon"  (click)="setMining('deleteStage',rowData)">删除</span>
+                      <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                      
+                  </td>
+                  <td style="width:15%">
+                        <button pButton type="button" *ngIf = "modifyStageButton && buttonType" class="operation-icon"  (click)="setMining('modifyStage',rowData)" label="修改"></button>
+                        <button pButton type="button" *ngIf = "deleteStageButton && buttonType" class="operation-icon"  (click)="setMining('deleteStage',rowData)" label="删除"></button>
                   </td>
               </tr>
           </ng-template>
@@ -108,7 +125,7 @@
                 </div>
             </ng-template>
           </p-table>
-          <p-paginator [hidden]="!stageTotal" [rows]="LIMIT_LOGIN" [totalRecords]="stageTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'stage')"></p-paginator>
+          <p-paginator [hidden]="!stageTotal" [rows]="LIMIT_LOGIN"  [totalRecords]="stageTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'stage')"></p-paginator>
       </div>    
   </div>
 
@@ -120,22 +137,39 @@
           </div>
           <button style="float: right;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回"></button>
           <div style="clear:both">
-              <p-table [columns]="monitoringTitle" [value]="monitoringValue">
+              <p-table 
+                [columns]="monitoringTitle" 
+                [value]="monitoringValue"
+                columnResizeMode="expand"
+                [style]="{'min-width':'1200px'}"
+                [resizableColumns]="true" 
+                [scrollable]="true" 
+                scrollHeight="400px" 
+              >
+              <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col *ngFor="let col of columns" [style.width]="col.width">
+                    </colgroup>
+                </ng-template>
               <ng-template pTemplate="header" let-columns>
                   <tr>
-                    <th style="width:8%">序号</th>
-                    <th *ngFor="let col of columns">
+                    <th style="width:8%" pResizableColumn>序号</th>
+                    <th *ngFor="let col of columns" pResizableColumn>
                         {{col.header}}
                     </th>
+                    <th style="width:15%" pResizableColumn>操作</th>
                   </tr>
               </ng-template>
               <ng-template pTemplate="body" let-rowData let-columns="columns">
                   <tr>
-                    <td>{{rowData.number}}</td>
+                    <td style="width:8%">{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
-                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'operation' && modifyValidationButton && buttonType" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)">修改</span>
-                        <span *ngIf = "col.field == 'operation' && deleteValidationButton && buttonType" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)">删除</span>
+                        <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        
+                    </td>
+                    <td style="width:15%">
+                        <button pButton type="button" *ngIf = " modifyValidationButton && buttonType" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)" label="修改"></button>
+                        <button pButton type="button" *ngIf = " deleteValidationButton && buttonType" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)" label="删除"></button>
                     </td>
                   </tr>
               </ng-template>
@@ -438,7 +472,7 @@
                     pInputTextarea 
                     [(ngModel)]="miningStage.miningMineralType" 
                     name="investigationOrganization"
-                    style="width:700px !important"
+                    style="width:700px !important;resize:none"
                     maxlength = '500'
                   ></textarea>
               </div>    
@@ -453,6 +487,8 @@
                     class="form-control" 
                     [(ngModel)]="miningStage.miningProductionScale"
                     maxlength = '200'
+                    onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
+                    placeholder="只能输入整数或小数"
                   >
               </div>    
           </div>
@@ -460,14 +496,21 @@
               <label class="control-label">开采面积(平方公里)</label>
               <div>
                   <input 
+                    id="miningArea"
                     type="text" 
                     style="width:700px !important" 
                     name="miningArea" 
                     class="form-control" 
                     [(ngModel)]="miningStage.miningArea"
                     maxlength = '200'
+                    pInputText
+                    onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
+                    placeholder="只能输入整数或小数"
                   >
+            
               </div>    
+           
+                
           </div>
           <div class="form-group has-feedback">
               <label class="control-label">开采工作投入量</label>
@@ -493,6 +536,8 @@
                     class="form-control" 
                     [(ngModel)]="miningStage.miningInvestment"
                     maxlength = '200'
+                    onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
+                    placeholder="只能输入整数或小数"
                   >
               </div>    
           </div>
@@ -531,6 +576,8 @@
                 [(ngModel)]="miningMonitoring.resourceUsed" 
                 name="resourceUsed"
                 style="width:700px !important"
+                onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
+                placeholder="只能输入整数或小数"
             ></textarea>
         </div>  
       </div>    
@@ -544,6 +591,8 @@
                 [(ngModel)]="miningMonitoring.resourceMaintained" 
                 name="resourceMaintained"
                 style="width:700px !important"
+                onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
+                placeholder="只能输入整数或小数"
               ></textarea>
           </div>    
       </div>

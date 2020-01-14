@@ -94,18 +94,15 @@ export class OutdoorComponent implements OnInit {
     this.locationLabelTitle = [
       { field: 'poiName', header: '标注名称' },
 /*       { field: 'poiIcon', header: '图片' }, */
-      { field: 'description', header: '描述' },
-      { field: 'operation', header: '操作' }
+      { field: 'description', header: '描述' }
     ];
     this.areaLocationTitle = [
       { field: 'areaName', header: '区域名称' },
-      { field: 'description', header: '描述' },
-      { field: 'operation', header: '操作' },
+      { field: 'description', header: '描述' }
     ];
     this.mineralLocationTitle = [
       { field: 'projectName', header: '项目名称' },
-      { field: 'owner_id', header: '矿权人' },
-      { field: 'operation', header: '操作' }
+      { field: 'owner_id', header: '矿权人' }
     ];
     //获取授权的API资源
     if(!localStorage.getItem('api')){
@@ -343,12 +340,20 @@ export class OutdoorComponent implements OnInit {
     })
   }
   /* 定位 */
-  locatorCard(point,zoom){
+  locatorCard(point,zoom,value,type?){
     /* this.locationIconDisplay = false;
     this.mapDrawDisplay = false; */
+    let area = [value]
     point= point.split(',').map(Number);
     this.twoMap.forEach(outdoorMap=>{
       outdoorMap.removeInteraction();
+      outdoorMap.removeLayer();//清除所有区域
+      if(type){
+        outdoorMap.initializeLabel(area);//只显示定位点位
+      }else{
+        outdoorMap.initializeArea(area);//只显示定位区域
+      }
+      
       outdoorMap.locatorCard(point,zoom);
   
     })
@@ -358,7 +363,7 @@ export class OutdoorComponent implements OnInit {
   setMineralMap(type,value?){
     /* 定位图标 */
     if(type ==='locationLabel'){
-      this.locatorCard(value.poiCoordinates,6);
+      this.locatorCard(value.poiCoordinates,6,value,'locationLabel');
       return;
     }
     /* 定位区域 */
@@ -367,7 +372,7 @@ export class OutdoorComponent implements OnInit {
       let areaCoordinates = ProjectionUtil.toLonLat(JSON.parse(value.areaCoordinates).coordinates.split(',').map(Number));
       point.push(areaCoordinates[0]);
       point.push(areaCoordinates[1]);
-      this.locatorCard(point.toString(),JSON.parse(value.areaCoordinates).zoom);
+      this.locatorCard(point.toString(),JSON.parse(value.areaCoordinates).zoom,value);
       return;
     }
     /* 图标修改 */
@@ -458,7 +463,7 @@ export class OutdoorComponent implements OnInit {
       let areaCoordinates = ProjectionUtil.toLonLat(value.areaCoordinates.coordinates.split(',').map(Number));
       point.push(areaCoordinates[0]);
       point.push(areaCoordinates[1]);
-      this.locatorCard(point.toString(),value.areaCoordinates.zoom);
+      this.locatorCard(point.toString(),value.areaCoordinates.zoom,value);
       return;
     } 
     /* 修改项目区域 */

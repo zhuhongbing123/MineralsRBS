@@ -62,8 +62,7 @@ export class UserManagementComponent implements OnInit {
     this.userTableTitle =[
       { field: 'username', header: '用户名' },
       { field: 'role', header: '角色' },
-      { field: 'createTime', header: '创建时间' },
-      { field: 'operation', header: '操作' },
+      { field: 'createTime', header: '创建时间' }
     ];
     this.roleTitle = [
       { field: 'name', header: '名称' },

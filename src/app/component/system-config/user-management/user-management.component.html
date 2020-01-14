@@ -14,26 +14,36 @@
             
     </div>
     <div style="clear:both">
-        <p-table [columns]="userTableTitle" [value]="userTableValue" [loading]="loading">
+        <p-table 
+            [columns]="userTableTitle" 
+            [value]="userTableValue" 
+            [loading]="loading"
+            [style]="{'min-width':'1200px'}"
+        
+        >
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th style="width:8%">序号</th>
                     <th *ngFor="let col of columns">
                         {{col.header}}
                     </th>
+                    <th style="width:33%">操作</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
-                    <td>{{rowData.number}}</td>
+                    <td style="width:8%">{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                         <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
-                        <span *ngIf = "col.field == 'operation' && modifyDisplay"  (click)="setUserRole(rowData,'modifyRole')" class="operation-icon"> 角色管理</span>
+                        
+                    </td>
+                    <td style="width:33%">
+                        <button pButton type="button" *ngIf = "modifyDisplay"  (click)="setUserRole(rowData,'modifyRole')" class="operation-icon" label="角色管理"> </button>
              
-                        <span *ngIf = "col.field == 'operation' && deleteRoleDisplay && rowData.role"  (click)="setUserRole(rowData,'deleteRole')" class="operation-icon"> 删除角色</span>
-                        <span *ngIf = "col.field == 'operation' && deleteUserDisplay"  (click)="setUserRole(rowData,'modify')" class="operation-icon"> 重置密码</span>
-                        <span *ngIf = "col.field == 'operation' && modifyPassword "  (click)="setUserRole(rowData,'delete')" class="operation-icon"> 删除用户</span>
+                        <button pButton type="button" *ngIf = "deleteRoleDisplay && rowData.role"  (click)="setUserRole(rowData,'deleteRole')" class="operation-icon" label="删除角色"> </button>
+                        <button pButton type="button" *ngIf = "deleteUserDisplay"  (click)="setUserRole(rowData,'modify')" class="operation-icon" label="重置密码"> </button>
+                        <button pButton type="button" *ngIf = "modifyPassword "  (click)="setUserRole(rowData,'delete')" class="operation-icon" label="删除用户"> </button>
                     </td>
                 </tr>
             </ng-template>
@@ -51,7 +61,12 @@
 <div class="dialog-class">
         <p-dialog header="{{userTitle}}" [(visible)]="userRoleDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
             <div class="p-table">
-                <p-table [columns]="roleTitle" [value]="roleValue"  [(selection)]="selectedRole">
+                <p-table 
+                    [columns]="roleTitle" 
+                    [value]="roleValue"  
+                    [(selection)]="selectedRole"
+                    
+                >
                   <ng-template pTemplate="header" let-columns>
                       <tr>
                           <th style="width: 3em"></th>

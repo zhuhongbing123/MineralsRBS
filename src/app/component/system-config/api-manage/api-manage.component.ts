@@ -66,8 +66,7 @@ export class ApiManageComponent implements OnInit {
       { field: 'uri', header: 'URI' },
       { field: 'classify', header: '资源类别'},
       { field: 'method', header: '访问方式' },
-      { field: 'status', header: '状态' },
-      { field: 'operation', header: '操作' }
+      { field: 'status', header: '状态' }
 
     ];
     this.loading = true;

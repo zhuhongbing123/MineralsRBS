@@ -1,0 +1,54 @@
+<p-tabMenu [model]="environmentItems" [activeItem]="environmentItems[0]"  (click)="menuClick($event.path[0].innerText)"></p-tabMenu>
+
+<!-- 实时数据 -->
+<div style="clear: both;margin-top:20px" class="p-table" [hidden]="!liveDataDisplay" >
+    <p-table [columns]="liveTableTitle" [value]="liveTableValue"  [rows]="10" >
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+
+                <th *ngFor="let col of columns">
+                    {{col.header}}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+
+                <td *ngFor="let col of columns">
+                    <span  *ngIf="col.field!=='state'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                    <span  *ngIf="col.field=='state' && rowData[col.field]=='已达上限值'" style="color:#e3fa10" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                    <span  *ngIf="col.field=='state' && rowData[col.field]=='测量'" style="color:#75eb77" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+<div [hidden]="!historyDataDisplay">
+    <div style="float:right;margin-top: 10px">
+        <span style="margin-right:5px">开始时间</span>
+        <p-calendar 
+            [showIcon]="true" 
+            [(ngModel)]="startTime" 
+            name="startTime" 
+            [monthNavigator]="true" 
+            [yearNavigator]="true" 
+
+            yearRange="1970:2030"
+            dateFormat="yy.mm.dd"
+        ></p-calendar>
+        <span style="margin-right:5px;margin-left: 5px">结束时间</span>
+        <p-calendar 
+            [showIcon]="true" 
+            [(ngModel)]="endTime" 
+            name="endTime" 
+            [monthNavigator]="true" 
+            [yearNavigator]="true" 
+        
+            yearRange="1970:2030"
+            dateFormat="yy.mm.dd"
+        ></p-calendar>
+        <button pButton type="button"  label="查询" ></button>
+    </div>
+    <div id="environment" style="width: 100%;height: 400px;background: white;margin-top: 20px;clear: both;top: 10px"></div>
+</div>

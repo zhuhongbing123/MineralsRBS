@@ -118,7 +118,7 @@ export class MiningInfoComponent implements OnInit {
           data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i].number = (this.startPage-1)*this.limit+i +1;
           if(data[i].latestMiningStage){
-            for(let j in data[i].latestMiningStage){
+            
               data[i]['projectArea'] = data[i].latestMiningStage.projectArea;
               data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?new Date(data[i].latestMiningStage.miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
               data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?new Date(data[i].latestMiningStage.miningEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
@@ -126,7 +126,7 @@ export class MiningInfoComponent implements OnInit {
               data[i]['miningProductionScale'] = data[i].latestMiningStage.miningProductionScale;
               data[i]['miningWorkload'] = data[i].latestMiningStage.miningWorkload;
               data[i]['miningInvestment'] = data[i].latestMiningStage.miningInvestment;
-            }
+            
           } 
           for(let j in this.mineralOwner){
             if(data[i].ownerId == this.mineralOwner[j].id){
@@ -195,6 +195,22 @@ export class MiningInfoComponent implements OnInit {
         for(let i=0; i<data.length;i++){
           data[i].number = (this.startPage-1)*this.limit+i +1;
           data[i].miningStartTime = data[i].miningStartTime? new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          if(data[i].latestMiningStage){
+           
+              data[i]['projectArea'] = data[i].latestMiningStage.projectArea;
+              data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?new Date(data[i].latestMiningStage.miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+              data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?new Date(data[i].latestMiningStage.miningEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+              data[i]['miningMineralType'] = data[i].latestMiningStage.miningMineralType;
+              data[i]['miningProductionScale'] = data[i].latestMiningStage.miningProductionScale;
+              data[i]['miningWorkload'] = data[i].latestMiningStage.miningWorkload;
+              data[i]['miningInvestment'] = data[i].latestMiningStage.miningInvestment;
+            
+          }
+          for(let j in this.mineralOwner){
+            if(data[i].ownerId == this.mineralOwner[j].id){
+              data[i]['owner_id']  = this.mineralOwner[j].ownerName;
+            }
+          } 
         }
         
         this.miningInfoValue = data;

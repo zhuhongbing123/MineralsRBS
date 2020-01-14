@@ -15,22 +15,40 @@
         <button pButton  type="button" label="查询" (click)="setMineral('filtered')"></button>
 </div>
 <div style="clear: both;" class="p-table">
-  <p-table [columns]="mineralProjectTitle" [value]="mineralProjectValue"  [rows]="10" [loading]="loading">
+  <p-table 
+    [columns]="mineralProjectTitle" 
+    [value]="mineralProjectValue"  
+    [loading]="loading"
+    columnResizeMode="expand"
+    [style]="{'min-width':'1200px'}"
+    [resizableColumns]="true" 
+    [scrollable]="true" 
+    scrollHeight="400px" 
+  >
+    <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+            <col *ngFor="let col of columns" [style.width]="col.width">
+        </colgroup>
+    </ng-template>
     <ng-template pTemplate="header" let-columns>
         <tr>
-            <th style="width:8%">序号</th>
-            <th *ngFor="let col of columns">
+            <th style="width:8%" pResizableColumn>序号</th>
+            <th *ngFor="let col of columns" pResizableColumn>
                 {{col.header}}
             </th>
+            <th style="width:15%" pResizableColumn>操作</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-            <td>{{rowData.number}}</td>
+            <td style="width:8%">{{rowData.number}}</td>
             <td *ngFor="let col of columns">
-                <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                <span *ngIf = "col.field == 'operation' && modifDisplay" class="operation-icon"  (click)="setMineral('modify',rowData)">修改</span>
-                <span *ngIf = "col.field == 'operation' && deleteDisplay" class="operation-icon"  (click)="setMineral('delete',rowData)">删除</span>
+                <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+               
+            </td>
+            <td style="width:15%">
+                <button pButton type="button" *ngIf = "modifDisplay" class="operation-icon"  (click)="setMineral('modify',rowData)" label="修改"></button>
+                <button pButton type="button" *ngIf = "deleteDisplay" class="operation-icon"  (click)="setMineral('delete',rowData)" label="删除"></button>
             </td>
         </tr>
     </ng-template>
@@ -75,7 +93,7 @@
                 <label class="control-label">项目定位区域</label>
                 <button type="button" pButton (click)="viewMap()" label="查看"></button>
               </div>  
-              <div class="form-group has-feedback">
+              <div class="form-group has-feedback" [hidden]="miningStartTime">
                   <label class="control-label">探矿权首立时间</label>
                   <div>
                       <p-calendar 
@@ -90,7 +108,7 @@
                       </p-calendar>
                   </div>    
               </div>
-              <div class="form-group has-feedback">
+              <div class="form-group has-feedback" [hidden]="miningStartTime">
                   <label class="control-label">探矿权范围</label>
                   <input 
                     type="text" 
@@ -101,7 +119,7 @@
                     maxlength = '200'
                   >
               </div>
-              <div class="form-group has-feedback">
+              <div class="form-group has-feedback" [hidden]="explorationStartTime">
                   <label class="control-label">采矿权首立时间</label>
                   <div>
                       <p-calendar 
@@ -115,7 +133,7 @@
                       ></p-calendar>
                   </div>   
               </div>
-              <div class="form-group has-feedback" >
+              <div class="form-group has-feedback"  [hidden]="explorationStartTime">
                   <label class="control-label">采矿权范围</label>
                   <input 
                     type="text" 

@@ -91,8 +91,7 @@ export class ExplorationInfoComponent implements OnInit {
       { field: 'investigationStage', header: '勘查阶段' },
       { field: 'investigationMineralType', header: '勘查矿种' },
       { field: 'investigationWorkload', header: '工作量' },
-      { field: 'investigationInvestment', header: '投入金额(万元)' },
-      { field: 'operation', header: '操作' }
+      { field: 'investigationInvestment', header: '投入金额(万元)' }
     ];
     this.loading = true;
     //获取授权的API资源
@@ -130,14 +129,13 @@ export class ExplorationInfoComponent implements OnInit {
          
           data[i].number = (this.startPage-1)*this.limit+i +1;
           if(data[i].latestExplorationStage){
-            for(let j in data[i].latestExplorationStage){
               data[i]['projectArea'] = data[i].latestExplorationStage.projectArea;
               data[i]['investigationArea'] = data[i].latestExplorationStage.investigationArea;
               data[i]['investigationStage'] = data[i].latestExplorationStage.investigationStage;
               data[i]['investigationWorkload'] = data[i].latestExplorationStage.investigationWorkload;
               data[i]['investigationInvestment'] = data[i].latestExplorationStage.investigationInvestment;
               data[i]['investigationMineralType'] = data[i].latestExplorationStage.investigationMineralType;
-            }
+
           }
           for(let j in this.mineralOwner){
               if(data[i].ownerId == this.mineralOwner[j].id){
@@ -210,6 +208,20 @@ export class ExplorationInfoComponent implements OnInit {
         for(let i=0; i<data.length;i++){
           data[i].number = (this.startPage-1)*this.limit+i +1;
           data[i].explorationStartTime = data[i].explorationStartTime? new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          if(data[i].latestExplorationStage){
+            data[i]['projectArea'] = data[i].latestExplorationStage.projectArea;
+            data[i]['investigationArea'] = data[i].latestExplorationStage.investigationArea;
+            data[i]['investigationStage'] = data[i].latestExplorationStage.investigationStage;
+            data[i]['investigationWorkload'] = data[i].latestExplorationStage.investigationWorkload;
+            data[i]['investigationInvestment'] = data[i].latestExplorationStage.investigationInvestment;
+            data[i]['investigationMineralType'] = data[i].latestExplorationStage.investigationMineralType;
+
+          }
+          for(let j in this.mineralOwner){
+              if(data[i].ownerId == this.mineralOwner[j].id){
+                data[i]['owner_id']  = this.mineralOwner[j].ownerName;
+              }
+          }
         }
         
         this.explorationInfoValue = data;
@@ -315,7 +327,7 @@ export class ExplorationInfoComponent implements OnInit {
     }
     this.explorationProject.explorationStartTime = this.explorationStartTime.getTime()/1000
     this.explorationProject.miningStartTime = 0;
-  
+    this.explorationProject.areaCoordinates = JSON.stringify(this.explorationProject.areaCoordinates);
  
       /* 增加探矿权项目 */
       this.httpUtil.post('mineral-project',this.explorationProject).then(value=>{

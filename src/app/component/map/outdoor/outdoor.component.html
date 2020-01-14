@@ -21,21 +21,31 @@
         ></p-dropdown>
     </div>
     <div style="clear: both;" class="p-table">
-        <p-table [columns]="areaLocationTitle" [value]="areaLocationValue" [scrollable]="true" scrollHeight="300px"  [resizableColumns]="true">
+        <p-table 
+            [columns]="areaLocationTitle" 
+            [value]="areaLocationValue" 
+            [scrollable]="true" 
+            scrollHeight="300px"  
+            [resizableColumns]="true"
+        >
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th *ngFor="let col of columns">
                         {{col.header}}
                     </th>
+                    <th style="width:58%">操作</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
                     <td *ngFor="let col of columns">
-                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'operation' && modifyAreaDisplay" class="operation-icon"  (click)="setMineralMap('modifyArea',rowData)">修改</span>
-                        <span *ngIf = "col.field == 'operation' && deleteAreaDisplay" class="operation-icon"  (click)="setMineralMap('deleteArea',rowData)">删除</span>
-                        <span *ngIf = "col.field == 'operation' " class="operation-icon"  (click)="setMineralMap('locationArea',rowData)">定位</span>
+                        <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        
+                    </td>
+                    <td style="width:58%">
+                        <button pButton type="button" *ngIf = "modifyAreaDisplay" class="operation-icon"  (click)="setMineralMap('modifyArea',rowData)" label="修改"></button>
+                        <button pButton type="button" *ngIf = "deleteAreaDisplay" class="operation-icon"  (click)="setMineralMap('deleteArea',rowData)" label="删除"></button>
+                        <button pButton type="button"  class="operation-icon"  (click)="setMineralMap('locationArea',rowData)" label="定位"></button>
                     </td>
                 </tr>
             </ng-template>
@@ -59,15 +69,19 @@
                             <th *ngFor="let col of columns">
                                 {{col.header}}
                             </th>
+                            <th style="width:58%">操作</th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-rowData let-columns="columns">
                         <tr>
                             <td *ngFor="let col of columns">
-                                <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                                <span *ngIf = "col.field == 'operation' && modifyPoiDisplay" class="operation-icon"  (click)="setMineralMap('modifyLabel',rowData)">修改</span>
-                                <span *ngIf = "col.field == 'operation' && deletePoiDisplay" class="operation-icon"  (click)="setMineralMap('deleteLabel',rowData)">删除</span>
-                                <span *ngIf = "col.field == 'operation' " class="operation-icon"  (click)="setMineralMap('locationLabel',rowData)">定位</span>
+                                <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                                
+                            </td>
+                            <td style="width:58%">
+                                <button pButton type="button" *ngIf = " modifyPoiDisplay" class="operation-icon"  (click)="setMineralMap('modifyLabel',rowData)" label="修改"></button>
+                                <button pButton type="button" *ngIf = "deletePoiDisplay" class="operation-icon"  (click)="setMineralMap('deleteLabel',rowData)" label="删除"></button>
+                                <button pButton type="button"  class="operation-icon"  (click)="setMineralMap('locationLabel',rowData)" label="定位"></button>
                             </td>
                         </tr>
                     </ng-template>
@@ -83,22 +97,32 @@
 
             </div>
             <div style="clear: both;" class="p-table">
-                    <p-table [columns]="mineralLocationTitle" [value]="mineralLocationValue" [scrollable]="true" scrollHeight="300px"  [resizableColumns]="true">
+                    <p-table 
+                        [columns]="mineralLocationTitle" 
+                        [value]="mineralLocationValue" 
+                        [scrollable]="true" scrollHeight="300px"  
+                        [resizableColumns]="true"
+                        [style]="{'min-width':'400px'}"
+                    >
                         <ng-template pTemplate="header" let-columns>
                             <tr>
                                 <th *ngFor="let col of columns">
                                     {{col.header}}
                                 </th>
+                                <th style="width:60%">操作</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-rowData let-columns="columns">
                             <tr>
                                 <td *ngFor="let col of columns">
-                                    <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                                    <span *ngIf = "col.field == 'operation' && !rowData.areaCoordinates && addProjectAreaDisplay" class="operation-icon"  (click)="setMineralMap('addMineral',rowData)">新增区域</span>
-                                    <span *ngIf = "col.field == 'operation' && rowData.areaCoordinates && addProjectAreaDisplay" class="operation-icon"  (click)="setMineralMap('modifyMineral',rowData)">修改</span>
-                                    <span *ngIf = "col.field == 'operation' && rowData.areaCoordinates" class="operation-icon"  (click)="setMineralMap('locationMineral',rowData)">定位</span>
-                                    <span *ngIf = "col.field == 'operation' && rowData.areaCoordinates && addProjectAreaDisplay" class="operation-icon"  (click)="setMineralMap('deleteMineral',rowData)">删除</span>
+                                    <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                                    
+                                </td>
+                                <td style="width:60%">
+                                    <button pButton type="button" *ngIf = "!rowData.areaCoordinates && addProjectAreaDisplay" class="operation-icon"  (click)="setMineralMap('addMineral',rowData)" label="新增区域"></button>
+                                    <button pButton type="button" *ngIf = "rowData.areaCoordinates && addProjectAreaDisplay" class="operation-icon"  (click)="setMineralMap('modifyMineral',rowData)" label="修改"></button>
+                                    <button pButton type="button" *ngIf = "rowData.areaCoordinates" class="operation-icon"  (click)="setMineralMap('locationMineral',rowData)" label="定位"></button>
+                                    <button pButton type="button" *ngIf = "rowData.areaCoordinates && addProjectAreaDisplay" class="operation-icon"  (click)="setMineralMap('deleteMineral',rowData)" label="删除"></button>
                                 </td>
                             </tr>
                         </ng-template>

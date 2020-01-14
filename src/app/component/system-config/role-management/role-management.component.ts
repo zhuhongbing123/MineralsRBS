@@ -70,9 +70,7 @@ export class RoleManagementComponent implements OnInit {
     this.roleTitle = [
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
-      { field: 'status', header: '状态' },
-      { field: 'link', header: '关联模块' },
-      { field: 'operation', header: '操作' }
+      { field: 'status', header: '状态' }
 
     ];
     this.roleLink = [

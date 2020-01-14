@@ -9,22 +9,31 @@
         <button pButton  type="button" label="查询" (click)="setApi('filtered')"></button>
 </div>
 <div class="p-table" style="clear:both">
-    <p-table [columns]="apiTableTitle" [value]="apiTableValue" [loading]="loading">
+    <p-table 
+        [columns]="apiTableTitle" 
+        [value]="apiTableValue" 
+        [loading]="loading"
+        [style]="{'min-width':'1200px'}"
+    >
       <ng-template pTemplate="header" let-columns>
           <tr>
             <th style="width:8%">序号</th>
             <th *ngFor="let col of columns">
                 {{col.header}}
             </th>
+            <th style="width:15%">操作</th>
           </tr>
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
           <tr>
-              <td>{{rowData.number}}</td>
+              <td style="width:8%">{{rowData.number}}</td>
               <td *ngFor="let col of columns">
-                  <span *ngIf = "col.field !== 'operation' && col.field !== 'link'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                  <span  *ngIf = "col.field == 'operation' && modifyDisplay"  (click)="setApi('modify',rowData)" class="operation-icon"> 修改</span>
-                  <span  *ngIf = "col.field == 'operation' && deleteDisplay"  (click)="setApi('delete',rowData)" class="operation-icon">删除 </span>
+                  <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                  
+              </td>
+              <td  style="width:15%">
+                    <button pButton type="button"  *ngIf = "modifyDisplay"  (click)="setApi('modify',rowData)" class="operation-icon" label="修改"> </button>
+                    <button pButton type="button"  *ngIf = "deleteDisplay"  (click)="setApi('delete',rowData)" class="operation-icon" label="删除"> </button>
               </td>
           </tr>
       </ng-template>

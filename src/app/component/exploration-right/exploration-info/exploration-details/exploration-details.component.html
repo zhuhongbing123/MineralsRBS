@@ -83,22 +83,39 @@
         </div>
         <button style="float: right;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回"></button>
         <div style="clear:both">
-            <p-table [columns]="explorationDetailTitle" [value]="explorationDetailValue">
+            <p-table 
+            [columns]="explorationDetailTitle" 
+            [value]="explorationDetailValue"
+            [scrollable]="true" 
+            scrollHeight="400px" 
+            [resizableColumns]="true"  
+            columnResizeMode="expand"
+            [style]="{'min-width':'1200px'}"
+            >
+            <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                    <col *ngFor="let col of columns" [style.width]="col.width">
+                </colgroup>
+            </ng-template>
             <ng-template pTemplate="header" let-columns>
                 <tr>
-                    <th style="width:8%">序号</th>
-                    <th *ngFor="let col of columns">
+                    <th style="width:8%" pResizableColumn>序号</th>
+                    <th *ngFor="let col of columns" pResizableColumn>
                         {{col.header}}
                     </th>
+                    <th style="width:15%" pResizableColumn>操作</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
-                    <td>{{rowData.number}}</td>
+                    <td style="width:8%">{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
-                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'operation' && modifyStageButton " class="operation-icon"  (click)="setExplorationt('modifyStage',rowData)">修改</span>
-                        <span *ngIf = "col.field == 'operation' && deleteStageButton " class="operation-icon"  (click)="setExplorationt('deleteStage',rowData)">删除</span>
+                        <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        
+                    </td>
+                    <td  style="width:15%">
+                        <button pButton type="button" *ngIf = " modifyStageButton " class="operation-icon"  (click)="setExplorationt('modifyStage',rowData)" label="修改"></button>
+                        <button pButton type="button" *ngIf = " deleteStageButton " class="operation-icon"  (click)="setExplorationt('deleteStage',rowData)" label="删除"></button>
                     </td>
                 </tr>
             </ng-template>
@@ -412,7 +429,7 @@
                   </div>    
               </div>
               <div class="form-group has-feedback">
-                  <label class="control-label">勘查单位(平方公里)</label>
+                  <label class="control-label">勘查单位</label>
                   <div>
                       <textarea 
                         rows="5" 
@@ -434,7 +451,16 @@
               <div class="form-group has-feedback">
                   <label class="control-label">面积(平方公里)</label>
                   <div>
-                      <input type="text" maxlength = '200' style="width:700px !important" name="investigationArea" class="form-control" [(ngModel)]="explorationStage.investigationArea">
+                      <input 
+                        type="text" 
+                        maxlength = '200' 
+                        style="width:700px !important" 
+                        name="investigationArea" 
+                        class="form-control" 
+                        [(ngModel)]="explorationStage.investigationArea"
+                        onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
+                        placeholder="只能输入整数或小数"
+                      >
                   </div>    
               </div>
               <div class="form-group has-feedback">
@@ -458,7 +484,16 @@
               <div class="form-group has-feedback">
                   <label class="control-label">投入金额(万元)</label>
                   <div>
-                      <input type="text"  maxlength = '200' style="width:700px !important" name="investigationInvestment" class="form-control" [(ngModel)]="explorationStage.investigationInvestment">
+                      <input 
+                        type="text"  
+                        maxlength = '200' 
+                        style="width:700px !important" 
+                        name="investigationInvestment" 
+                        class="form-control" 
+                        [(ngModel)]="explorationStage.investigationInvestment"
+                        onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
+                        placeholder="只能输入整数或小数"
+                      >
                   </div>    
               </div>
           </form>     

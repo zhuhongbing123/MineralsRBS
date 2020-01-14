@@ -65,6 +65,33 @@ export class MenuComponent implements OnInit {
         
       },
       {
+        label: '远程监控', icon: 'iconfont iconjiankongshuju',
+        items:[
+          {label: '电量监控', icon: 'iconfont icondianliang',routerLink: ['/layout/remoteMonitoring/powerMonitoring']},
+          {label: '安全监控', icon: 'iconfont iconjiankongshexiangtou-xian',routerLink: ['/layout/remoteMonitoring/cameraMonitoring']},
+          {label: '环境监控', icon: 'iconfont iconhuanjingjiance',routerLink: ['/layout/remoteMonitoring/environmentMonitoring']},
+          {label: '灾害监控', icon: 'iconfont icondizhizaihai',routerLink: ['/layout/remoteMonitoring/disasterMonitoring']},
+          
+        ]
+        
+      },
+      {
+        label: '矿山存储', icon: 'iconfont iconicon_cunchu',
+        items:[
+          {label: '数据导入导出', icon: 'iconfont iconziyuanbaosongshujudaoru',routerLink: ['/layout/miningStorage/dataImportExport']},
+          {label: '数据分析', icon: 'iconfont iconshujufenxi',routerLink: ['/layout/miningStorage/dataAnalyze']}
+          
+        ]
+      },
+      {
+        label: '绿色矿山', icon: 'iconfont iconkuangshan',
+        items:[
+          {label: '数据导入导出', icon: 'iconfont iconziyuanbaosongshujudaoru',routerLink: ['/layout/greenMining/dataImportExport']},
+          {label: '数据分析', icon: 'iconfont iconshujufenxi',routerLink: ['/layout/greenMining/dataAnalyze']}
+          
+        ]
+      },
+      {
         label: '地图', icon: 'fa fa-fw  fa-map',
         items: [
           { label: '矿权地图', icon: 'iconfont iconmap', routerLink: ['/layout/mapManage/outDoor'] }

@@ -101,19 +101,19 @@ export class MiningDetailsComponent implements OnInit {
       { field: 'miningEndTime', header: '结束时间' },
       { field: 'projectArea', header: '矿权范围' },
       { field: 'miningMineralType', header: '开采矿种' },
-      { field: 'miningProductionScale', header: '生产规模' },
-      { field: 'miningArea', header: '开采面积' },
+      { field: 'miningProductionScale', header: '生产规模(吨/年)' },
+      { field: 'miningArea', header: '开采面积(平方公里)' },
       { field: 'miningWorkload', header: '开采投入工作量' },
-      { field: 'miningInvestment', header: '开采投入金额' },
-      { field: 'operation', header: '操作' },
+      { field: 'miningInvestment', header: '开采投入金额(万元)' },
+
     ];
     this.monitoringTitle = [
       { field: 'validationYear', header: '监测报告年份' },
-      { field: 'resourceUsed', header: '年度动用资源量' },
-      { field: 'resourceMaintained', header: '年末保有资源量' },
+      { field: 'resourceUsed', header: '年度动用资源量(千吨)' },
+      { field: 'resourceMaintained', header: '年末保有资源量(千吨)' },
       { field: 'executionStatus', header: '执行情况' },
       { field: 'problemFound', header: '监测过程发现的其它问题' },
-      { field: 'operation', header: '操作' },
+
     ];
      //获取授权的API资源
      if(!localStorage.getItem('api')){
@@ -360,9 +360,9 @@ export class MiningDetailsComponent implements OnInit {
       "projectArea": this.miningStage.projectArea?this.miningStage.projectArea:'',//矿权范围
       "miningMineralType": this.miningStage.miningMineralType?this.miningStage.miningMineralType:'',//开采矿种
       "miningProductionScale": this.miningStage.miningProductionScale?this.miningStage.miningProductionScale:'',//生产规模  
-      "miningArea": this.miningStage.miningArea?parseInt(this.miningStage.miningArea.toString()):null,//开采面积
+      "miningArea": this.miningStage.miningArea?this.miningStage.miningArea:null,//开采面积
       "miningWorkload": this.miningStage.miningWorkload?this.miningStage.miningWorkload:'',//开采投入工作量
-      "miningInvestment": this.miningStage.miningInvestment?parseInt(this.miningStage.miningInvestment.toString()):null//开采投入金额
+      "miningInvestment": this.miningStage.miningInvestment?this.miningStage.miningInvestment:null//开采投入金额
     }
     if(this.modifyStage){
       this.httpUtil.put('mineral-mining-stage',stageInfo).then(value=>{

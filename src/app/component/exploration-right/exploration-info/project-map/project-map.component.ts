@@ -201,6 +201,8 @@ export class ProjectMapComponent implements OnInit {
       this.mineralProject.areaBackground = '#ff0044';
       this.selectedDraw = '';
     }else{
+      this.mineralProject.areaBackground = '';
+      this.mineralProject.areaCoordinates = '';
       this.httpUtil.post('mineral-project/coordinates',{
         "areaBackground": "",
         "areaCoordinates": "",

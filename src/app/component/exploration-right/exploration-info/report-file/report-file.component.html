@@ -1,27 +1,31 @@
 
   <!--文件预览页面  -->       
   <p-sidebar [(visible)]="viewFileDisplay" [fullScreen]="true" [baseZIndex]="10000">
-    <h1 style="font-weight:normal;width: 50%;float: left;">{{selectedFile.label}}</h1>
+    <h3 style="font-weight:normal;width: 50%;float: left;">{{selectedFile.label}}</h3>
     <button pButton type="button" style="float:right;top:20px;z-index: 999;" (click)="viewFileDisplay = false"  label="返回" ></button>
-    <div id="example-pdf" class="example-pdf" [hidden]="fileType!=='pdf'&&fileType!=='doc'">
+    <div [hidden]="fileDisplay">
+        <div id="example-pdf" class="example-pdf" [hidden]="fileType!=='pdf'&&fileType!=='doc'&&fileType!=='pptx'&&fileType!=='docx'">
 
-    </div>
+        </div>
 
-    <div [hidden]="fileType!=='xlsx'" class="example-excel">
-        <p-tabMenu [model]="itemsExcel" [activeItem]="itemsExcel[0]" (click)="excelClick($event)"></p-tabMenu>
-        <div  id="result" style="width: 100%;overflow: auto;height: 85%;"></div>
-    </div>
+        <div [hidden]="fileType!=='xlsx'" class="example-excel">
+            <p-tabMenu [model]="itemsExcel" [activeItem]="itemsExcel[0]" (click)="excelClick($event)"></p-tabMenu>
+            <div  id="result" style="width: 100%;overflow: auto;height: 85%;"></div>
+        </div>
 
-    <div [hidden]="fileType!=='png'&& fileType!=='jpg'" class="example-image">
-        <img src="{{imgUrl}}" id="img" style="width:90%;"/>
-    </div>
+        <div [hidden]="fileType!=='png'&& fileType!=='jpg'" class="example-image">
+            <img src="{{imgUrl}}" id="img"  alt="该图片不存在"/>
+        </div>
 
-    <div [hidden]="fileType!=='txt'">
-        <textarea rows="5" cols="30" style="width:100%" pInputTextarea disabled [(ngModel)]="txtTable" name="projectArea"></textarea>
+        <div [hidden]="fileType!=='txt'">
+            <textarea rows="5" cols="30" style="width:100%" pInputTextarea disabled [(ngModel)]="txtTable" name="projectArea"></textarea>
+        </div>
+        
+        <div id='tiff' [hidden]="fileType!=='tif'"></div>
     </div>
-    
-    <div id='tiff' [hidden]="fileType!=='tif'"></div>
-   
+    <div [hidden]="!fileDisplay" class="failed-file">
+        该文件不存在!<br/>请重新上传！
+    </div>
   </p-sidebar>
 <div  style="clear: 7;" class="p-table" [hidden]="!reportDetailDisplay">
     <div [hidden]="viewFileDisplay">
@@ -63,7 +67,20 @@
         </div>
         
         <div style="clear:both">
-            <p-table [columns]="reportClassifyTitle" [value]="reportClassifyValue" [resizableColumns]="true" columnResizeMode="expand">
+            <p-table 
+                [columns]="reportClassifyTitle" 
+                [value]="reportClassifyValue"   
+                [scrollable]="true" 
+                scrollHeight="400px" 
+                [resizableColumns]="true"  
+                columnResizeMode="expand"
+                [style]="{'min-width':'1200px'}"
+            >
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col *ngFor="let col of columns" [style.width]="col.width">
+                    </colgroup>
+                </ng-template>
                 <ng-template pTemplate="header" let-columns>
                     <tr>
                         <th style="width:8%" pResizableColumn>序号</th>
@@ -79,16 +96,20 @@
                         <th *ngFor="let col of columns" pResizableColumn>
                             {{col.header}}
                         </th>
+                        <th style="width:22%" pResizableColumn>操作</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-rowData let-columns="columns">
                     <tr>
-                        <td>{{rowData.number}}</td>
-                        <td *ngFor="let col of columns" >
+                        <td style="width:8%" class="ui-resizable-column">{{rowData.number}}</td>
+                        <td *ngFor="let col of columns" class="ui-resizable-column">
                             <span *ngIf = "col.field !== 'operation'"  pTooltip=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                            <span *ngIf = "col.field == 'operation' && modifyButton && buttonType" class="operation-icon"  (click)="setExplorationt('modifyReport',rowData)">修改</span>
-                            <span *ngIf = "col.field == 'operation' && viewButton" class="operation-icon"  (click)="setExplorationt('viewReport',rowData)">查看文件</span>
-                            <span *ngIf = "col.field == 'operation' && deleteButton && buttonType" class="operation-icon"  (click)="setExplorationt('deleteReport',rowData)">删除</span>
+
+                        </td>
+                        <td style="width:22%">
+                            <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('modifyReport',rowData)" label="修改"></button>
+                            <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('viewReport',rowData)" label="查看文件"></button>
+                            <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('deleteReport',rowData)"  label="删除"></button>
                         </td>
                     </tr>
                 </ng-template>
@@ -131,7 +152,7 @@
         </div>    
         <div class="form-group has-feedback" [hidden]="type!=='policy'">
                 <label class="control-label">选择报告文件
-                        <p-fileUpload  name="file" [url]="fileUrl" chooseLabel='选择'  uploadLabel='上传' cancelLabel='取消' [disabled]='fileDisabled' maxFileSize="1000000" (onUpload)="onUpload($event)">
+                        <p-fileUpload  name="file" [url]="fileUrl" chooseLabel='选择'  uploadLabel='上传' cancelLabel='取消'  (onUpload)="onUpload($event)">
                             <ng-template pTemplate="content">
                                 <ul *ngIf="uploadedFiles.length">
                                     <li *ngFor="let file of uploadedFiles">{{file.name}}</li>

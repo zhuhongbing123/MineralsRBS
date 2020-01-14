@@ -25,7 +25,11 @@ export const routes: Routes = [
         { path: 'miningRight', loadChildren: '../mining-right/mining-right.module#MiningRightModule' },
         { path: 'mineralManage', loadChildren: '../mineral-manage/mineral-manage.module#MineralManageModule' },
         { path: 'mapManage', loadChildren: '../map/map.module#MapModule' },
-        { path: 'systemConfig', loadChildren: '../system-config/system-config.module#SystemConfigModule' }
+        { path: 'systemConfig', loadChildren: '../system-config/system-config.module#SystemConfigModule' },
+        { path: 'greenMining', loadChildren: '../green-mining/green-mining.module#GreenMiningModule' },
+        { path: 'remoteMonitoring', loadChildren: '../remote-monitoring/remote-monitoring.module#RemoteMonitoringModule' },
+        { path: 'miningStorage', loadChildren: '../mining-storage/mining-storage.module#MiningStorageModule' },
+        
     ]
     },
     { path: '**', component: LoginComponent }

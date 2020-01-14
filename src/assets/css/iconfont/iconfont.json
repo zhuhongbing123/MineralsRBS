@@ -20,6 +20,27 @@
       "unicode_decimal": 60002
     },
     {
+      "icon_id": "754771",
+      "name": "资源报送-数据导入",
+      "font_class": "ziyuanbaosongshujudaoru",
+      "unicode": "e657",
+      "unicode_decimal": 58967
+    },
+    {
+      "icon_id": "1159882",
+      "name": "电量",
+      "font_class": "dianliang",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "1390100",
+      "name": "监控数据",
+      "font_class": "jiankongshuju",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
       "icon_id": "2210353",
       "name": "矿业工程",
       "font_class": "ironstone",
@@ -32,6 +53,13 @@
       "font_class": "rizhi",
       "unicode": "e69d",
       "unicode_decimal": 59037
+    },
+    {
+      "icon_id": "3758785",
+      "name": "矿山",
+      "font_class": "kuangshan",
+      "unicode": "e6a6",
+      "unicode_decimal": 59046
     },
     {
       "icon_id": "4143505",
@@ -67,6 +95,13 @@
       "font_class": "tenantuser",
       "unicode": "e66b",
       "unicode_decimal": 58987
+    },
+    {
+      "icon_id": "5390820",
+      "name": "地质灾害",
+      "font_class": "dizhizaihai",
+      "unicode": "e793",
+      "unicode_decimal": 59283
     },
     {
       "icon_id": "5439379",
@@ -118,6 +153,13 @@
       "unicode_decimal": 59063
     },
     {
+      "icon_id": "7708735",
+      "name": "环境监测",
+      "font_class": "huanjingjiance",
+      "unicode": "e6a8",
+      "unicode_decimal": 59048
+    },
+    {
       "icon_id": "8406406",
       "name": "矿山机械",
       "font_class": "kuangshanjixie",
@@ -132,11 +174,32 @@
       "unicode_decimal": 59421
     },
     {
+      "icon_id": "8817342",
+      "name": "数据分析",
+      "font_class": "shujufenxi",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "9278042",
+      "name": "存储",
+      "font_class": "icon_cunchu",
+      "unicode": "e653",
+      "unicode_decimal": 58963
+    },
+    {
       "icon_id": "9283904",
       "name": "金属矿山",
       "font_class": "jinshukuangshanmetalMines",
       "unicode": "e669",
       "unicode_decimal": 58985
+    },
+    {
+      "icon_id": "10408925",
+      "name": "监控摄像头",
+      "font_class": "jiankongshexiangtou-xian",
+      "unicode": "e643",
+      "unicode_decimal": 58947
     },
     {
       "icon_id": "11312105",

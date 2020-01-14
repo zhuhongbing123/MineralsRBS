@@ -74,8 +74,8 @@ export class ReportFileComponent implements OnInit {
   reportTotal;//报告文件总数
   policyReportDisplay = false;//是否是政策报告页面
   uploadedFiles = [];//上传文件
-  fileDisabled = false;//上传功能灰化
   fileUrl = localStorage.getItem('IP')+'mineral-policy/fileUpload';
+  fileDisplay = false;//预览文件是否存在
   constructor(private explorationInfoService:ExplorationInfoService,
               private httpUtil: HttpUtil,
               private confirmationService: ConfirmationService,
@@ -111,7 +111,7 @@ export class ReportFileComponent implements OnInit {
       { field: 'reportUploader', header: '文件上传用户' },
       { field: 'creationTime', header: '报告上传日期' },
       { field: 'updateTime', header: '报告更新日期' },
-      { field: 'operation', header: '操作' }
+      /* { field: 'operation', header: '操作' } */
     ];
     this.explorationItems = [
       {label: '项目详情', icon: 'fa fa-fw fa-bar-chart'},
@@ -414,7 +414,6 @@ export class ReportFileComponent implements OnInit {
     if(type==='addReport'){
       this.reportDisplay = true;
       this.uploadedFiles = [];
-      this.fileDisabled = false;
       this.explorationReport = new ExplorationReport();
 
       this.modifyReport = false;
@@ -446,7 +445,7 @@ export class ReportFileComponent implements OnInit {
         this.uploadedFiles.push({
           name: value.reportFilePath.split('\\')[value.reportFilePath.split('\\').length-1]
         });
-        this.fileDisabled = false;
+
       }
       
       this.explorationReport = JSON.parse(JSON.stringify(value));
@@ -461,6 +460,7 @@ export class ReportFileComponent implements OnInit {
     /* 查看报告文件 */
     if(type==='viewReport'){
 
+      //政策报告文件
       if(this.type=='policy'){
         this.previewFile(value);
         return;
@@ -583,6 +583,8 @@ export class ReportFileComponent implements OnInit {
         let isInitialize = false;
         switch(fileType){
           case 'doc':
+          case 'docx':
+          case 'pptx':
             isInitialize = true;
             break;
           case 'png':
@@ -706,6 +708,8 @@ export class ReportFileComponent implements OnInit {
             var data = new Uint8Array(xhr.response)
             var workbook = XLSX.read(data, {type: 'array'});
             that.outputWorkbook(workbook)
+        }else{
+          that.fileDisplay = true;
         }
     };
     xhr.send();
@@ -784,6 +788,8 @@ export class ReportFileComponent implements OnInit {
     let isInitialize = true;
     switch(fileType){
       case 'doc':
+      case 'docx':
+      case 'pptx':
         isInitialize = false;
         break;
       case 'png':
@@ -822,6 +828,8 @@ export class ReportFileComponent implements OnInit {
   previewFile(value){
     
     let url,filepath,path;
+    let that = this;
+    this.fileDisplay = false;
     //政策文件单独路径
     if(this.type=='policy'){
       let data = value.reportFilePath.split('\\');
@@ -847,7 +855,13 @@ export class ReportFileComponent implements OnInit {
     this.viewFileDisplay=true;
     switch(this.fileType){
       case 'doc':
-        this.httpUtil.post('report-viewer/toPdfFile',{
+      case 'docx':
+      case 'pptx':
+        let fileurl = 'report-viewer/toPdfFile';
+        if(this.type=='policy'){
+          fileurl = 'mineral-policy/toPdfFile'
+        }
+        this.httpUtil.post(fileurl,{
           "filePath": this.type=='policy'?path:this.selectedFile.filePath
         }).then(value=>{
             if(value.meta.code===6666){
@@ -887,16 +901,26 @@ export class ReportFileComponent implements OnInit {
         xhr.open('GET', url, false);
         xhr.overrideMimeType("text/html;charset=utf-8");//默认为utf-8
         xhr.send(null);
+        if(xhr.status !==200){
+          this.fileDisplay = true;
+          return;
+        }
         this.txtTable = xhr.responseText;
         break;   
       case 'tif':
         let xhrTif = new XMLHttpRequest();
         xhrTif.responseType = 'arraybuffer';
         xhrTif.open('GET', url);
+        
         xhrTif.onload = function (e) {
+          if(e.target['status'] !==200 ){
+            that.fileDisplay = true;
+            return;
+          }
           var tiff = new Tiff({buffer: xhrTif.response});
           var canvas = tiff.toCanvas();
           document.getElementById('tiff').appendChild(canvas);
+          
         };
         xhrTif.send(); 
     }
@@ -1114,13 +1138,13 @@ export class ReportFileComponent implements OnInit {
   }
   /* 上传文件 */
   onUpload(event) {
-    if(event.files.length<1){
+    if(event.files.length<1 || event.originalEvent.body.meta.code!==6666){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '上传失败，请重新上传'});
       return;
     }
     this.uploadedFiles = [];
     for(let file of event.files) {
         this.uploadedFiles.push(file);
-        this.fileDisabled = true;
     }
     this.explorationReport.reportFilePath = event.originalEvent.body.data.filePath;
     this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '上传成功'});
