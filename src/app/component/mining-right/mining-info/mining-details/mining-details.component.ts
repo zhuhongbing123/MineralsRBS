@@ -431,6 +431,9 @@ saveMiningProject(type){
     this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '项目名称不能为空'});
     return;
   }
+  if(typeof(this.miningProject.areaCoordinates)==='object'){
+    this.miningProject.areaCoordinates =  JSON.stringify(this.miningProject.areaCoordinates);
+  }
   this.miningProject.miningStartTime = this.miningStartTime?this.miningStartTime.getTime()/1000:0;
  
    /* 修改项目信息 */

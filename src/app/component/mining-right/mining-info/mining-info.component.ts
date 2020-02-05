@@ -78,8 +78,7 @@ export class MiningInfoComponent implements OnInit {
       { field: 'miningMineralType', header: '开采矿种' },
       { field: 'miningProductionScale', header: '生产规模(吨/年)' },
       { field: 'miningWorkload', header: '开采投入工作量' },
-      { field: 'miningInvestment', header: '开采投入金额(万元)' },
-      { field: 'operation', header: '操作' }
+      { field: 'miningInvestment', header: '开采投入金额(万元)' }
     ];
     this.loading = true;
     //获取授权的API资源
@@ -300,6 +299,10 @@ export class MiningInfoComponent implements OnInit {
   saveProject(){
     if(!this.miningProject.projectName){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '项目名称不能为空'});
+      return;
+    }
+    if(!this.miningProject.ownerId){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '矿权人不能为空'});
       return;
     }
     this.miningProject.explorationStartTime = this.explorationStartTime?this.explorationStartTime.getTime()/1000:0;

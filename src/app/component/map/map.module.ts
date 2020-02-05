@@ -10,6 +10,7 @@ import { CarService } from '../../demo/service/carservice';
 import { OutdoorComponent } from './outdoor/outdoor.component';
 import { MapRoutes } from '../routers/map.route';
 import { MapCommonModule } from '../../common/map/map.module';
+import { ThreeMapComponent } from './three-map/three-map.component';
 
 
 
@@ -32,7 +33,7 @@ import { MapCommonModule } from '../../common/map/map.module';
     SpinnerModule
   ],
   providers: [CarService],
-  declarations: [OutdoorComponent],
+  declarations: [OutdoorComponent, ThreeMapComponent],
   exports:[]
 })
 export class MapModule { }

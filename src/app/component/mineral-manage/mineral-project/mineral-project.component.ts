@@ -252,6 +252,10 @@ export class MineralProjectComponent implements OnInit {
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '项目名称不能为空'});
       return;
     }
+    if(!this.mineralProject.ownerId){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '矿权人不能为空'});
+      return;
+    }
     this.mineralProject.explorationStartTime = this.explorationStartTime?this.explorationStartTime.getTime()/1000:0;
     this.mineralProject.miningStartTime = this.miningStartTime?this.miningStartTime.getTime()/1000:0;
     this.mineralProject.areaCoordinates = JSON.stringify(this.mineralProject.areaCoordinates);

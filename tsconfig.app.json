@@ -2,8 +2,12 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "outDir": "./out-tsc/app",
-        "types": []
+        "types": ["webgl2", "offscreencanvas"]
     },
+    "angularCompilerOptions": {
+        // ...
+        "disableTypeScriptVersionCheck": true  // 在这里新加了一个配置选项
+      },
     "include": [
         "src/**/*.ts"
     ],

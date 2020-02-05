@@ -67,14 +67,14 @@ export class AuthInterceptor implements HttpInterceptor {
             }
             // err jwt 情况本地信息跳转登录界面
             if (event.body.meta && event.body.meta.code === 1007) {
-              this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '长时间未操作，请重新登录'});
+              
               localStorage.clear();
               this.loginService.exit();
               return;
             }
             //注销之后跳转登录界面
             if (event.body.meta && event.body.meta.code === 2004) {
-              this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '长时间未操作，请重新登录'});
+              
               localStorage.clear();
               this.loginService.exit();
               return;

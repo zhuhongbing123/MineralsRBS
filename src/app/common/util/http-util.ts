@@ -56,11 +56,8 @@ export class HttpUtil {
 
   }
     public get(url){
-        return this.http
-      .get(
-        this.baseUrl + url
-      )
-      .toPromise()
+      this.baseUrl = localStorage.getItem('IP');
+      return this.http.get(this.baseUrl + url).toPromise()
       .then(res => {
         if (res["code"] === 401) {
           this.router.navigateByUrl("");

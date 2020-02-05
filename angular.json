@@ -48,7 +48,8 @@
                             "node_modules/@fullcalendar/timegrid/main.js",
                             "node_modules/@fullcalendar/interaction/main.js",
                             "node_modules/bootstrap/dist/js/bootstrap.min.js",
-                            "node_modules/echarts/dist/echarts.min.js"
+                            "node_modules/echarts/dist/echarts.min.js",
+                            "node_modules/three/build/three.module.js"
                         ]
                     },
                     "configurations": {

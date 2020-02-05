@@ -11,7 +11,7 @@
         <span>区域设定</span>
         <button class="right-operation-close" pButton type="button" icon="pi pi-times" label="关闭" (click)="mapDrawDisplay = false"></button>
     </div>
-    <div [hidden]="!addAreaDisplay">
+    <div [hidden]="!addAreaDisplay" class="search">
         <p-dropdown 
             [options]="drawShaps" 
             [(ngModel)]="selectedDraw" 
@@ -133,7 +133,7 @@
     </div>
     <div   [hidden]="!dropdownDisplay" style="position: absolute;
     margin-top: 500px;">
-        <div style="border:1px solid ;width:400px;height:50px;background-color: #467e9b;">
+        <div style="border:1px solid ;width:400px;height:50px;background-color: #467e9b;" class="search">
         <p-dropdown 
             [options]="drawShaps" 
             [(ngModel)]="selectedDraw" 

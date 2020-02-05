@@ -27,7 +27,7 @@ export class LoginService {
     
   }
   getTokenKey() {
-    
+    this.baseUrl = localStorage.getItem('IP');
     const url =this.baseUrl +  'account/login?tokenKey=get';
     // 先向后台申请加密tokenKey tokenKey=get
     return this.httpUtil.getLogin(url);

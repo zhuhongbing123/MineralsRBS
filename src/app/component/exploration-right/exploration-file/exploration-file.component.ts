@@ -43,8 +43,7 @@ export class ExplorationFileComponent implements OnInit {
   public setTableValue(){
     this.explorationInfoTitle=[
       { field: 'reportCategoryName', header: '报告分类名称' },
-      { field: 'reportType', header: '报告种类' },
-      { field: 'operation', header: '操作' }
+      { field: 'reportType', header: '报告种类' }
     ];
     this.loading =true;
     //获取授权的API资源

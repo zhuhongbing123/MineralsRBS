@@ -325,6 +325,10 @@ export class ExplorationInfoComponent implements OnInit {
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '项目名称不能为空'});
       return;
     }
+    if(!this.explorationProject.ownerId){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '矿权人不能为空'});
+      return;
+    }
     this.explorationProject.explorationStartTime = this.explorationStartTime.getTime()/1000
     this.explorationProject.miningStartTime = 0;
     this.explorationProject.areaCoordinates = JSON.stringify(this.explorationProject.areaCoordinates);

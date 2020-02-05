@@ -369,10 +369,11 @@ export class OutdoorComponent implements OnInit {
     /* 定位区域 */
     if(type ==='locationArea'){
       let point = [];
-      let areaCoordinates = ProjectionUtil.toLonLat(JSON.parse(value.areaCoordinates).coordinates.split(',').map(Number));
+      value.areaCoordinates = JSON.parse(value.areaCoordinates);
+      let areaCoordinates = ProjectionUtil.toLonLat(value.areaCoordinates.coordinates.split(',').map(Number));
       point.push(areaCoordinates[0]);
       point.push(areaCoordinates[1]);
-      this.locatorCard(point.toString(),JSON.parse(value.areaCoordinates).zoom,value);
+      this.locatorCard(point.toString(),value.areaCoordinates.zoom,value);
       return;
     }
     /* 图标修改 */

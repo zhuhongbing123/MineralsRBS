@@ -198,6 +198,9 @@ modifyProject(){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '项目名称不能为空'});
       return;
     }
+    if(typeof(this.explorationProject.areaCoordinates)==='object'){
+      this.explorationProject.areaCoordinates =  JSON.stringify(this.explorationProject.areaCoordinates);
+    }
     this.explorationProject.explorationStartTime = this.explorationStartTime?this.explorationStartTime.getTime()/1000:0;
     this.explorationProject.miningStartTime = this.miningStartTime?this.miningStartTime.getTime()/1000:0;
 

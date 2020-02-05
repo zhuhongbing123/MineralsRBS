@@ -28,8 +28,11 @@
         "@fullcalendar/daygrid": "4.0.1",
         "@fullcalendar/interaction": "4.0.2",
         "@fullcalendar/timegrid": "4.0.1",
+        "@tweenjs/tween.js": "^18.5.0",
         "@types/file-saver": "^2.0.1",
+        "@types/offscreencanvas": "^2019.6.1",
         "@types/ol": "^5.3.5",
+        "@types/webgl2": "0.0.5",
         "bootstrap": "^3.3.7",
         "chart.js": "2.7.3",
         "crypto-js": "^3.1.9-1",
@@ -53,6 +56,8 @@
         "quill": "1.1.8",
         "rxjs": "^6.5.3",
         "rxjs-compat": "^6.5.3",
+        "three": "^0.112.1",
+        "three-full": "^17.1.0",
         "tiff.js": "^1.0.0",
         "web-animations-js": "^2.3.2",
         "xlsx": "^0.15.1",
@@ -80,6 +85,6 @@
         "scss": "^0.2.4",
         "ts-node": "7.0.1",
         "tslint": "5.17.0",
-        "typescript": "3.4.5"
+        "typescript": "^3.7.4"
     }
 }
