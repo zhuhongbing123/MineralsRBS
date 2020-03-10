@@ -50,11 +50,22 @@ export class RoleManagementComponent implements OnInit {
   addUser = false;//增加用户按钮显示
   deleteUser = false;//删除用户按钮显示
   searchDisplay = false;//搜索按钮显示
+  searchAPIDisplay = false;//API搜索显示
+  selectAPIDisplay  = false;//API分类下拉框显示
 
   loading: boolean;//列表加载动画显示
   filteredRole:any[];//搜索时显示下拉框的角色名
   filteredRoleName: string;//搜索的角色名
   allRoleName;//所有角色名
+
+  apiClassify=[{
+    label:'全部',
+    value:0
+  }];//api分类
+  selectApiClassify;//已选择的分类名称
+  selectTeamId: number = 0;//api分类ID 0表示获取全部
+  filteredAPIName;//搜索API名称
+  filteredAPI:any[];//搜索API下拉框值
 
   constructor(private httpUtil: HttpUtil,
               private messageService:MessageService,
@@ -110,6 +121,12 @@ export class RoleManagementComponent implements OnInit {
       }
       if(element.uri ==='/role/search/*/*' && element.method =='POST'){
         this.searchDisplay =true;
+      }
+      if(element.uri ==='/resource/search/-/*/*/*/*' && element.method =='POST'){
+        this.searchAPIDisplay =true;
+      }
+      if(element.uri ==='/role/api/-/*/*/*/*' && element.method =='GET'){
+        this.selectAPIDisplay =true;
       }
       
       
@@ -176,7 +193,35 @@ export class RoleManagementComponent implements OnInit {
       }
     })
   }
+  
+    /* 获取API分类 */
+    getApiClassify(){
+      this.httpUtil.get('resource/api/-1/1/10000').then(value=>{
+        if (value.meta.code === 6666) {
+          let data = value.data.data;
+          this.apiClassify=[{
+            label:'全部',
+            value:0
+          }];
+          for(let i in data){
+            if(data[i].name!=='分类集合(API类别请放入此集合)'){
+              this.apiClassify.push({
+                label:data[i].name,
+                value:data[i].id
+              })
+            }
+            
+          }
 
+        }else if (value.meta.code === 1008) {
+          this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '您无此api权限'});
+        }  else {
+          this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '获取失败'});
+        }
+      });
+
+      
+  }
 
   /* 角色表格切换页码 */
   rolePageChange(event){
@@ -199,6 +244,10 @@ export class RoleManagementComponent implements OnInit {
     //url = this.addLinkUrl+'-/'+this.selectedRole.id;
     if(type=='add'){
       url = this.addLinkUrl+'-/'+this.selectedRole.id;
+      if(this.selectTeamId!==0){
+        url = 'role/api/-/'+this.selectedRole.id+'/'+this.selectTeamId+'/';
+      }
+      this.filteredAPIName = '';
     }else if(type=='link'){
       url = this.addLinkUrl+this.selectedRole.id;
     }
@@ -410,7 +459,9 @@ export class RoleManagementComponent implements OnInit {
           }
           this.addLinkValue = data;
           this.selectedAddLink = '';
+          this.selectApiClassify = 0;
           this.addLinkDisplay = true;
+          this.getApiClassify();
         }
       })
       
@@ -558,4 +609,77 @@ export class RoleManagementComponent implements OnInit {
       }
     }
   }
+
+  /* 选择资源类别 */
+  selectClassify(){
+    this.startPage = 1;
+    this.limit = 10;
+    this.selectTeamId = this.selectApiClassify;
+    this.filteredAPIName = '';
+    this.getApiValue();
+  }
+
+   /* 获取api数据 */
+   getApiValue(){
+     let url;
+     if(this.selectTeamId==0){
+        url = 'role/api/-/'+this.selectedRole.id+'/'+this.startPage+'/'+this.limit
+     }else{
+       url = 'role/api/-/'+this.selectedRole.id+'/'+this.selectTeamId+'/'+this.startPage+'/'+this.limit
+     }
+    this.httpUtil.get(url).then(value=>{
+      if (value.meta.code === 6666) {
+        let data = value.data.data.list;
+        this.addLinkTotal = value.data.data.total;
+
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
+          if(data[i].status==1){
+            data[i].status = '正常'
+          }
+          if(data[i].status==9){
+            data[i].status = '禁用'
+          }
+          for(let j in this.apiClassify){
+              if(data[i].parentId ==this.apiClassify[j].value && data[i].type!==3){
+                data[i]['classify'] = this.apiClassify[j].label;
+              }
+          }
+        }
+        this.addLinkValue = data;
+      }
+    })
+  }
+  /* 通过名称搜索API */
+  getFilteredApi(){
+    let url;
+    url = 'resource/search/-/'+this.selectedRole.id+'/'+this.selectTeamId+'/'+this.startPage+'/'+this.limit;
+
+    this.httpUtil.post(url,{
+      resourceName: this.filteredAPIName?this.filteredAPIName:''
+    }).then(value=>{
+      if (value.meta.code === 6666) {
+        let data = value.data.resources.list;
+        this.addLinkTotal = value.data.resources.total;
+
+        for(let i=0; i<data.length;i++){
+          data[i].number = (this.startPage-1)*this.limit+i +1;
+          if(data[i].status==1){
+            data[i].status = '正常'
+          }
+          if(data[i].status==9){
+            data[i].status = '禁用'
+          }
+          for(let j in this.apiClassify){
+              if(data[i].parentId ==this.apiClassify[j].value){
+                data[i]['classify'] = this.apiClassify[j].label;
+              }
+          }
+        }
+        this.addLinkValue = data;
+      }
+    })
+  }
+
+  
 }

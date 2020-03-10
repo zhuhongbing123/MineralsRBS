@@ -11,19 +11,22 @@
         <button pButton  type="button" label="查询" (click)="setRole('filtered')"></button>
     </div>
     <div style="clear: both;"> 
-        <p-table [columns]="roleTitle" [value]="roleValue" [loading]="loading">
+        <p-table [columns]="roleTitle" [value]="roleValue" [loading]="loading"
+        stateStorage="session" stateKey="statedemo-session" 
+        selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true">
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th style="width:8%">序号</th>
-                    <th *ngFor="let col of columns">
+                    <th *ngFor="let col of columns" [pSortableColumn]="col.field">
                         {{col.header}}
+                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
-                    <th style="width:10%">关联模块</th>
-                    <th style="width:15%">操作</th>
+                    <th style="width:120px">关联模块</th>
+                    <th style="width:170px">操作</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
-                <tr>
+                <tr [pSelectableRow]="rowData" >
                     <td style="width:8%">{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
@@ -32,10 +35,10 @@
                         <!-- <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'授权菜单')" class="operation-icon">授权菜单</span> -->
 <!--                         <span *ngIf = "col.field == 'link' && viewUser"  (click)="clickLink(rowData,'关联用户')" class="operation-icon">关联用户</span> -->
                     </td>
-                    <td  style="width:10%">
+                    <td  style="width:120px">
                         <button pButton type="button" *ngIf = "viewAPI"  (click)="clickLink(rowData,'授权API')" class="operation-icon" label="授权API"></button>
                     </td>
-                    <td  style="width:15%">
+                    <td  style="width:170px">
                         <button pButton type="button" *ngIf = " modifyDisplay"  (click)="setRole('modify',rowData)" class="operation-icon" label="修改"> </button>
                         <button pButton type="button" *ngIf = "deleteDisplay"  (click)="setRole('delete',rowData)" class="operation-icon" label="删除"> </button>
                     </td>
@@ -62,14 +65,16 @@
                         <button pButton type="button" style="float:right" [disabled]="selectedDeleteLink.length<1" label="批量删除" (click)="setLink('deleteMore',selectedDeleteLink)"></button>
                     </div>
                     <div style="float:left;height: 600px;">
-                        <p-table [columns]="addLinkTitle" [value]="linkTableValue" [(selection)]="selectedDeleteLink">
+                        <p-table [columns]="addLinkTitle" [value]="linkTableValue" [(selection)]="selectedDeleteLink"
+                        >
                             <ng-template pTemplate="header" let-columns>
                                 <tr>
                                     <th style="width: 3em">
                                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
                                     <th style="width:8%">序号</th>
-                                    <th *ngFor="let col of columns">
+                                    <th *ngFor="let col of columns" [pSortableColumn]="col.field">
                                         {{col.header}}
+                                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                                     </th>
                                 </tr>
                             </ng-template>
@@ -111,6 +116,7 @@
                         name="code" 
                         class="form-control"
                         maxlength = '100'
+                        autocomplete="off"
                       >
                     </div>
                     <div class="form-group has-feedback">
@@ -122,6 +128,7 @@
                             name="roleName" 
                             class="form-control"
                             maxlength = '100'
+                            autocomplete="off"
                         >
                     </div>
                     <div class="form-group has-feedback">
@@ -143,16 +150,25 @@
     </p-dialog>
     <!-- 添加角色关联模块 -->
     <p-dialog header="{{addLinkHeader}}" [(visible)]="addLinkDisplay" [modal]="true" [responsive]="true" [style]="{width: '1000px'}">
-        <div class="p-table" style="height:600px">
-            <p-table [columns]="addLinkTitle" [value]="addLinkValue" [(selection)]="selectedAddLink">
+        <div class="search ui-g-12 ui-md-4" [hidden]="!selectAPIDisplay">
+                <p-dropdown [options]="apiClassify" [style]="{width:'300px'}" [(ngModel)]="selectApiClassify" (onChange)="selectClassify()" placeholder="资源类别" [virtualScroll]="true"  [filter]="true"></p-dropdown>
+        </div>
+        <div style="float: right;margin-top: 5px" [hidden]="!searchAPIDisplay">
+                <p-autoComplete [(ngModel)]="filteredAPIName" [suggestions]="filteredAPI"
+                    placeholder="输入API名称" ></p-autoComplete>
+                <button pButton  type="button" label="查询" (click)="getFilteredApi()"></button>
+        </div>
+        <div class="p-table" style="height:600px;clear: both;">
+            <p-table [columns]="addLinkTitle" [value]="addLinkValue" [(selection)]="selectedAddLink" >
                 <ng-template pTemplate="header" let-columns>
                     <tr>
                         <th style="width: 3em">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
                         <th style="width:8%">序号</th>    
-                        <th *ngFor="let col of columns">
+                        <th *ngFor="let col of columns" [pSortableColumn]="col.field">
                             {{col.header}}
-                        </th>
+                            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                        </th>   
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-rowData let-columns="columns">

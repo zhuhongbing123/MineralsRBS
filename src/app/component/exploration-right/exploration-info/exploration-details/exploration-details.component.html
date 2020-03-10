@@ -84,13 +84,14 @@
         <button style="float: right;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回"></button>
         <div style="clear:both">
             <p-table 
-            [columns]="explorationDetailTitle" 
-            [value]="explorationDetailValue"
-            [scrollable]="true" 
-            scrollHeight="400px" 
-            [resizableColumns]="true"  
-            columnResizeMode="expand"
-            [style]="{'min-width':'1200px'}"
+                [columns]="explorationDetailTitle" 
+                [value]="explorationDetailValue"
+                [scrollable]="true" 
+                scrollHeight="400px" 
+                [resizableColumns]="true"  
+                columnResizeMode="expand"
+                stateStorage="session" stateKey="statedemo-details" 
+                selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
             >
             <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
@@ -100,20 +101,21 @@
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th style="width:8%" pResizableColumn>序号</th>
-                    <th *ngFor="let col of columns" pResizableColumn>
+                    <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
                         {{col.header}}
+                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
-                    <th style="width:15%" pResizableColumn>操作</th>
+                    <th style="width:170px" pResizableColumn>操作</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
-                <tr>
+                <tr [pSelectableRow]="rowData">
                     <td style="width:8%">{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                         
                     </td>
-                    <td  style="width:15%">
+                    <td  style="width:170px">
                         <button pButton type="button" *ngIf = " modifyStageButton " class="operation-icon"  (click)="setExplorationt('modifyStage',rowData)" label="修改"></button>
                         <button pButton type="button" *ngIf = " deleteStageButton " class="operation-icon"  (click)="setExplorationt('deleteStage',rowData)" label="删除"></button>
                     </td>
@@ -134,7 +136,7 @@
 
   <div class="dialog-class textarea-style">
       <!-- 探矿权项目增加、修改弹出框 -->
-      <p-dialog header="编辑探矿权项目" [(visible)]="explorationtDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+      <p-dialog header="编辑探矿权项目" [(visible)]="explorationtDisplay" [modal]="true" [closable]=false [responsive]="true" [style]="{width: '800px'}">
               <form>
                   <div class="form-group has-feedback">
                       <label class="control-label">项目名称</label>

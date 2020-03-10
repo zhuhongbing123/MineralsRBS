@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PasswordModule } from 'primeng/password';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ConfirmDialogModule, PaginatorModule, ButtonModule, DropdownModule, DialogModule, PanelMenuModule, SidebarModule, AutoCompleteModule, CalendarModule, MenubarModule, ToolbarModule, SplitButtonModule } from 'primeng/primeng';
+import { ConfirmDialogModule, PaginatorModule, ButtonModule, DropdownModule, DialogModule, PanelMenuModule, SidebarModule, AutoCompleteModule, CalendarModule, MenubarModule, ToolbarModule, SplitButtonModule, TreeTableModule } from 'primeng/primeng';
 import { ToastModule } from 'primeng/toast';
 import { SystemConfigService } from './system-config.service';
 import { RouterModule } from '@angular/router';
@@ -36,7 +36,8 @@ import { MineralOwnerComponent } from './mineral-owner/mineral-owner.component';
     SidebarModule,
     AutoCompleteModule,
     CalendarModule,
-    SplitButtonModule
+    SplitButtonModule,
+    TreeTableModule
     
   ],
   providers: [SystemConfigService],

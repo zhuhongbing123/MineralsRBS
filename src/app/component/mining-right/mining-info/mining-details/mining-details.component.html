@@ -87,10 +87,12 @@
             [columns]="stageDetailTitle" 
             [value]="stageDetailValue" 
             columnResizeMode="expand"
-            [style]="{'min-width':'1200px'}"
+
             [resizableColumns]="true" 
             [scrollable]="true" 
             scrollHeight="400px" 
+            stateStorage="session" stateKey="statedemo-mining-details" 
+            selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
           >
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -100,20 +102,21 @@
           <ng-template pTemplate="header" let-columns>
               <tr>
                     <th style="width:8%" pResizableColumn>序号</th>
-                    <th *ngFor="let col of columns" pResizableColumn>
+                    <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
                         {{col.header}}
+                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
-                    <th style="width:15%" pResizableColumn>操作</th>
+                    <th style="width:180px" pResizableColumn>操作</th>
               </tr>
           </ng-template>
           <ng-template pTemplate="body" let-rowData let-columns="columns">
-              <tr>
+              <tr [pSelectableRow]="rowData">
                     <td style="width:8%">{{rowData.number}}</td>
                   <td *ngFor="let col of columns">
                       <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                       
                   </td>
-                  <td style="width:15%">
+                  <td style="width:180px">
                         <button pButton type="button" *ngIf = "modifyStageButton && buttonType" class="operation-icon"  (click)="setMining('modifyStage',rowData)" label="修改"></button>
                         <button pButton type="button" *ngIf = "deleteStageButton && buttonType" class="operation-icon"  (click)="setMining('deleteStage',rowData)" label="删除"></button>
                   </td>
@@ -141,10 +144,12 @@
                 [columns]="monitoringTitle" 
                 [value]="monitoringValue"
                 columnResizeMode="expand"
-                [style]="{'min-width':'1200px'}"
+       
                 [resizableColumns]="true" 
                 [scrollable]="true" 
                 scrollHeight="400px" 
+                stateStorage="session" stateKey="statedemo-mining-report" 
+                selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
               >
               <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
@@ -154,20 +159,21 @@
               <ng-template pTemplate="header" let-columns>
                   <tr>
                     <th style="width:8%" pResizableColumn>序号</th>
-                    <th *ngFor="let col of columns" pResizableColumn>
+                    <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
                         {{col.header}}
+                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
-                    <th style="width:15%" pResizableColumn>操作</th>
+                    <th style="width:180px" pResizableColumn>操作</th>
                   </tr>
               </ng-template>
               <ng-template pTemplate="body" let-rowData let-columns="columns">
-                  <tr>
+                  <tr  [pSelectableRow]="rowData">
                     <td style="width:8%">{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        
+
                     </td>
-                    <td style="width:15%">
+                    <td style="width:180px">
                         <button pButton type="button" *ngIf = " modifyValidationButton && buttonType" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)" label="修改"></button>
                         <button pButton type="button" *ngIf = " deleteValidationButton && buttonType" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)" label="删除"></button>
                     </td>
@@ -190,7 +196,7 @@
 
 <div class="dialog-class textarea-style">
   <!-- 采矿权项目修改弹出框 -->
-  <p-dialog header="{{miningTitle}}" [(visible)]="miningDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+  <p-dialog header="{{miningTitle}}" [(visible)]="miningDisplay" [modal]="true" [closable]=false [responsive]="true" [style]="{width: '800px'}">
           <form>
               <div class="form-group has-feedback">
                   <label class="control-label">项目名称</label>

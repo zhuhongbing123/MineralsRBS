@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../../../login/login.service';
 import { ProjectMapComponent } from 'src/app/component/exploration-right/exploration-info/project-map/project-map.component';
+import { setTime } from '../../../../common/util/app-config';
 @Component({
   selector: 'app-exploration-details',
   templateUrl: './exploration-details.component.html',
@@ -133,8 +134,8 @@ export class ExplorationDetailsComponent implements OnInit {
         let data = value.data.explorationStages.list;
         this.detailTotal = value.data.explorationStages.total;
         for(let i=0; i<data.length;i++){
-          data[i].investigationStartTime = data[i].investigationStartTime? new Date(data[i].investigationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-          data[i].investigationEndTime =  data[i].investigationEndTime?new Date(data[i].investigationEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].investigationStartTime = data[i].investigationStartTime? setTime(data[i].investigationStartTime):'';
+          data[i].investigationEndTime =  data[i].investigationEndTime?setTime(data[i].investigationEndTime):'';
           data[i].number = (this.startPage-1)*this.limit+i +1;
           for(let j in this.mineralOwner){
               if(data[i].ownerId == this.mineralOwner[j].id){
@@ -216,6 +217,9 @@ modifyProject(){
             }
             this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
             this.explorationtDisplay = false;
+          }else if(value.meta.code === 1111 && value.meta.msg === '数据冲突操作失败'){
+            this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该项目名称已存在，请重新输入'});
+            return;
           }
         })
     }

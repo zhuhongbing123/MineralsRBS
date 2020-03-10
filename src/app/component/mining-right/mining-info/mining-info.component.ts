@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { LoginService } from '../../login/login.service';
 import { FALSE } from 'ol/functions';
 import { ProjectMapComponent } from '../../exploration-right/exploration-info/project-map/project-map.component';
-
+import { setTime } from '../../../common/util/app-config';
 declare let PDFObject;
 @Component({
   selector: 'app-mining-info',
@@ -114,13 +114,14 @@ export class MiningInfoComponent implements OnInit {
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
         for(let i=0; i<data.length;i++){
-          data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          
+          data[i].miningStartTime =  data[i].miningStartTime?setTime(data[i].miningStartTime):'';
           data[i].number = (this.startPage-1)*this.limit+i +1;
           if(data[i].latestMiningStage){
             
               data[i]['projectArea'] = data[i].latestMiningStage.projectArea;
-              data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?new Date(data[i].latestMiningStage.miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-              data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?new Date(data[i].latestMiningStage.miningEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+              data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?setTime(data[i].latestMiningStage.miningStartTime):'';
+              data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?setTime(data[i].latestMiningStage.miningEndTime):'';
               data[i]['miningMineralType'] = data[i].latestMiningStage.miningMineralType;
               data[i]['miningProductionScale'] = data[i].latestMiningStage.miningProductionScale;
               data[i]['miningWorkload'] = data[i].latestMiningStage.miningWorkload;
@@ -193,12 +194,12 @@ export class MiningInfoComponent implements OnInit {
         this.projectTotal = value.data.mineralProjects.total;
         for(let i=0; i<data.length;i++){
           data[i].number = (this.startPage-1)*this.limit+i +1;
-          data[i].miningStartTime = data[i].miningStartTime? new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].miningStartTime = data[i].miningStartTime? setTime(data[i].miningStartTime):'';
           if(data[i].latestMiningStage){
            
               data[i]['projectArea'] = data[i].latestMiningStage.projectArea;
-              data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?new Date(data[i].latestMiningStage.miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-              data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?new Date(data[i].latestMiningStage.miningEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+              data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?setTime(data[i].latestMiningStage.miningStartTime):'';
+              data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?setTime(data[i].latestMiningStage.miningEndTime):'';
               data[i]['miningMineralType'] = data[i].latestMiningStage.miningMineralType;
               data[i]['miningProductionScale'] = data[i].latestMiningStage.miningProductionScale;
               data[i]['miningWorkload'] = data[i].latestMiningStage.miningWorkload;
@@ -313,6 +314,9 @@ export class MiningInfoComponent implements OnInit {
         this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
         this.miningInfoDisplay = false;
         this.getMiningInfo();
+      }else if(value.meta.code === 1111 && value.meta.msg === '数据冲突操作失败'){
+        this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该项目名称已存在，请重新输入'});
+        return;
       }
     })
   }

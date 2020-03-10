@@ -130,8 +130,33 @@ export class LoginComponent implements OnInit {
           let data = value.data.data.list;
           localStorage.setItem('role', JSON.stringify(data));
           //this.loadingDisplay = false;
-          this.router.navigate(['/layout/explorationRight/explorationInfo']);//跳转到探矿权
-        }
+          let api = JSON.parse(localStorage.getItem('api'));
+          let explorationInfo = false;
+          let policyReport = false;
+          for(let i in api){
+            switch(api[i].uri){
+              case '/mineral-project/type/*/*/*':
+                explorationInfo  = true;
+                continue;
+              case '/mineral-policy/list/*/*':
+                policyReport = true;
+                continue;
+    
+            }
+              
+            }
+
+            if(explorationInfo){
+              this.router.navigate(['/layout/explorationRight/explorationInfo']);//跳转到探矿权
+            }else if(policyReport){
+              this.router.navigate(['/layout/mineralPolicy/policyReport']);//跳转到政策报告
+            }else{
+              this.router.navigate(['/layout/systemConfig/roleManage']);//跳转到角色管理
+            }
+          }
+          
+          
+        
       })
     })
   }

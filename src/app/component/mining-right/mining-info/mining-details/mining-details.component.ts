@@ -6,6 +6,7 @@ import { ExplorationInfoService } from '../../../exploration-right/exploration-i
 import { Router, ActivatedRoute } from '@angular/router';
 import { LoginService } from '../../../login/login.service';
 import { ProjectMapComponent } from '../../../exploration-right/exploration-info/project-map/project-map.component';
+import { setTime } from '../../../../common/util/app-config';
 
 @Component({
   selector: 'app-mining-details',
@@ -167,8 +168,8 @@ export class MiningDetailsComponent implements OnInit {
         this.stageTotal = value.data.miningStages.total;
         for(let i=0; i<data.length;i++){
           data[i].number = (this.startPage-1)*this.limit+i +1;
-          data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-          data[i].miningEndTime =  data[i].miningEndTime?new Date(data[i].miningEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].miningStartTime =  data[i].miningStartTime?setTime(data[i].miningStartTime):'';
+          data[i].miningEndTime =  data[i].miningEndTime?setTime(data[i].miningEndTime):'';
           for(let j in this.mineralOwner){
               if(data[i].ownerId == this.mineralOwner[j].id){
                   data[i].ownerId = this.mineralOwner[j].ownerName;
@@ -187,7 +188,7 @@ export class MiningDetailsComponent implements OnInit {
           this.validationTotal = value.data.projectValidations.total;
           for(let i=0; i<data.length;i++){
             data[i].number = (this.startPage-1)*this.limit+i +1;
-            data[i].validationYear =  new Date(data[i].validationYear*1000).toLocaleDateString().replace(/\//g, "-");
+            data[i].validationYear =  data[i].validationYear?setTime(data[i].validationYear):'';
             for(let j in this.reportCategory){
               if(data[i].reportCategoryId ===this.reportCategory[j].value){
                 data[i].reportCategoryId = this.reportCategory[j].reportCategory;
@@ -447,6 +448,9 @@ saveMiningProject(type){
       }
       this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
       this.miningDisplay = false;
+    }else if(value.meta.code === 1111 && value.meta.msg === '数据冲突操作失败'){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该项目名称已存在，请重新输入'});
+      return;
     }
   })
 }

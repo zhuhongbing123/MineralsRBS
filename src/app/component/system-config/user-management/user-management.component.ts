@@ -208,6 +208,8 @@ export class UserManagementComponent implements OnInit {
       this.userName = value.userName;
       this.accountName = value.uid;
       this.modifyPasswordDisplay = true;
+      this.newPassword= '';
+      this.comfirmPassword = '';
       return;
     }
     /* 删除用户 */

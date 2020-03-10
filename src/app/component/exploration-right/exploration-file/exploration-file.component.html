@@ -1,7 +1,7 @@
 
 <div style="color:#fff">
     <div *ngIf="reportTypeNumber==0">
-        <p>矿业权政策 > 矿业权政策报告1分类</p>
+        <p>矿业权政策 > 矿业权政策报告分类</p>
     </div>
     <div *ngIf="reportTypeNumber==1">
         <p>探矿权 > 探矿权报告分类</p>
@@ -22,7 +22,9 @@
         scrollHeight="400px" 
         [resizableColumns]="true"  
         columnResizeMode="expand"
-        [style]="{'min-width':'1200px'}"
+        stateStorage="session" stateKey="statedemo-login" 
+        selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
+        
       >
         <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
@@ -32,20 +34,21 @@
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <th style="width:8%" pResizableColumn>序号</th>
-                <th *ngFor="let col of columns" pResizableColumn>
+                <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
                     {{col.header}}
+                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                 </th>   
-                <th style="width:15%" pResizableColumn>操作</th>
+                <th style="width:190px" pResizableColumn>操作</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
-            <tr>
+            <tr [pSelectableRow]="rowData">
                 <td style="width:8%">{{rowData.number}}</td>
                 <td *ngFor="let col of columns">
                     <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                     
                 </td>
-                <td  style="width:15%">
+                <td  style="width:190px">
                     <button pButton type="button"  *ngIf = " modifyButton"   class="operation-icon" (click)="setReport('modify',rowData)" label="修改"></button>
                     <button pButton type="button"  *ngIf = "deleteButton"    class="operation-icon" (click)="setReport('delete',rowData)" label="删除"></button>
                 </td>
@@ -57,7 +60,7 @@
                 </div>
         </ng-template>
       </p-table>
-      <p-paginator [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+      <p-paginator   [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
   </div>
 </div>
 <div class="dialog-class">

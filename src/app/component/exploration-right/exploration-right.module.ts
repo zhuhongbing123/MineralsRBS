@@ -18,6 +18,7 @@ import { ProjectMapComponent } from 'src/app/component/exploration-right/explora
 import { DynamicDialogModule } from 'primeng/components/dynamicdialog/dynamicdialog';
 import { ElModule } from 'element-angular';
 import { Map2dService } from '../../common/map/map2-d/map2-d.service';
+import { ViewFileComponent } from './exploration-info/report-file/view-file/view-file.component';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { Map2dService } from '../../common/map/map2-d/map2-d.service';
     ExplorationInfoComponent, 
     ReportFileComponent, 
     ExplorationDetailsComponent,
-    ProjectMapComponent
+    ProjectMapComponent,
+    ViewFileComponent
   ],
   entryComponents: [
     ProjectMapComponent

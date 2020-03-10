@@ -18,27 +18,27 @@
             [columns]="userTableTitle" 
             [value]="userTableValue" 
             [loading]="loading"
-            [style]="{'min-width':'1200px'}"
-        
-        >
+            stateStorage="session"
+        selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true" stateKey="statedemo-user">
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th style="width:8%">序号</th>
-                    <th *ngFor="let col of columns">
+                    <th *ngFor="let col of columns" [pSortableColumn]="col.field"  pResizableColumn pReorderableColumn>
                         {{col.header}}
+                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
-                    <th style="width:33%">操作</th>
+                    <th style="width:410px">操作</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
-                <tr>
+                <tr [pSelectableRow]="rowData">
                     <td style="width:8%">{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
+                        <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yyyy-MM-dd HH:mm'}}</span>
                         
                     </td>
-                    <td style="width:33%">
+                    <td style="width:410px">
                         <button pButton type="button" *ngIf = "modifyDisplay"  (click)="setUserRole(rowData,'modifyRole')" class="operation-icon" label="角色管理"> </button>
              
                         <button pButton type="button" *ngIf = "deleteRoleDisplay && rowData.role"  (click)="setUserRole(rowData,'deleteRole')" class="operation-icon" label="删除角色"> </button>
@@ -71,8 +71,9 @@
                       <tr>
                           <th style="width: 3em"></th>
                           <th style="width:8%">序号</th>
-                          <th *ngFor="let col of columns">
+                          <th *ngFor="let col of columns"  [pSortableColumn]="col.field">
                               {{col.header}}
+                              <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                           </th>
                       </tr>
                   </ng-template>
@@ -182,7 +183,7 @@
             </form>
             <p-footer>
                 <button type="button" pButton  (click)="saveOwner('modify')" label="保存"></button>
-                <button type="button" pButton  (click)="userDisplay=false" label="取消" class="ui-button-secondary"></button>
+                <button type="button" pButton  (click)="modifyPasswordDisplay=false" label="取消" class="ui-button-secondary"></button>
              </p-footer>   
         </p-dialog>
 </div>                

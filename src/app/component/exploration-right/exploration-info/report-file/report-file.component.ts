@@ -8,6 +8,7 @@ import { HttpUrl } from '../../../../common/util/http-url';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginService } from '../../../login/login.service';
+import { setTime } from '../../../../common/util/app-config';
 declare let PDFObject,$,Tiff;
 
 @Component({
@@ -197,8 +198,8 @@ export class ReportFileComponent implements OnInit {
           for(let i=0; i<data.length;i++){
             
             
-            data[i].creationTime =  data[i].creationTime?new Date(data[i].creationTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-            data[i].updateTime =  data[i].updateTime?new Date(data[i].updateTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+            data[i].creationTime =  data[i].creationTime?setTime(data[i].creationTime):'';
+            data[i].updateTime =  data[i].updateTime?setTime(data[i].updateTime):'';
             data[i].reportCategoryId =  data[i].reportCategoryName;
             /* for(let j in this.reportCategory){
               if(data[i].reportCategoryId ===this.reportCategory[j].value){
@@ -246,8 +247,8 @@ export class ReportFileComponent implements OnInit {
             this.reportTotal = value.data.policies.total;
             for(let i=0; i<data.length;i++){
            
-              data[i].creationTime =  data[i].creationTime?new Date(data[i].creationTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-              data[i].updateTime =  data[i].updateTime?new Date(data[i].updateTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+              data[i].creationTime =  data[i].creationTime?setTime(data[i].creationTime):'';
+              data[i].updateTime =  data[i].updateTime?setTime(data[i].updateTime):'';
               data[i].reportCategoryId =  data[i].reportCategoryName;
               /* for(let j in this.reportCategory){
                 if(data[i].reportCategoryId ===this.reportCategory[j].value){
@@ -459,7 +460,7 @@ export class ReportFileComponent implements OnInit {
     }
     /* 查看报告文件 */
     if(type==='viewReport'){
-
+      
       //政策报告文件
       if(this.type=='policy'){
         this.previewFile(value);
@@ -550,8 +551,8 @@ export class ReportFileComponent implements OnInit {
           for(let i=0; i<data.length;i++){
             
       
-            data[i].creationTime =  data[i].creationTime?new Date(data[i].creationTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
-            data[i].updateTime =  data[i].updateTime?new Date(data[i].updateTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+            data[i].creationTime =  data[i].creationTime?setTime(data[i].creationTime):'';
+            data[i].updateTime =  data[i].updateTime?setTime(data[i].updateTime):'';
             data[i].reportCategoryId =  data[i].reportCategoryName;
             /* for(let j in this.reportCategory){
               if(data[i].reportCategoryId ===this.reportCategory[j].value){

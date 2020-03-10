@@ -1,17 +1,20 @@
 <p>系统配置 > 登录日志</p>
 <div class="p-table">
-    <p-table [columns]="loginLogTitle" [value]="loginLogValue"  [loading]="loading">
+    <p-table [columns]="loginLogTitle" [value]="loginLogValue"  [loading]="loading"
+    stateStorage="session" stateKey="statedemo-login-log" 
+            selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true">
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th style="width:8%">序号</th>
-            <th *ngFor="let col of columns">
+            <th *ngFor="let col of columns" [pSortableColumn]="col.field">
                 {{col.header}}
+                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
             </th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr>
-            <td>{{rowData.number}}</td>
+        <tr [pSelectableRow]="rowData">
+                <td>{{rowData.number}}</td>
             <td *ngFor="let col of columns" class="area-table-td">
                     <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                     <span *ngIf = "col.field == 'createTime'" > {{rowData[col.field]*1000  | date:'yyyy-MM-dd HH:mm'}}</span>

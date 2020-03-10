@@ -74,7 +74,8 @@
                 scrollHeight="400px" 
                 [resizableColumns]="true"  
                 columnResizeMode="expand"
-                [style]="{'min-width':'1200px'}"
+                stateStorage="session" stateKey="statedemo-file" 
+                selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
             >
                 <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
@@ -93,20 +94,21 @@
                         <th>报告上传日期</th>
                         <th>报告更新日期</th>
                         <th>操作</th> -->
-                        <th *ngFor="let col of columns" pResizableColumn>
+                        <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
                             {{col.header}}
+                            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                         </th>
-                        <th style="width:22%" pResizableColumn>操作</th>
+                        <th style="width:270px" pResizableColumn>操作</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-rowData let-columns="columns">
-                    <tr>
+                    <tr [pSelectableRow]="rowData">
                         <td style="width:8%" class="ui-resizable-column">{{rowData.number}}</td>
                         <td *ngFor="let col of columns" class="ui-resizable-column">
                             <span *ngIf = "col.field !== 'operation'"  pTooltip=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
 
                         </td>
-                        <td style="width:22%">
+                        <td style="width:270px">
                             <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('modifyReport',rowData)" label="修改"></button>
                             <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('viewReport',rowData)" label="查看文件"></button>
                             <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('deleteReport',rowData)"  label="删除"></button>
@@ -197,16 +199,19 @@
                     <span *ngFor="let path of clickFolderPath" (click)="clickFile(path,'path')" class="click-file file-path">{{path.name}}></span>
                 </div>    
                 <div style="max-height:400px;min-height: 300px;" class="p-table">
-                    <p-table [columns]="fileTitle" [value]="fileValue">
+                    <p-table [columns]="fileTitle" [value]="fileValue"
+                    stateStorage="session" stateKey="statedemo-view-file" 
+                    selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true">
                         <ng-template pTemplate="header" let-columns>
                             <tr>
-                                <th *ngFor="let col of columns">
+                                <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
                                     {{col.header}}
+                                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                                 </th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-rowData let-columns="columns">
-                            <tr>
+                            <tr [pSelectableRow]="rowData">
                                 <td *ngFor="let col of columns">
                                     <span *ngIf = "col.field !== 'operation' && col.field == 'name'" class="click-file" (click)="treeSelect(rowData)"> {{rowData[col.field]}}</span>
                                     <span *ngIf = "col.field !== 'operation' && col.field == 'fileType'"> {{rowData[col.field]}}</span>

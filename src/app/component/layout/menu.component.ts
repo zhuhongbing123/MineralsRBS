@@ -30,9 +30,25 @@ export class MenuComponent implements OnInit {
   constructor(public app: LayoutComponent, 
               private router: Router,
               private httpUtil: HttpUtil) { }
-
+  
   ngOnInit() {
+    
    // this.getMenuValue();
+   let api = JSON.parse(localStorage.getItem('api'));
+   let policyFile = false;
+   let policyReport = false;
+   let explorationFile = false;
+   let explorationInfo = false;
+   let miningFile = false;
+   let miningInfo = false;
+   let mineralProject = false;
+   let mineralOwner = false;
+   let roleManage = false;
+   let userManage = false;
+   let apiManage = false;
+   let loginLog = false;
+   let operationLog = false;
+
     this.models = [
      
       {
@@ -94,8 +110,8 @@ export class MenuComponent implements OnInit {
       {
         label: '地图', icon: 'fa fa-fw  fa-map',
         items: [
-          { label: '矿权地图', icon: 'iconfont iconmap', routerLink: ['/layout/mapManage/outDoor'] }
-         /*  { label: '矿山地图', icon: 'iconfont iconmap', routerLink: ['/layout/mapManage/threeMap'] } */
+          { label: '矿权地图', icon: 'iconfont iconmap', routerLink: ['/layout/mapManage/outDoor'] }/* ,
+          { label: '矿山地图', icon: 'iconfont iconmap', routerLink: ['/layout/mapManage/threeMap'] } */
         ]
       },
       {
@@ -112,6 +128,118 @@ export class MenuComponent implements OnInit {
 
       }
     ];
+    
+    for(let i in api){
+     
+      switch(api[i].uri){
+        case '/mineral-report-category/type/*/*/*':
+          policyFile = true;
+          explorationFile = true;
+          miningFile = true;
+          continue;
+        case '/mineral-policy/list/*/*':
+          policyReport = true;
+          continue; 
+        case '/mineral-project/type/*/*/*':
+          explorationInfo = true;
+          miningInfo = true;
+          mineralProject = true;
+          continue; 
+        case '/mineral-owner/list/*/*':
+          mineralOwner = true;
+          continue; 
+        case '/user/list/*/*':
+          userManage = true;
+          continue;   
+        case '/resource/api/*/*/*':
+          apiManage = true;
+          continue;   
+        case '/log/accountLog/*/*':
+          loginLog = true;
+          continue;    
+        case '/log/operationLog/*/*':
+          operationLog = true;
+          continue;  
+      }
+    }
+
+    if(!policyFile){
+      this.models[0].items.splice(0,1)
+     }
+    if(!policyReport && this.models[0].items.length==2){
+      this.models[0].items.splice(1,1)
+    }else if(!policyReport){
+      this.models[0].items.splice(0,1)
+    }
+   /*  if(!policyFile && !policyReport){
+      this.models.splice(0,1)
+    } */
+    if(!explorationFile){
+      this.models[1].items.splice(0,1)
+    }
+    if(!explorationInfo && this.models[1].items.length==2){
+      this.models[1].items.splice(1,1)
+    }else if(!explorationInfo){
+      this.models[1].items.splice(0,1)
+    }
+    /* if(!explorationInfo && !explorationFile){
+      this.models.splice(1,1)
+    } */
+    if(!miningFile){
+      this.models[2].items.splice(0,1)
+    }
+    if(!miningInfo && this.models[2].items.length==2){
+      this.models[2].items.splice(1,1)
+    }else if(!miningInfo){
+      this.models[2].items.splice(0,1)
+    }
+   /*  if(!miningFile && !miningInfo){
+      this.models.splice(2,1)
+    } */
+    if(!mineralProject){
+      this.models[3].items.splice(0,1)
+    }
+    if(!mineralOwner && this.models[2].items.length==2){
+      this.models[3].items.splice(1,1)
+    }else if(!mineralOwner){
+      this.models[3].items.splice(0,1)
+    }
+  /*   if(!mineralProject && !mineralOwner){
+      this.models.splice(3,1)
+    } */
+    if(!userManage){
+      this.models[8].items.splice(1,1)
+    }
+    if(!apiManage && this.models[8].items.length==5){
+      this.models[8].items.splice(2,1)
+    }else if(!apiManage){
+      this.models[8].items.splice(1,1)
+    }
+    if(!loginLog){
+      if(this.models[8].items.length==5){
+        this.models[8].items.splice(3,1)
+      }else if(this.models[8].items.length==4){
+        this.models[8].items.splice(2,1)
+      }else{
+        this.models[8].items.splice(1,1)
+      }
+      
+    }
+    if(!operationLog){
+      if(this.models[8].items.length==5){
+        this.models[8].items.splice(4,1)
+      }else if(this.models[8].items.length==4){
+        this.models[8].items.splice(3,1)
+      }else if(this.models[8].items.length==3){
+        this.models[8].items.splice(2,1)
+      }else{
+        this.models[8].items.splice(1,1)
+      }
+      
+    }
+
+
+
     let menuData = JSON.parse(localStorage.getItem('menu'))
     let parentIds = []
     let childrens = []
@@ -387,4 +515,6 @@ export class SubMenuComponent {
       this.activeIndex = null;
     }
   }
+
+  
 }

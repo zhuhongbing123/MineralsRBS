@@ -95,6 +95,7 @@ export class AuthInterceptor implements HttpInterceptor {
       //catchError(this.handleError)
     );
   }
+  
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

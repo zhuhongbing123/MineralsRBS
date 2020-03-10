@@ -49,8 +49,20 @@ export class LayoutComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         setTimeout(() => {this.layoutMenuScrollerViewChild.moveBar(); }, 100);
+        let that = this;
+         window.onbeforeunload = function(e) {
+             if(e.type=='beforeunload'){
+                that.onbeforeunload();
+             }
+        }
+        
+    
     }
 
+    /* 关闭浏览器清除登录信息 */
+    onbeforeunload(){
+    localStorage.clear();
+  }
     onLayoutClick() {
         if (!this.topbarItemClick) {
             this.activeTopbarItem = null;

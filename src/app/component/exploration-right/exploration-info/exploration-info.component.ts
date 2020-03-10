@@ -10,6 +10,7 @@ import { LoginService } from '../../login/login.service';
 
 import { MineralManageService } from '../../mineral-manage/mineral-manage.service';
 import { ProjectMapComponent } from 'src/app/component/exploration-right/exploration-info/project-map/project-map.component';
+import { setTime } from '../../../common/util/app-config';
 
 @Component({
   selector: 'app-exploration-info',
@@ -125,7 +126,7 @@ export class ExplorationInfoComponent implements OnInit {
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
         for(let i=0; i<data.length;i++){
-          data[i].explorationStartTime = data[i].explorationStartTime!==0? new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].explorationStartTime = data[i].explorationStartTime!==0? setTime(data[i].explorationStartTime):'';
          
           data[i].number = (this.startPage-1)*this.limit+i +1;
           if(data[i].latestExplorationStage){
@@ -207,7 +208,7 @@ export class ExplorationInfoComponent implements OnInit {
         this.projectTotal = value.data.mineralProjects.total;
         for(let i=0; i<data.length;i++){
           data[i].number = (this.startPage-1)*this.limit+i +1;
-          data[i].explorationStartTime = data[i].explorationStartTime? new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].explorationStartTime = data[i].explorationStartTime? setTime(data[i].explorationStartTime):'';
           if(data[i].latestExplorationStage){
             data[i]['projectArea'] = data[i].latestExplorationStage.projectArea;
             data[i]['investigationArea'] = data[i].latestExplorationStage.investigationArea;
@@ -339,6 +340,9 @@ export class ExplorationInfoComponent implements OnInit {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
           this.explorationtDisplay = false;
           this.getExplorationInfo();
+        }else if(value.meta.code === 1111 && value.meta.msg === '数据冲突操作失败'){
+          this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该项目名称已存在，请重新输入'});
+          return;
         }
       })
 
