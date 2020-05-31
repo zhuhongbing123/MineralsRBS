@@ -44,7 +44,6 @@ export class MineralProjectComponent implements OnInit {
   addProjectArea = false;//新增项目区域
   addAreaCommon: Subscription;
   mineralOwner:any[];//矿权人
-  oldProjectInfo;//项目信息修改之前的值
 
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
@@ -57,7 +56,7 @@ export class MineralProjectComponent implements OnInit {
                   this.mineralProject.areaBackground = value.areaBackground;
                   this.mineralProject.areaCoordinates = value.areaCoordinates;
                   this.mineralProject.areaOpacity = value.areaOpacity;
-                  console.log(value)
+      
                 })
                }
 
@@ -102,12 +101,12 @@ export class MineralProjectComponent implements OnInit {
     
     this.loading = true;
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
+    if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
       this.loginService.exit();
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/mineral-project' && element.method =='POST'){
         this.addDisplay =true;
       }
@@ -138,8 +137,8 @@ export class MineralProjectComponent implements OnInit {
         this.projectTotal = value.data.mineralProjects.total;
         for(let i=0; i<data.length;i++){
           data[i].number = (this.startPage-1)*this.limit+i +1;
-          data[i].explorationStartTime =  data[i].explorationStartTime!==0?setTime(data[i].explorationStartTime):'';
-          data[i].miningStartTime =  data[i].miningStartTime!==0?setTime(data[i].miningStartTime):'';
+          data[i].explorationStartTime =  data[i].explorationStartTime!==0?new Date(data[i].explorationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].miningStartTime =  data[i].miningStartTime!==0?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           for(let j in this.mineralOwner){
             if(data[i].ownerId == this.mineralOwner[j].id){
               data[i]['owner_id']  = this.mineralOwner[j].ownerName;
@@ -192,9 +191,9 @@ export class MineralProjectComponent implements OnInit {
           data[i].number = (this.startPage-1)*this.limit+i +1;
           data[i].explorationStartTime =  data[i].explorationStartTime!==0?setTime(data[i].explorationStartTime):'';
           data[i].miningStartTime =  data[i].miningStartTime!==0?setTime(data[i].miningStartTime):'';
-          if(data[i].lastestProjectOwner){
-            data[i]['owner_id']= data[i].lastestProjectOwner.ownerName;
-          }
+          
+            data[i]['owner_id']= data[i].ownerName;
+          
         }
         
         this.mineralProjectValue = data;
@@ -209,7 +208,6 @@ export class MineralProjectComponent implements OnInit {
       this.miningStartTime = value.miningStartTime?new Date(value.miningStartTime):'';
       this.mineralProject = value;
       this.mineralProjectDisplay = true;
-      this.oldProjectInfo = JSON.parse(JSON.stringify(this.mineralProjectValue));
       this.addProjectArea = false;
       this.isModify = true;
 
@@ -249,12 +247,7 @@ export class MineralProjectComponent implements OnInit {
   }
 
   /* 保存项目 */
-  saveMineralProject(type){
-    if(type=='cancel'){
-      this.mineralProjectValue = this.oldProjectInfo;
-      this.mineralProjectDisplay = false;
-      return;
-    }
+  saveMineralProject(){
     if(!this.mineralProject.projectName){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '项目名称不能为空'});
       return;
@@ -263,7 +256,6 @@ export class MineralProjectComponent implements OnInit {
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '矿权人不能为空'});
       return;
     }
-    
     this.mineralProject.explorationStartTime = this.explorationStartTime?this.explorationStartTime.getTime()/1000:0;
     this.mineralProject.miningStartTime = this.miningStartTime?this.miningStartTime.getTime()/1000:0;
     this.mineralProject.areaCoordinates = JSON.stringify(this.mineralProject.areaCoordinates);
@@ -274,9 +266,6 @@ export class MineralProjectComponent implements OnInit {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
           this.mineralProjectDisplay = false;
           this.getExplorationInfo();
-        }else if(value.meta.code === 1111 && value.meta.msg === '数据冲突操作失败'){
-          this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该项目名称已存在，请重新输入'});
-          return;
         }
       })
     }else{
@@ -286,9 +275,6 @@ export class MineralProjectComponent implements OnInit {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
           this.mineralProjectDisplay = false;
           this.getExplorationInfo();
-        }else if(value.meta.code === 1111 && value.meta.msg === '数据冲突操作失败'){
-          this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该项目名称已存在，请重新输入'});
-          return;
         }
       })
     }
@@ -310,7 +296,7 @@ export class MineralProjectComponent implements OnInit {
   filteredName(event){
     this.filteredProject= [];
     for(let i in this.allProjectName){
-      let brand = this.allProjectName[i];
+      let brand = this.allProjectName[i].projectName;
       if(brand.toLowerCase().indexOf(event.query.toLowerCase())>-1) {
           this.filteredProject.push(brand);
       }

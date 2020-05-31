@@ -53,18 +53,19 @@ export class LoginComponent implements OnInit {
           if (data.data.tokenKey !== undefined) {
             const tokenKey = data.data.tokenKey;
             const userKey = data.data.userKey;
-            localStorage.setItem('tokenKey', data.data.tokenKey);
-            localStorage.setItem('userKey', data.data.userKey);
+           
+            sessionStorage.setItem('tokenKey', data.data.tokenKey);
+            sessionStorage.setItem('userKey', data.data.userKey);
             getToken$.unsubscribe();
             const login$ = this.loginService.login(this.username, this.password, tokenKey, userKey).subscribe(
               data2 => {
                 // 认证成功返回jwt
                 if (data2.meta.code === 1003 && data2.data.jwt != null) {
-                  
-                  localStorage.setItem('token', data2.data.jwt);
-                  localStorage.setItem('uid', this.username);
-                  localStorage.setItem('roleId', data2.data.user.roleId);
-                  localStorage.setItem('roleCode', data2.data.user.roleCode);
+                  sessionStorage.setItem('token', data2.data.jwt);
+                  sessionStorage.setItem('token', data2.data.jwt);
+                  sessionStorage.setItem('uid', this.username);
+                  sessionStorage.setItem('roleId', data2.data.user.roleId);
+                  sessionStorage.setItem('roleCode', data2.data.user.roleCode);
                   this.getRoleApi(data2.data.user.roleId);
                   login$.unsubscribe();
                   //this.router.navigate(['/menu']);
@@ -96,14 +97,14 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     window.sessionStorage.setItem('HTTP', window.location.hostname);
-    if( localStorage.getItem('token')){
+    if( sessionStorage.getItem('token')){
       this.router.navigate(['/layout/explorationRight/explorationInfo']);//跳转到探矿权
     }
     /* 获取IP地址 */
     this.loginService.getIP().then(res=>{
-      localStorage.setItem('IP', res[0].serverIP);
-      localStorage.setItem('fileIP', res[0].fileIP);
-      localStorage.setItem('mapIP', res[0].fileIP);
+      sessionStorage.setItem('IP', res[0].serverIP);
+      sessionStorage.setItem('fileIP', res[0].fileIP);
+      sessionStorage.setItem('mapIP', res[0].mapIP);
     })
   }
   check() {
@@ -122,15 +123,15 @@ export class LoginComponent implements OnInit {
     this.httpUtil.get('role/api/'+ roleId).then(value=>{
       if(value.meta.code === 6666){
         let data = value.data.data;
-        localStorage.setItem('api', JSON.stringify(data));
+        sessionStorage.setItem('api', JSON.stringify(data));
       }
     }).then(()=>{
       this.httpUtil.get('role/1/1000').then(value=>{
         if(value.meta.code === 6666){
           let data = value.data.data.list;
-          localStorage.setItem('role', JSON.stringify(data));
+          sessionStorage.setItem('role', JSON.stringify(data));
           //this.loadingDisplay = false;
-          let api = JSON.parse(localStorage.getItem('api'));
+          let api = JSON.parse(sessionStorage.getItem('api'));
           let explorationInfo = false;
           let policyReport = false;
           for(let i in api){
@@ -147,7 +148,7 @@ export class LoginComponent implements OnInit {
             }
 
             if(explorationInfo){
-              this.router.navigate(['/layout/explorationRight/explorationInfo']);//跳转到探矿权
+              this.router.navigate(['/layout/mapManage/outDoor']);//跳转到地图
             }else if(policyReport){
               this.router.navigate(['/layout/mineralPolicy/policyReport']);//跳转到政策报告
             }else{

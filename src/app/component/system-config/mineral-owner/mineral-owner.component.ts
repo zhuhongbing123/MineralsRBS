@@ -48,13 +48,13 @@ export class MineralOwnerComponent implements OnInit {
     ];
     this.loading = true;
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
+    if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
       this.loginService.exit();
       return;
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/mineral-owner' && element.method =='POST'){
           this.addDisplay =true;
       }

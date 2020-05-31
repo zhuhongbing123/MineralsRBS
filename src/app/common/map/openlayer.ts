@@ -23,7 +23,8 @@ import { DrawEvent } from 'ol/interaction/Draw';
 import GeoJSON from 'ol/format/GeoJSON';
 import { Basic, MapLocationLabel } from '../util/app-config.js';
 import { Map2dService } from './map2-d/map2-d.service.js';
-import {ZoomSlider} from 'ol/control';
+import { ZoomSlider } from 'ol/control'; 
+import { transform } from 'ol/proj';
 import { reduce } from 'rxjs/operators';
 declare let $;
 
@@ -65,6 +66,7 @@ export class Openlayer {
      */
     public set mapDivId(value: string) {
         this._mapDivId = value;
+        
     }
 
     constructor(private map2dService: Map2dService){}
@@ -113,22 +115,27 @@ export class Openlayer {
             },
             offset: [0, -10 ]
           })
-
+          let osm ;
+          if(sessionStorage.getItem('mapIP')!==''){
+            osm = new TileWMS({
+                url:  sessionStorage.getItem('mapIP'),
+                params: {'FORMAT': 'image/jpeg', 
+               'VERSION': '1.1.0',
+                 tiled: true,
+                "LAYERS": 'cite:chinaosm',
+                "exceptions": 'application/vnd.ogc.se_inimage',
+                tilesOrigin: 73.2467041015625 + "," + 15.149866104126
+                    }
+            })
+          }else{
+              osm = new OSM();
+          }
           //地图初始化
           this.map = new Map({
             target: this.mapDivId,
             layers: [
               new TileLayer({
-                source: new OSM()/* TileWMS({
-                    url: 'http://192.168.101.113:8781/geoserver/mineral/wms',
-                    params: {'FORMAT': 'image/jpeg', 
-                   'VERSION': '1.1.0',
-                     tiled: true,
-                    "LAYERS": 'cite:chinaosm',
-                    "exceptions": 'application/vnd.ogc.se_inimage',
-                    tilesOrigin: 73.2467041015625 + "," + 15.149866104126
-                        }
-                }) */
+                source: osm
               }),
               vector
             ],
@@ -180,6 +187,7 @@ export class Openlayer {
             if(feature && that.clickIcon){
                 //显示弹出框
                 var coordinate = feature['values_'].geometry.flatCoordinates;
+                let aa = ProjectionUtil.toLonLat(coordinate);
                 var hdms = toStringHDMS(ProjectionUtil.toLonLat(coordinate));
                 that.clickPoint = hdms;
                 that.content.innerHTML=

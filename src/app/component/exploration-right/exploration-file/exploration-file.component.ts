@@ -41,19 +41,27 @@ export class ExplorationFileComponent implements OnInit {
 
   //初始化表格
   public setTableValue(){
-    this.explorationInfoTitle=[
-      { field: 'reportCategoryName', header: '报告分类名称' },
-      { field: 'reportType', header: '报告种类' }
-    ];
+    if (this.reportTypeNumber == 0){
+      this.explorationInfoTitle = [
+        { field: 'reportCategoryName', header: '分类分级' },
+        { field: 'reportType', header: '文件类别' }
+      ];
+    }else{
+      this.explorationInfoTitle = [
+        { field: 'reportCategoryName', header: '资料类别目录' },
+        { field: 'reportType', header: '矿业权类别' }
+      ];
+    }
+    
     this.loading =true;
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
+    if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
       this.loginService.exit();
       return;
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/mineral-report-category' && element.method =='POST'){
         this.addButton =true;
       }
@@ -143,7 +151,8 @@ export class ExplorationFileComponent implements OnInit {
     if(this.reportType =='add'){
       this.httpUtil.post('mineral-report-category',{
         "reportType": this.reportTypeNumber,
-        "reportCategoryName": this.reportCategoryName
+        "reportCategoryName": this.reportCategoryName,
+        "status": 1
       }).then(value=>{
         if (value.meta.code === 6666) {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
@@ -155,7 +164,8 @@ export class ExplorationFileComponent implements OnInit {
       this.httpUtil.put('mineral-report-category',{
         "reportType": this.reportTypeNumber,
         "reportCategoryName": this.reportCategoryName,
-        "id":this.reportValue.id
+        "id":this.reportValue.id,
+        "status": 1
       }).then(value=>{
         if (value.meta.code === 6666) {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});

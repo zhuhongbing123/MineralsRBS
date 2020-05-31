@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { RouterModule } from '@angular/router';
 
-import { CheckboxModule, InputTextModule, ButtonModule, BreadcrumbModule, DialogModule, SidebarModule, TabMenuModule, PaginatorModule, CalendarModule, InputTextareaModule, DropdownModule, FileUploadModule, TreeModule, AutoCompleteModule, TooltipModule, SelectButtonModule, ColorPickerModule, SpinnerModule } from 'primeng/primeng';
+import { CheckboxModule, InputTextModule, ButtonModule, BreadcrumbModule, DialogModule, SidebarModule, TabMenuModule, PaginatorModule, CalendarModule, InputTextareaModule, DropdownModule, FileUploadModule, TreeModule, AutoCompleteModule, TooltipModule, SelectButtonModule, ColorPickerModule, SpinnerModule, KeyFilterModule } from 'primeng/primeng';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from "primeng/table";
 import { CarService } from '../../demo/service/carservice';
@@ -11,7 +11,7 @@ import { OutdoorComponent } from './outdoor/outdoor.component';
 import { MapRoutes } from '../routers/map.route';
 import { MapCommonModule } from '../../common/map/map.module';
 import { ThreeMapComponent } from './three-map/three-map.component';
-
+import { ThreeDmapComponent } from './three-dmap/three-dmap.component';
 
 
 @NgModule({
@@ -30,10 +30,11 @@ import { ThreeMapComponent } from './three-map/three-map.component';
     DialogModule,
     PaginatorModule,
     ColorPickerModule,
-    SpinnerModule
+    SpinnerModule,
+    KeyFilterModule
   ],
   providers: [CarService],
-  declarations: [OutdoorComponent, ThreeMapComponent],
+  declarations: [OutdoorComponent, ThreeMapComponent, ThreeDmapComponent],
   exports:[]
 })
 export class MapModule { }

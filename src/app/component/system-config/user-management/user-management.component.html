@@ -6,10 +6,10 @@
             <div class="ui-g-12 ui-md-4">
                     <button pButton type="button"  label="新增" (click)="setUserRole('','add')"></button>
             </div>
-            <div style="float:right">
+            <div style="float:right" [hidden]="!searchDisplay">
                     <p-autoComplete [(ngModel)]="filteredUserName" [suggestions]="filteredUser" (completeMethod)="filteredUsers($event)"
                     placeholder="输入用户名" ></p-autoComplete>
-                <button pButton [hidden]="!addDisplay" type="button" label="查询" (click)="setUserRole('','filtered')"></button>
+                <button pButton  type="button" label="查询" (click)="setUserRole('','filtered')"></button>
             </div>
             
     </div>
@@ -18,32 +18,32 @@
             [columns]="userTableTitle" 
             [value]="userTableValue" 
             [loading]="loading"
-            stateStorage="session"
-        selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true" stateKey="statedemo-user">
+            [style]="{'min-width':'1200px'}"
+        
+        >
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th style="width:8%">序号</th>
-                    <th *ngFor="let col of columns" [pSortableColumn]="col.field"  pResizableColumn pReorderableColumn>
+                    <th *ngFor="let col of columns">
                         {{col.header}}
-                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
-                    <th style="width:410px">操作</th>
+                    <th style="width:33%">操作</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
-                <tr [pSelectableRow]="rowData">
+                <tr>
                     <td style="width:8%">{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yyyy-MM-dd HH:mm'}}</span>
+                        <span *ngIf = "col.field == 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]  | date:'yy-MM-dd HH:mm'}}</span>
                         
                     </td>
-                    <td style="width:410px">
+                    <td style="width:33%">
                         <button pButton type="button" *ngIf = "modifyDisplay"  (click)="setUserRole(rowData,'modifyRole')" class="operation-icon" label="角色管理"> </button>
              
                         <button pButton type="button" *ngIf = "deleteRoleDisplay && rowData.role"  (click)="setUserRole(rowData,'deleteRole')" class="operation-icon" label="删除角色"> </button>
-                        <button pButton type="button" *ngIf = "deleteUserDisplay"  (click)="setUserRole(rowData,'modify')" class="operation-icon" label="重置密码"> </button>
-                        <button pButton type="button" *ngIf = "modifyPassword "  (click)="setUserRole(rowData,'delete')" class="operation-icon" label="删除用户"> </button>
+                        <button pButton type="button" *ngIf = "modifyPassword  || rowData.username==loginUserName"  (click)="setUserRole(rowData,'modify')" class="operation-icon" label="重置密码"> </button>
+                        <button pButton type="button" *ngIf = " deleteUserDisplay"  (click)="setUserRole(rowData,'delete')" class="operation-icon" label="删除用户"> </button>
                     </td>
                 </tr>
             </ng-template>
@@ -59,7 +59,8 @@
 
 <!-- 角色操作弹出框 -->
 <div class="dialog-class">
-        <p-dialog header="{{userTitle}}" [(visible)]="userRoleDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+        <p-dialog header="{{userTitle}}" [(visible)]="userRoleDisplay" 
+        [modal]="true" [responsive]="true" [style]="{width: '800px'}">
             <div class="p-table">
                 <p-table 
                     [columns]="roleTitle" 
@@ -71,9 +72,8 @@
                       <tr>
                           <th style="width: 3em"></th>
                           <th style="width:8%">序号</th>
-                          <th *ngFor="let col of columns"  [pSortableColumn]="col.field">
+                          <th *ngFor="let col of columns">
                               {{col.header}}
-                              <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                           </th>
                       </tr>
                   </ng-template>
@@ -104,8 +104,7 @@
                 </p-footer>  
             
         </p-dialog>
-</div>
-<div class="dialog-class">
+
         <!-- 矿权人增加、修改弹出框 -->
         <p-dialog header="矿权人" [(visible)]="userDisplay" [modal]="true" [responsive]="true" [style]="{width: '600px'}">
                 <form>
@@ -117,6 +116,7 @@
                             name="accountName"  
                             class="form-control"
                             maxlength = '100'
+                            autocomplete = 'off'
                         >
                     </div>
                     <div class="form-group has-feedback">
@@ -127,6 +127,7 @@
                             name="userName" 
                             class="form-control"
                             maxlength = '100'
+                            autocomplete = 'off'
                          >
                     </div>
                     <div class="form-group has-feedback">
@@ -183,7 +184,7 @@
             </form>
             <p-footer>
                 <button type="button" pButton  (click)="saveOwner('modify')" label="保存"></button>
-                <button type="button" pButton  (click)="modifyPasswordDisplay=false" label="取消" class="ui-button-secondary"></button>
+                <button type="button" pButton  (click)="userDisplay=false" label="取消" class="ui-button-secondary"></button>
              </p-footer>   
         </p-dialog>
 </div>                

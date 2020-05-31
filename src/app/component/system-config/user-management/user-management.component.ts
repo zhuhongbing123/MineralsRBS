@@ -47,6 +47,7 @@ export class UserManagementComponent implements OnInit {
   comfirmPassword;//确认密码
   newPassword;//新密码
   modifyPasswordDisplay = false;//修改密码弹出框
+  loginUserName;
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
@@ -72,36 +73,32 @@ export class UserManagementComponent implements OnInit {
 
     this.loading = true;
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
+    if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
       this.loginService.exit();
       return;
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
-      if(element.uri ==='/user/authority/role' && element.method =='POST'){
-        this.addDisplay =true;
-      };
-      if(element.uri ==='/user/update/role' && element.method =='POST'){
-        this.modifyDisplay =true;
-      };
-      if(element.uri ==='/user/authority/role/*/*' && element.method =='DELETE'){
-        this.deleteRoleDisplay =true;
-      };
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/user/search/*/*' && element.method =='POST'){
         this.searchDisplay =true;
       };
-      if(element.uri ==='/user/*' && element.method =='DELETE'){
-        this.deleteUserDisplay =true;
-      };
-      if(element.uri ==='/user/password' && element.method =='POST'){
-        this.modifyPassword =true;
-      };
-    });
 
-    if(!this.modifyDisplay && !this.deleteRoleDisplay){
+
+      //只有管理员角色才有权限，一般用户角色只有重置密码功能
+      if(sessionStorage.getItem('roleCode')=='role_admin'){
+        this.addDisplay =true;
+        this.modifyDisplay =true;
+        this.deleteRoleDisplay =true;
+        this.modifyPassword =true;
+        this.deleteUserDisplay =true;
+
+      }
+    });
+    this.loginUserName = sessionStorage.getItem('uid');
+    /* if(!this.modifyDisplay && !this.deleteRoleDisplay){
       this.userTableTitle.splice(this.userTableTitle.length-1,1);
-    }
+    } */
     this.getUserValue();
     this.getUserName();
   }
@@ -208,8 +205,6 @@ export class UserManagementComponent implements OnInit {
       this.userName = value.userName;
       this.accountName = value.uid;
       this.modifyPasswordDisplay = true;
-      this.newPassword= '';
-      this.comfirmPassword = '';
       return;
     }
     /* 删除用户 */
@@ -321,7 +316,16 @@ export class UserManagementComponent implements OnInit {
   /* 添加用户 */
   saveOwner(type){
     let url = 'account/register';
+
     if(type=='modify'){
+      if(!this.newPassword){
+        this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '新密码不能为空'});
+        return;
+      }
+      if(this.newPassword.length<6){
+        this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '密码必须大于等于6位'});
+        return;
+      }
       if(this.newPassword !== this.comfirmPassword){
         this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '输入的新密码不一致,请重新输入'});
        
@@ -330,6 +334,22 @@ export class UserManagementComponent implements OnInit {
       url = 'user/password';
       this.password = this.newPassword;
     }else{
+      if(!this.accountName){
+          this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '账户名称不能为空'});
+          return;
+      }
+      if(!this.userName){
+        this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '用户名称不能为空'});
+        return;
+      }
+      if(!this.password){
+        this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '密码必须输入'});
+        return;
+      }
+      if(this.password.length<6){
+        this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '密码必须大于等于6位'});
+        return;
+      }
       if(this.password !== this.comfirmPassword){
         if(this.newPassword !== this.comfirmPassword){
           this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '输入的密码不一致,请重新输入'});

@@ -1,0 +1,45 @@
+{
+	"metadata": {
+		"version": 4.5,
+		"type": "Object",
+		"generator": "Object3D.toJSON"
+	},
+	"geometries": [
+		{
+			"uuid": "BBEE74D1-E43D-4C32-A9F3-4656E78C26F3",
+			"type": "PlaneBufferGeometry",
+			"width": 30,
+			"height": 40,
+			"widthSegments": 1,
+			"heightSegments": 1
+		}],
+	"materials": [
+		{
+			"uuid": "2F69AF3A-DDF5-4BBA-87B5-80159F90DDBF",
+			"type": "MeshPhongMaterial",
+			"color": 86015,
+			"emissive": 0,
+			"specular": 1118481,
+			"shininess": 30,
+			"depthFunc": 3,
+			"depthTest": true,
+			"depthWrite": true,
+			"stencilWrite": false,
+			"stencilWriteMask": 255,
+			"stencilFunc": 519,
+			"stencilRef": 0,
+			"stencilFuncMask": 255,
+			"stencilFail": 7680,
+			"stencilZFail": 7680,
+			"stencilZPass": 7680
+		}],
+	"object": {
+		"uuid": "EBBB1E63-6318-4752-AE2E-440A4E0B3EF3",
+		"type": "Mesh",
+		"name": "Ground",
+		"layers": 1,
+		"matrix": [1,0,0,0,0,0.000796,-1,0,0,1,0.000796,0,0,0,0,1],
+		"geometry": "BBEE74D1-E43D-4C32-A9F3-4656E78C26F3",
+		"material": "2F69AF3A-DDF5-4BBA-87B5-80159F90DDBF"
+	}
+}

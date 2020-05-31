@@ -9,7 +9,7 @@ import { LoginService } from '../login/login.service';
   template: `
         <div class="topbar clearfix">
             <div class="topbar-left">
-            矿业权管理系统 
+            矿业权档案管理系统 
             </div>
 
             <div class="topbar-right">
@@ -101,7 +101,7 @@ import { LoginService } from '../login/login.service';
 })
 export class TopBarComponent {
 
-   public loginName =   localStorage.getItem('uid');
+   public loginName =   sessionStorage.getItem('uid');
   constructor(public app: LayoutComponent,
     public loginService: LoginService
   ) { }

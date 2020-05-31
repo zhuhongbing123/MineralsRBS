@@ -36,37 +36,41 @@
             <button style="margin-top: 10px;margin-bottom: 10px;margin-left: 10px" type="button" pButton [hidden]="type==='policy'" (click)="goBack()" label="返回"></button>
         </div>
         <!-- 只有政策报告界面存在搜索 -->
-        <div style="float: right;margin-top:10px" [hidden]="type!=='policy' && !isClickSearch || !buttonType">
-            <span style="margin-right:5px">开始时间</span>
-            <p-calendar 
-                [showIcon]="true" 
-                [(ngModel)]="startTime" 
-                name="startTime" 
-                [monthNavigator]="true" 
-                [yearNavigator]="true" 
-      
-                yearRange="1970:2030"
-                dateFormat="yy.mm.dd"
-            ></p-calendar>
-            <span style="margin-right:5px;margin-left: 5px">结束时间</span>
-            <p-calendar 
-                [showIcon]="true" 
-                [(ngModel)]="endTime" 
-                name="endTime" 
-                [monthNavigator]="true" 
-                [yearNavigator]="true" 
-         
-                yearRange="1970:2030"
-                dateFormat="yy.mm.dd"
-            ></p-calendar>
-            <span style="margin-right:5px;margin-left: 5px">报告名称</span>
-            <p-autoComplete [(ngModel)]="reportNameLike"
-                placeholder="输入报告名称" ></p-autoComplete>
-            <button pButton type="button"  label="查询"  (click)="setExplorationt('filtered')"></button>
-            
+
+        <div style=" padding-top: 10px;text-align: center;" [hidden]="type!=='policy' || !isClickSearch">
+                    <span style="margin-right:10px">开始时间</span>
+                    <p-calendar 
+                        [showIcon]="true" 
+                        [(ngModel)]="startTime" 
+                        name="startTime" 
+                        [monthNavigator]="true" 
+                        [yearNavigator]="true" 
+                
+                        yearRange="1970:2030"
+                        dateFormat="yy.mm.dd"
+                    ></p-calendar>
+                    <span style="margin-right:10px;margin-left: 10px">结束时间</span>
+                    <p-calendar 
+                        [showIcon]="true" 
+                        [(ngModel)]="endTime" 
+                        name="endTime" 
+                        [monthNavigator]="true" 
+                        [yearNavigator]="true" 
+                    
+                        yearRange="1970:2030"
+                        dateFormat="yy.mm.dd"
+                    ></p-calendar>
+                    <span style="margin-right:10px;margin-left: 10px">报告名称</span>
+                    <p-autoComplete [(ngModel)]="reportNameLike"
+                        placeholder="输入报告名称" ></p-autoComplete>
+                    <button pButton type="button"  label="查询"  (click)="setExplorationt('filtered')"></button>
+
         </div>
-        
-        <div style="clear:both">
+        <div class="search"  style="clear:both;"  [hidden]="type!=='policy' || !isClickSearch">
+                <span style="margin-right:10px;margin-left: 10px">文件分类名称</span>
+                <p-dropdown [options]="fileClassify" [style]="{width:'200px'}"  [(ngModel)]="selectClassifyID" (onChange)="selectClassify(selectClassifyID)" placeholder="请选择报告分类" [virtualScroll]="true"  [filter]="true"></p-dropdown>
+        </div>
+        <div style="clear:both;margin-top: 10px;">
             <p-table 
                 [columns]="reportClassifyTitle" 
                 [value]="reportClassifyValue"   
@@ -74,8 +78,7 @@
                 scrollHeight="400px" 
                 [resizableColumns]="true"  
                 columnResizeMode="expand"
-                stateStorage="session" stateKey="statedemo-file" 
-                selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
+                [style]="{'min-width':'1200px'}"
             >
                 <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
@@ -94,21 +97,20 @@
                         <th>报告上传日期</th>
                         <th>报告更新日期</th>
                         <th>操作</th> -->
-                        <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
+                        <th *ngFor="let col of columns" pResizableColumn>
                             {{col.header}}
-                            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                         </th>
-                        <th style="width:270px" pResizableColumn>操作</th>
+                        <th style="width:22%" pResizableColumn *ngIf="buttonType">操作</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-rowData let-columns="columns">
-                    <tr [pSelectableRow]="rowData">
+                    <tr>
                         <td style="width:8%" class="ui-resizable-column">{{rowData.number}}</td>
                         <td *ngFor="let col of columns" class="ui-resizable-column">
                             <span *ngIf = "col.field !== 'operation'"  pTooltip=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
 
                         </td>
-                        <td style="width:270px">
+                        <td style="width:22%" *ngIf="buttonType">
                             <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('modifyReport',rowData)" label="修改"></button>
                             <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('viewReport',rowData)" label="查看文件"></button>
                             <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('deleteReport',rowData)"  label="删除"></button>
@@ -121,7 +123,7 @@
                         </div>
                 </ng-template>
             </p-table>
-            <p-paginator [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+            <p-paginator #clickPaginator [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
         </div>
     </div>
    
@@ -130,11 +132,11 @@
     <!-- 矿权报告弹出框 -->
     <p-dialog header="{{explorationTitle}}" [(visible)]="reportDisplay" [modal]="true" [blockScroll]="true" [responsive]="true" [style]="{width: '800px'}">
         <div class="form-group has-feedback">
-                <label class="control-label">报告名称</label>
+                <label class="control-label">资料名称</label>
                 <input  type="text" style="width:700px !important" maxlength = '100'  [(ngModel)]="explorationReport.reportName" name="reportName"  class="form-control">
         </div> 
         <div class="form-group has-feedback">
-            <label class="control-label">报告分类</label>
+            <label class="control-label">资料分类</label>
             <div class="search">
                 <p-dropdown [options]="reportCategory" [style]="{'width':'700px'}" name="reportCategoryId" [(ngModel)]="explorationReport.reportCategoryId" placeholder="请选择报告分类" filter="true">
                     <ng-template let-car pTemplate="item">
@@ -165,7 +167,7 @@
 
         </div>    
         <div class="form-group has-feedback">
-            <label class="control-label">文件描述详情</label>
+            <label class="control-label">资料摘要</label>
             <div>
                 <textarea 
                     rows="5" 
@@ -199,19 +201,16 @@
                     <span *ngFor="let path of clickFolderPath" (click)="clickFile(path,'path')" class="click-file file-path">{{path.name}}></span>
                 </div>    
                 <div style="max-height:400px;min-height: 300px;" class="p-table">
-                    <p-table [columns]="fileTitle" [value]="fileValue"
-                    stateStorage="session" stateKey="statedemo-view-file" 
-                    selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true">
+                    <p-table [columns]="fileTitle" [value]="fileValue">
                         <ng-template pTemplate="header" let-columns>
                             <tr>
-                                <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
+                                <th *ngFor="let col of columns">
                                     {{col.header}}
-                                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                                 </th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-rowData let-columns="columns">
-                            <tr [pSelectableRow]="rowData">
+                            <tr>
                                 <td *ngFor="let col of columns">
                                     <span *ngIf = "col.field !== 'operation' && col.field == 'name'" class="click-file" (click)="treeSelect(rowData)"> {{rowData[col.field]}}</span>
                                     <span *ngIf = "col.field !== 'operation' && col.field == 'fileType'"> {{rowData[col.field]}}</span>

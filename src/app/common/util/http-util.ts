@@ -18,8 +18,8 @@ export class HttpUtil {
         }) */
         
              
-        this.baseUrl = localStorage.getItem('IP');
-        this.headers = new HttpHeaders({ 'appId': localStorage.getItem('uid')?localStorage.getItem('uid'):'','token': localStorage.getItem('token')?localStorage.getItem('token'):''});
+        this.baseUrl = sessionStorage.getItem('IP');
+        this.headers = new HttpHeaders({ 'appId': sessionStorage.getItem('uid')?sessionStorage.getItem('uid'):'','token': sessionStorage.getItem('token')?sessionStorage.getItem('token'):''});
         this.options = new RequestOptions({ headers: this.headers });
     }
 
@@ -42,7 +42,7 @@ export class HttpUtil {
     /* 注销 */
     public postLogout(url: string, body?: any | null) {
       const uri =  url;
-      if(!localStorage.getItem('token')){
+      if(!sessionStorage.getItem('token')){
         this.router.navigateByUrl('/login');
         return;
       }
@@ -56,7 +56,7 @@ export class HttpUtil {
 
   }
     public get(url){
-      this.baseUrl = localStorage.getItem('IP');
+      this.baseUrl = sessionStorage.getItem('IP');
       return this.http.get(this.baseUrl + url).toPromise()
       .then(res => {
         if (res["code"] === 401) {

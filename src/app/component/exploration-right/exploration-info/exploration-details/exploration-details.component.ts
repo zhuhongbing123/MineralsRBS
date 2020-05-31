@@ -8,7 +8,6 @@ import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../../../login/login.service';
 import { ProjectMapComponent } from 'src/app/component/exploration-right/exploration-info/project-map/project-map.component';
-import { setTime } from '../../../../common/util/app-config';
 @Component({
   selector: 'app-exploration-details',
   templateUrl: './exploration-details.component.html',
@@ -83,29 +82,30 @@ export class ExplorationDetailsComponent implements OnInit {
     this.explorationItems = [
       {label: '项目详情', icon: 'fa fa-fw fa-bar-chart'},
       {label: '勘查阶段详情', icon: 'fa fa-fw fa-bar-chart'},
-      {label: '探矿权报告', icon: 'fa fa-fw fa-bar-chart'}
+      {label: '探矿权档案', icon: 'fa fa-fw fa-bar-chart'}
     ];
     this.explorationDetailTitle = [
+      { field: 'mineralName', header: '矿业权名称' },
       { field: 'ownerId', header: '矿权人' },
-      { field: 'investigationStartTime', header: '首立时间' },
+      { field: 'expiryDate', header: '有效期' },
       { field: 'projectArea', header: '矿权范围' },
       { field: 'investigationOrganization', header: '勘查单位' },
       { field: 'investigationCategory', header: '类别' },
       { field: 'investigationArea', header: '面积(平方公里)' },
       { field: 'investigationMineralType', header: '勘查矿种' },
       { field: 'investigationStage', header: '勘查阶段' },
-      { field: 'investigationWorkload', header: '工作量' },
+      { field: 'investigationWorkload', header: '勘查工作量' },
       { field: 'investigationInvestment', header: '投入金额(万元)' },
 
     ];
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
+    if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
       this.loginService.exit();
       return;
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/mineral-project' && element.method =='PUT'){
           this.modifyButton =true;
       }
@@ -120,9 +120,9 @@ export class ExplorationDetailsComponent implements OnInit {
       }
     });
 
-    if(!this.modifyStageButton && !this.deleteStageButton || !this.buttonType){
+    /* if(!this.modifyStageButton && !this.deleteStageButton || !this.buttonType){
       this.explorationDetailTitle.splice(this.explorationDetailTitle.length-1,1);
-    }
+    } */
     this.getStageInfo();
   }
 
@@ -134,14 +134,19 @@ export class ExplorationDetailsComponent implements OnInit {
         let data = value.data.explorationStages.list;
         this.detailTotal = value.data.explorationStages.total;
         for(let i=0; i<data.length;i++){
-          data[i].investigationStartTime = data[i].investigationStartTime? setTime(data[i].investigationStartTime):'';
-          data[i].investigationEndTime =  data[i].investigationEndTime?setTime(data[i].investigationEndTime):'';
+          data[i].investigationStartTime = data[i].investigationStartTime? new Date(data[i].investigationStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          data[i].investigationEndTime =  data[i].investigationEndTime?new Date(data[i].investigationEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+          if (data[i].investigationStartTime){
+            data[i]['expiryDate']= data[i].investigationStartTime + '~' + data[i].investigationEndTime;//显示时间区间
+          }
+          
           data[i].number = (this.startPage-1)*this.limit+i +1;
           for(let j in this.mineralOwner){
               if(data[i].ownerId == this.mineralOwner[j].id){
                   data[i].ownerId = this.mineralOwner[j].ownerName;
               }
           }
+          data[i]['mineralName'] = this.explorationProject.projectName;
         }
         this.explorationDetailValue = data;
       }
@@ -163,7 +168,7 @@ export class ExplorationDetailsComponent implements OnInit {
     this.explorationInfoService.getReportFile({
       type: false
     });
-  }else if(event ==='探矿权报告'){
+  }else if(event ==='探矿权档案'){
     this.reportDetailDisplay = true
     this.projectDetailDisplay = false;
     this.stageDetailDisplay = false;
@@ -217,9 +222,6 @@ modifyProject(){
             }
             this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
             this.explorationtDisplay = false;
-          }else if(value.meta.code === 1111 && value.meta.msg === '数据冲突操作失败'){
-            this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该项目名称已存在，请重新输入'});
-            return;
           }
         })
     }
@@ -288,7 +290,7 @@ saveExplorationStage(){
       "projectId": this.explorationProject.id,//矿权项目ID，
       "ownerId": this.explorationStage.ownerId,//矿权人ID
       "investigationStartTime": this.stageStartTime?this.stageStartTime.getTime()/1000:0,//首立时间
-      "investigationEndTime":0,//结束时间
+      "investigationEndTime": this.stageEndTime ? this.stageEndTime.getTime() / 1000 : 0,//结束时间
       "projectArea": this.explorationStage.projectArea,//矿权范围
       "investigationOrganization": this.explorationStage.investigationOrganization,//勘查单位
       "investigationCategory": this.explorationStage.investigationCategory,//类别  

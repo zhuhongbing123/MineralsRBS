@@ -15,7 +15,7 @@ export class LoginService {
               private router: Router,
               private messageService: MessageService,
               private http: HttpClient) {
-    this.baseUrl = localStorage.getItem('IP');
+    this.baseUrl = sessionStorage.getItem('IP');
     
     
   }
@@ -27,7 +27,7 @@ export class LoginService {
     
   }
   getTokenKey() {
-    this.baseUrl = localStorage.getItem('IP');
+    this.baseUrl = sessionStorage.getItem('IP');
     const url =this.baseUrl +  'account/login?tokenKey=get';
     // 先向后台申请加密tokenKey tokenKey=get
     return this.httpUtil.getLogin(url);
@@ -39,7 +39,6 @@ export class LoginService {
     password = CryptoJS.enc.Utf8.parse(password);
     // AES CBC加密模式
     password = CryptoJS.AES.encrypt(password, tokenKey, {iv: tokenKey, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7}).toString();
-    console.log(password);
     const param = new HttpParams().append('appId', appId)
       .append('password', password)
       .append('methodName', 'login')
@@ -67,7 +66,7 @@ export class LoginService {
         this.logOut().then(value=>{
           if (value['meta'].code === 6666) {
             // 本地消除存储用户信息
-            localStorage.clear();
+            sessionStorage.clear();
             this.router.navigateByUrl('/login');
           
           }
@@ -90,7 +89,7 @@ export class LoginService {
     this.logOut().then(value=>{
       if (value['meta'].code === 6666 || value['meta'].code === 2004) {
         // 本地消除存储用户信息
-        localStorage.clear();
+        sessionStorage.clear();
         this.router.navigateByUrl('/login');
         return;
       

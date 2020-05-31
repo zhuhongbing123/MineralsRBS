@@ -25,7 +25,6 @@ export class AppConfig {
     'fa fa-user',
     'fa fa-wrench'
   ];
-
 }
 /* 矿权项目参数 */
 export class ExplorationProject {
@@ -99,6 +98,12 @@ export class MiningStage{
   "miningArea": number;//开采面积
   "miningWorkload": string;//开采投入工作量
   "miningInvestment": number;//开采投入金额
+  "lisenceId": string;//证号
+  "address": string;//地址
+  "economyType": string;//经济类型
+  "miningMethod": string;//开采方式
+  "miningDepth": string;//开采深度
+  "comment": string;//备注
 }
 /* 采矿权年度监测报告 */
 export class MiningMonitoring{
@@ -110,6 +115,20 @@ export class MiningMonitoring{
   "executionStatus":String;//执行情况
   "problemFound":string;//监测过程发现的其它问题
 }
+/* 绿色矿山统计 */
+export class MiningStatistics {
+  "id": number;
+  "projectId": number;//矿权项目ID
+  "ownerId": any;//矿权人ID
+  "implementPlan": string;//实施方案
+  "implementProgress": string;//建设进程
+  "selfInvestigation": String;//自评情况
+  "thirdPartyInvestigation": string;//第三方评估结果
+  "projectAcceptance": string;//验收情况
+  "projectRating": string;//评级
+  "comment": string;//备注
+}
+
 /* 地图的定位点标注 */
 export class MapLocationLabel{
   "description": string; //描述
@@ -132,14 +151,13 @@ export class MapLocationArea{
 export class Basic {
   option: string;//坐标点
 }
-
 export const setTime = function (timestamp) {
   var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
   var Y = date.getFullYear() + '-';
-  var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-  var D = (date.getDate() < 10 ? '0'+(date.getDate()) : date.getDate());
+  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+  var D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
   var h = date.getHours() + ':';
   var m = date.getMinutes() + ':';
   var s = date.getSeconds();
-  return Y+M+D;
+  return Y + M + D;
 }

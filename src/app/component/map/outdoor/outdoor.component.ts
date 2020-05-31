@@ -8,6 +8,8 @@ import * as ProjectionUtil from 'ol/proj';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { LocationIcon } from '../../../common/util/default-common';
 import { LoginService } from 'src/app/component/login/login.service';
+import { transform,transformWithProjections,ProjectionLike} from 'ol/proj';
+import { toStringHDMS, toStringXY, createStringXY } from 'ol/coordinate';
 @Component({
   selector: 'app-outdoor',
   templateUrl: './outdoor.component.html',
@@ -66,6 +68,7 @@ export class OutdoorComponent implements OnInit {
   addPoiDisplay = false;//新增地点标注按钮
   modifyPoiDisplay = false;//修改地点标注按钮
   deletePoiDisplay = false;//删除地点标注按钮
+  mapDisplay = false;//地图图标、标注是否显示
 
 
   constructor(private httpUtil: HttpUtil,
@@ -105,13 +108,13 @@ export class OutdoorComponent implements OnInit {
       { field: 'owner_id', header: '矿权人' }
     ];
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
+    if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
       this.loginService.exit();
       return;
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/mineral-project/list/*/*' && element.method =='GET'){
         this.projectDisplay =true;
       }
@@ -142,10 +145,29 @@ export class OutdoorComponent implements OnInit {
       if(element.uri ==='/mineral-poi/*' && element.method =='DELETE'){
         this.deletePoiDisplay=true;
       }
+      
+      if(element.uri ==='/mineral-poi/all' && element.method =='GET'){
+        this.mapDisplay =true;
+      }
+      if(element.uri ==='/mineral-area/all' && element.method =='GET'){
+        this.mapDisplay =true;
+      }
+      if(element.uri ==='/mineral-project/all' && element.method =='GET'){
+        this.mapDisplay =true;
+      }
+     
     
     });
 
-    this.locationMineralDisplay = true;
+
+    if(this.projectDisplay){
+      this.locationMineralDisplay = true;
+    }
+
+    if(!this.mapDisplay){
+      return;
+    }
+    
     this.getMapLocationLabelAll();
     this.getMapLocationAreaAll();
     this.getMineralOwner();
@@ -464,6 +486,8 @@ export class OutdoorComponent implements OnInit {
       let areaCoordinates = ProjectionUtil.toLonLat(value.areaCoordinates.coordinates.split(',').map(Number));
       point.push(areaCoordinates[0]);
       point.push(areaCoordinates[1]);
+      let aa = ProjectionUtil.transform(point, 'EPSG:4326', 'EPSG:3857');
+      let bb = toStringHDMS(point);
       this.locatorCard(point.toString(),value.areaCoordinates.zoom,value);
       return;
     } 

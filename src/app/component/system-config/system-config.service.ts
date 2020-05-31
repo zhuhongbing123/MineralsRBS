@@ -9,7 +9,7 @@ import { HttpUrl } from '../../common/util/http-url';
 export class SystemConfigService {
     private baseUrl: string;//通用的URL地址
   constructor(private httpUtil: HttpUtil) {
-    this.baseUrl = localStorage.getItem('IP');
+    this.baseUrl = sessionStorage.getItem('IP');
   }
 
   getTokenKey() {
@@ -24,8 +24,7 @@ export class SystemConfigService {
     password = CryptoJS.enc.Utf8.parse(password);
     // AES CBC加密模式
     password = CryptoJS.AES.encrypt(password, tokenKey, {iv: tokenKey, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7}).toString();
-    console.log(password);
-    const param = new HttpParams().append('appId', appId)
+       const param = new HttpParams().append('appId', appId)
       .append('password', password)
       .append('methodName', 'login')
       .append('userKey', userKey)

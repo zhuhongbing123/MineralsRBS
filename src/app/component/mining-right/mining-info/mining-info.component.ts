@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { LoginService } from '../../login/login.service';
 import { FALSE } from 'ol/functions';
 import { ProjectMapComponent } from '../../exploration-right/exploration-info/project-map/project-map.component';
-import { setTime } from '../../../common/util/app-config';
+
 declare let PDFObject;
 @Component({
   selector: 'app-mining-info',
@@ -69,26 +69,29 @@ export class MiningInfoComponent implements OnInit {
   public setTableValue(){
     
     this.miningInfoTitle=[
-      { field: 'projectName', header: '项目名称' },
-      { field: 'owner_id', header: '矿权人' },
-      { field: 'miningStartTime', header: '采矿权首立时间' },
-      { field: 'stageStartTime', header: '开始时间' },
-      { field: 'stageEndTime', header: '结束时间' },
-      { field: 'projectArea', header: '矿权范围' },
+      { field: 'projectName', header: '矿山名称' },
+      { field: 'lisenceId', header: '证号' },
+      { field: 'owner_id', header: '采矿权人' },
+      { field: 'address', header: '地址' },
+      { field: 'economyType', header: '经济类型' },
       { field: 'miningMineralType', header: '开采矿种' },
+      { field: 'miningMethod', header: '开采方式' },
       { field: 'miningProductionScale', header: '生产规模(吨/年)' },
-      { field: 'miningWorkload', header: '开采投入工作量' },
-      { field: 'miningInvestment', header: '开采投入金额(万元)' }
+      { field: 'miningArea', header: '矿区面积(平方公里)' },
+      { field: 'validityDate', header: '有效期' },
+      { field: 'projectArea', header: '矿区范围拐点坐标' },
+      { field: 'miningDepth', header: '开采深度' },
+      { field: 'comment', header: '备注' }
     ];
     this.loading = true;
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
+    if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
       this.loginService.exit();
       return;
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/mineral-project/*' && element.method =='DELETE'){
         this.deleteDisplay =true;
       }
@@ -114,20 +117,29 @@ export class MiningInfoComponent implements OnInit {
         let data = value.data.mineralProjects.list;
         this.projectTotal = value.data.mineralProjects.total;
         for(let i=0; i<data.length;i++){
-          
-          data[i].miningStartTime =  data[i].miningStartTime?setTime(data[i].miningStartTime):'';
+          data[i].miningStartTime =  data[i].miningStartTime?new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           data[i].number = (this.startPage-1)*this.limit+i +1;
           if(data[i].latestMiningStage){
             
               data[i]['projectArea'] = data[i].latestMiningStage.projectArea;
-              data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?setTime(data[i].latestMiningStage.miningStartTime):'';
-              data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?setTime(data[i].latestMiningStage.miningEndTime):'';
+              data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?new Date(data[i].latestMiningStage.miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+              data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?new Date(data[i].latestMiningStage.miningEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
               data[i]['miningMineralType'] = data[i].latestMiningStage.miningMineralType;
               data[i]['miningProductionScale'] = data[i].latestMiningStage.miningProductionScale;
               data[i]['miningWorkload'] = data[i].latestMiningStage.miningWorkload;
               data[i]['miningInvestment'] = data[i].latestMiningStage.miningInvestment;
+              data[i]['lisenceId'] = data[i].latestMiningStage.lisenceId;
+              data[i]['address'] = data[i].latestMiningStage.address;
+              data[i]['economyType'] = data[i].latestMiningStage.economyType;
+              data[i]['miningMethod'] = data[i].latestMiningStage.miningMethod;
+            data[i]['miningDepth'] = data[i].latestMiningStage.miningDepth;
+            data[i]['miningArea'] = data[i].latestMiningStage.miningArea;
+            data[i]['comment'] = data[i].latestMiningStage.comment; 
             
           } 
+          if (data[i]['stageStartTime']){ //有效期
+            data[i]['validityDate'] = data[i]['stageStartTime'] + '~' + data[i]['stageEndTime'];
+          }
           for(let j in this.mineralOwner){
             if(data[i].ownerId == this.mineralOwner[j].id){
               data[i]['owner_id']  = this.mineralOwner[j].ownerName;
@@ -194,12 +206,12 @@ export class MiningInfoComponent implements OnInit {
         this.projectTotal = value.data.mineralProjects.total;
         for(let i=0; i<data.length;i++){
           data[i].number = (this.startPage-1)*this.limit+i +1;
-          data[i].miningStartTime = data[i].miningStartTime? setTime(data[i].miningStartTime):'';
+          data[i].miningStartTime = data[i].miningStartTime? new Date(data[i].miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
           if(data[i].latestMiningStage){
            
               data[i]['projectArea'] = data[i].latestMiningStage.projectArea;
-              data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?setTime(data[i].latestMiningStage.miningStartTime):'';
-              data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?setTime(data[i].latestMiningStage.miningEndTime):'';
+              data[i]['stageStartTime'] = data[i].latestMiningStage.miningStartTime?new Date(data[i].latestMiningStage.miningStartTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+              data[i]['stageEndTime'] = data[i].latestMiningStage.miningEndTime?new Date(data[i].latestMiningStage.miningEndTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
               data[i]['miningMineralType'] = data[i].latestMiningStage.miningMineralType;
               data[i]['miningProductionScale'] = data[i].latestMiningStage.miningProductionScale;
               data[i]['miningWorkload'] = data[i].latestMiningStage.miningWorkload;
@@ -289,7 +301,7 @@ export class MiningInfoComponent implements OnInit {
   filteredName(event){
     this.filteredProject= [];
     for(let i in this.allProjectName){
-      let brand = this.allProjectName[i];
+      let brand = this.allProjectName[i].projectName;
       if(brand.toLowerCase().indexOf(event.query.toLowerCase())>-1) {
           this.filteredProject.push(brand);
       }
@@ -314,9 +326,6 @@ export class MiningInfoComponent implements OnInit {
         this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
         this.miningInfoDisplay = false;
         this.getMiningInfo();
-      }else if(value.meta.code === 1111 && value.meta.msg === '数据冲突操作失败'){
-        this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该项目名称已存在，请重新输入'});
-        return;
       }
     })
   }

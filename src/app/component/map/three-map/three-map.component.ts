@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import * as THREE from '../../../../assets/js/three.module.js';
+import * as THREE from 'three';
 
 import Stats from '../../../../assets/js/stats.module.js';
 
@@ -29,11 +29,16 @@ export class ThreeMapComponent implements OnInit{
   helper;
 
   raycaster = new THREE.Raycaster();
-  mouse = new THREE.Vector2();
+  mouse;
   cube;
   selectedObjects = [];
   outlinePass;
+  rollOverMaterial;
   objects= [];
+  isShiftDown = false;
+  plane; cubeGeo; cubeMaterial;
+   clock = new THREE.Clock();//声明一个时钟对象
+  mixer; rollOverMesh;
   constructor() { }
   ngOnInit() {
    
@@ -46,8 +51,10 @@ export class ThreeMapComponent implements OnInit{
     this.container.innerHTML = "";
 
     
-    this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 5000 );
-    this.camera.position.z = 1000;
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+    this.camera.position.set(500, 800, 1300);
+    this.camera.lookAt(0, 0, 0);
+    //this.camera.position.z = 1000;
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color( 0xbfd1e5 );
@@ -64,33 +71,68 @@ export class ThreeMapComponent implements OnInit{
 
         this.scene.add( light );
         
+    //加载JSON模型
+    var loaderss = new THREE.ObjectLoader();
+    let that = this;
+    loaderss.load("./assets/json/test/scene.json", function (obj) {
+      obj.position.x = 140;
+      obj.position.y = 920;
+      obj.position.z = 100;
+      obj.scale.x = 20.0;
+      obj.scale.y = 20.0;
+      obj.scale.z = 20.0;
+      that.scene.add(obj);
+    });
+    
 
-        var geometry = new THREE.BoxBufferGeometry( 40, 40, 40 );
+    var skyBoxGeometry = new THREE.BoxGeometry(5, 20, 32);  
+    var texture = new THREE.TextureLoader().load("./assets/img/location_icon/camera.png");
 
-				for ( var i = 0; i < 200; i ++ ) {
+    var skyBoxMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
 
-					var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+    var skyBox = new THREE.Mesh(skyBoxGeometry, skyBoxMaterial);
+    skyBox.position.x = 240;
+    skyBox.position.y = 920;
+    skyBox.position.z = 250;
+    skyBox.scale.x = 10.0;
+    skyBox.scale.y = 10.0;
+    skyBox.scale.z = 10.0;
+   // this.scene.add(skyBox); 
 
-					object.position.x = Math.random() * 1000 - 500;
-					object.position.y = Math.random() * 600 - 300;
-					object.position.z = Math.random() * 800 - 400;
 
-					object.rotation.x = Math.random() * 2 * Math.PI;
-					object.rotation.y = Math.random() * 2 * Math.PI;
-					object.rotation.z = Math.random() * 2 * Math.PI;
 
-					object.scale.x = Math.random() * 2 + 1;
-					object.scale.y = Math.random() * 2 + 1;
-					object.scale.z = Math.random() * 2 + 1;
+    var people = new THREE.ObjectLoader();
+    people.load("./assets/json/test/people.json", function (obj) {
+      obj.position.x = 520;
+      obj.position.y = 920;
+      obj.position.z = -1000;
+      obj.scale.x = 20.0;
+      obj.scale.y = 20.0;
+      obj.scale.z = 20.0;
+      that.rollOverMesh = obj;
+      that.scene.add(obj);
+      that.start();
+    });
+    var rollOverGeo = new THREE.BoxBufferGeometry(50, 50, 50);
+    this.rollOverMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.5, transparent: true });
+    this.rollOverMesh = new THREE.Mesh(rollOverGeo, this.rollOverMaterial);
+    this.rollOverMesh.position.x = 840;
+    this.rollOverMesh.position.y = 980;
+    this.rollOverMesh.position.z = -350;
+    //this.scene.add(this.rollOverMesh);
+    //this.start();
 
-					object.castShadow = true;
-					object.receiveShadow = true;
 
-					this.scene.add( object );
+    
+   
+    
 
-					this.objects.push( object );
+  
 
-        }
+
+
+
+
         this.renderer = new THREE.WebGLRenderer( { antialias: true } );
     this.renderer.setPixelRatio( window.devicePixelRatio );
     this.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -127,104 +169,21 @@ export class ThreeMapComponent implements OnInit{
    this.camera.position.x = 2000;
    this.controls.update();
 
-   var geometry = new THREE.PlaneBufferGeometry( 7500, 7500, this.worldWidth - 1, this.worldDepth - 1 );
-   geometry.rotateX( - Math.PI / 2 );
 
-   let vertices = geometry.attributes.position.array;
+    this.mouse = new THREE.Vector2();
+    var geometry = new THREE.PlaneBufferGeometry(100, 100);
+    geometry.rotateX(- Math.PI / 2);
 
-   for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
+    this.plane = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ visible: false }));
+    this.scene.add(this.plane);
 
-    vertices[ j + 1 ] = data[ i ] * 10;
+    this.objects.push(this.plane);
+    /* document.addEventListener('mousedown', function (event){
+      that.onDocumentMouseDown(event)
+    } , false); */
+    
+    //document.addEventListener('mousemove', this.onMouseMove, false);
 
-   }
-
-   geometry.computeFaceNormals(); // needed for helper
-
-   //
-
-   this.texture = new THREE.CanvasTexture( this.generateTexture( data, this.worldWidth, this.worldDepth ) );
-   this.texture.wrapS = THREE.ClampToEdgeWrapping;
-   this.texture.wrapT = THREE.ClampToEdgeWrapping;
-
-   this.mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: this.texture } ) );
-   this.scene.add( this.mesh );
-
-   var geometrys = new THREE.ConeBufferGeometry( 20, 100, 3 );
-   geometrys.translate( 0, 50, 0 );
-   geometrys.rotateX( Math.PI / 2 );
-   this.helper = new THREE.Mesh( geometrys, new THREE.MeshNormalMaterial() );
-   //this.scene.add( this.helper );
-   var skyBoxGeometry = new THREE.BoxGeometry( 150, 150, 150 );  
-   var texture = new THREE.TextureLoader().load("../../../../assets/img/location_icon/icon8.jpg");  
-//设置颜色线框显示否
-var cubeMaterial = new THREE.MeshBasicMaterial({ map:texture });
- this.cube = new THREE.Mesh(skyBoxGeometry,cubeMaterial);
- 
-//设置cube的位置 
-this.cube.position.x=140;
-this.cube.position.y = 920;
-this.cube.position.z=1000;
- 
-//cube添加到场景中
-
-     
-   this.scene.add(this.cube);  
-
-   /* var x = 0, y = 0;
-   var triangleShape = new THREE.Shape()
-					.moveTo( 100, 20 )
-					.lineTo( 40, 80 )
-					.lineTo( 120, 80 )
-					.lineTo( 80, 20 ); // close path
-   var geometry = new THREE.ShapeBufferGeometry( triangleShape );
-
-   var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { color: 0xff0000, side: THREE.DoubleSide } ) );
-   mesh.position.set( 150, 900, 1000 );
-   mesh.rotation.set( 0, 0, 0 );
-   mesh.scale.set( 2, 2, 2 );
-   this.scene.add( mesh );
-   
-   //三角形
-var vertice = new Float32Array( [
-  // 三角形1 - 三个顶点 
-  -10 ,10, 0,
-  -10 ,-10, 0,
-  10 , -10, 0,
-] );
-var geometry = new THREE.BufferGeometry();
-//增加坐标点，坐标点是X,Y,Z的布局，可以自己任意设置
-geometry.addAttribute( 'position', new THREE.BufferAttribute( vertice, 3 ) );
-//材质
-var material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.DoubleSide } );
-
-var mesh = new THREE.Mesh( geometry, material );
-mesh.position.set( 1050, 900, 1000 );
-mesh.scale.set( 8, 8, 8 );
-this.scene.add(mesh);
-
-
-this.outlinePass = new OutlinePass( new THREE.Vector2( window.innerWidth, window.innerHeight ), this.scene, this.camera );
-   let that = this;
-   this.container.addEventListener( 'mousemove', function(){
-     that.onMouseMove(event)
-   }, false );
-   this.stats = new Stats();
-   //this.container.appendChild( this.stats.dom );
-
-   //
-
-   window.addEventListener( 'resize', this.onWindowResize, false );
-   document.addEventListener("mousedown", (event) => {
-
-     let aa = (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1;
-   });
-   window.addEventListener( 'mousemove', function(){
-     that.onTouchMove(event)
-    } );
-    window.addEventListener( 'touchmove', function(){
-      that.onTouchMove(event) 
-
-    });  */
  }
 
  onTouchMove( event ) {
@@ -416,7 +375,86 @@ addSelectedObject( object ) {
 
    }
 
- }
+  }
+  onDocumentMouseDown(event) {
 
+    event.preventDefault();
+
+    this.mouse.set((event.clientX / window.innerWidth) * 2 - 1, - (event.clientY / window.innerHeight) * 2 + 1);
+
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+
+    var intersects = this.raycaster.intersectObjects(this.objects);
+
+    if (intersects.length == 0) {
+
+      var intersect = intersects[0];
+
+      // delete cube
+
+      if (this.isShiftDown) {
+
+        if (intersect.object !== this.plane) {
+
+          this.scene.remove(intersect.object);
+
+          this.objects.splice(this.objects.indexOf(intersect.object), 1);
+
+        }
+
+        // create cube
+
+      } else {
+
+        var voxel = new THREE.Mesh(this.cubeGeo, this.cubeMaterial);
+        voxel.position.copy(intersect.point).add(intersect.face.normal);
+        voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
+        this.scene.add(voxel);
+
+        this.objects.push(voxel);
+
+      }
+
+      this.render();
+
+    }
+
+     
+
+  }
+  renders() {
+    //this.renderer.render(this.scene, this.camera);
+    requestAnimationFrame(this.renders.bind(this));
+    // 更新帧动画的时间
+    
+    this.mixer.update(this.clock.getDelta());
+  }
+
+  start(type?) {
+    let that = this;
+    if (type){
+      that.rollOverMesh.rotateY(Math.PI);//模型转向
+    }
+    
+    let setInter = setInterval(function () {
+      that.rollOverMesh.translateZ(5);
+      if (that.rollOverMesh.position.z>10) {
+        clearInterval(setInter);
+        that.stop();
+      }
+    }, 200)
+  }
+  stop(){
+    let that = this;
+    that.rollOverMesh.rotateY(Math.PI);
+    let setInter = setInterval(function () {
+      that.rollOverMesh.translateZ(5);
+      if (that.rollOverMesh.position.z < -1000) {
+        clearInterval(setInter);
+        
+        that.start('AAA');
+      }
+    }, 200)
+  }
 
 }

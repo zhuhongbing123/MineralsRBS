@@ -1,0 +1,17 @@
+{
+  "icon": [{
+    "icon": "assets/img/icon1.jpg"
+  }, {
+    "icon": "assets/img/icon2.jpg"
+  }, {
+    "icon": "assets/img/icon3.jpg"
+  }, {
+    "icon": "assets/img/icon4.jpg"
+  }, {
+    "icon": "assets/img/icon5.jpg"
+  }, {
+    "icon": "assets/img/icon6.jpg"
+  }, {
+    "icon": "assets/img/icon7.jpg"
+  }]
+}

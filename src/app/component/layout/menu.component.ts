@@ -30,11 +30,10 @@ export class MenuComponent implements OnInit {
   constructor(public app: LayoutComponent, 
               private router: Router,
               private httpUtil: HttpUtil) { }
-  
+
   ngOnInit() {
-    
    // this.getMenuValue();
-   let api = JSON.parse(localStorage.getItem('api'));
+   let api = JSON.parse(sessionStorage.getItem('api'));
    let policyFile = false;
    let policyReport = false;
    let explorationFile = false;
@@ -50,36 +49,37 @@ export class MenuComponent implements OnInit {
    let operationLog = false;
 
     this.models = [
+      {
+        label: '矿业权基本信息', icon: 'iconfont iconironstone',
+        items: [
+          { label: '矿业权名录', icon: 'iconfont iconxiangmu', routerLink: ['/layout/mineralManage/mineralProject'] },
+          { label: '矿权人名录', icon: 'iconfont iconkuanggong', routerLink: ['/layout/systemConfig/mineralOwner'] }
+        ]
+
+      },
      
       {
         label: '矿业权政策', icon: 'iconfont iconzhengce',
         items: [
-          { label: '矿业权政策报告分类', icon: 'iconfont iconbaogaoguanli', routerLink: ['/layout/mineralPolicy/policyFile'] },
-          { label: '矿业权政策报告', icon: 'iconfont iconbaogao', routerLink: ['/layout/mineralPolicy/policyReport'] }
+          { label: '分类目录', icon: 'iconfont iconbaogaoguanli', routerLink: ['/layout/mineralPolicy/policyFile'] },
+          { label: '文件列表', icon: 'iconfont iconbaogao', routerLink: ['/layout/mineralPolicy/policyReport'] }
         ]
       },
       {
         label: '探矿权', icon: 'iconfont icontankuangquancaikuangquanpinggu',
         items: [
-          { label: '探矿权报告分类', icon: 'iconfont iconbaogaoguanli', routerLink: ['/layout/explorationRight/explorationFile'] },
+          { label: '资料类别目录', icon: 'iconfont iconbaogaoguanli', routerLink: ['/layout/explorationRight/explorationFile'] },
           { label: '探矿权信息', icon: 'iconfont iconkuangquanleixinggengzheng', routerLink: ['/layout/explorationRight/explorationInfo'] }
         ]
       },
       {
         label: '采矿权', icon: 'iconfont iconmineral',
         items: [
-          { label: '采矿权报告分类', icon: 'iconfont iconbaogaoguanli', routerLink: ['/layout/miningRight/miningFile'] },
+          { label: '资料类别目录', icon: 'iconfont iconbaogaoguanli', routerLink: ['/layout/miningRight/miningFile'] },
           { label: '采矿权信息', icon: 'iconfont iconcaikuangquanzhaopaiguachurangjieguogongshi', routerLink: ['/layout/miningRight/miningInfo'] }
         ]
       },
-      {
-        label: '矿权管理', icon: 'iconfont iconironstone',
-        items:[
-          {label: '矿权项目管理', icon: 'iconfont iconxiangmu',routerLink: ['/layout/mineralManage/mineralProject']},
-          {label: '矿权人管理', icon: 'iconfont iconkuanggong',routerLink: ['/layout/systemConfig/mineralOwner']} 
-        ]
-        
-      },
+      
       {
         label: '远程监控', icon: 'iconfont iconjiankongshuju',
         items:[
@@ -92,26 +92,19 @@ export class MenuComponent implements OnInit {
         
       },
       {
-        label: '矿山存储', icon: 'iconfont iconicon_cunchu',
-        items:[
-          {label: '数据导入导出', icon: 'iconfont iconziyuanbaosongshujudaoru',routerLink: ['/layout/miningStorage/dataImportExport']},
-          {label: '数据分析', icon: 'iconfont iconshujufenxi',routerLink: ['/layout/miningStorage/dataAnalyze']}
-          
-        ]
-      },
-      {
         label: '绿色矿山', icon: 'iconfont iconkuangshan',
-        items:[
-          {label: '数据导入导出', icon: 'iconfont iconziyuanbaosongshujudaoru',routerLink: ['/layout/greenMining/dataImportExport']},
-          {label: '数据分析', icon: 'iconfont iconshujufenxi',routerLink: ['/layout/greenMining/dataAnalyze']}
+        items: [
+          { label: '绿色矿山建设统计', icon: 'iconfont iconshujufenxi', routerLink: ['/layout/greenMining/miningStatistics'] },
+         /*  {label: '数据导入导出', icon: 'iconfont iconziyuanbaosongshujudaoru',routerLink: ['/layout/greenMining/dataImportExport']},
+          {label: '数据分析', icon: 'iconfont iconshujufenxi',routerLink: ['/layout/greenMining/dataAnalyze']} */
           
         ]
       },
       {
-        label: '地图', icon: 'fa fa-fw  fa-map',
+        label: '矿区地理位置', icon: 'fa fa-fw  fa-map',
         items: [
-          { label: '矿权地图', icon: 'iconfont iconmap', routerLink: ['/layout/mapManage/outDoor'] }/* ,
-          { label: '矿山地图', icon: 'iconfont iconmap', routerLink: ['/layout/mapManage/threeMap'] } */
+          { label: '矿权地图', icon: 'iconfont iconmap', routerLink: ['/layout/mapManage/outDoor'] },
+          { label: '矿山地图', icon: 'iconfont iconmap', routerLink: ['/layout/mapManage/threeMap'] }
         ]
       },
       {
@@ -215,7 +208,7 @@ export class MenuComponent implements OnInit {
     }else if(!apiManage){
       this.models[8].items.splice(1,1)
     }
-    if(!loginLog){
+    if(!loginLog  || sessionStorage.getItem('roleCode')!=="role_admin"){
       if(this.models[8].items.length==5){
         this.models[8].items.splice(3,1)
       }else if(this.models[8].items.length==4){
@@ -226,7 +219,7 @@ export class MenuComponent implements OnInit {
       
     }
     if(!operationLog){
-      if(this.models[8].items.length==5){
+      if(this.models[8].items.length==5 ){
         this.models[8].items.splice(4,1)
       }else if(this.models[8].items.length==4){
         this.models[8].items.splice(3,1)
@@ -240,7 +233,7 @@ export class MenuComponent implements OnInit {
 
 
 
-    let menuData = JSON.parse(localStorage.getItem('menu'))
+    let menuData = JSON.parse(sessionStorage.getItem('menu'))
     let parentIds = []
     let childrens = []
     let menu = []
@@ -515,6 +508,4 @@ export class SubMenuComponent {
       this.activeIndex = null;
     }
   }
-
-  
 }

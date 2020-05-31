@@ -1,17 +1,17 @@
 
 
-<p>采矿权 > 采矿权项目信息</p>
+<p>采矿权 > 采矿权信息</p>
 <div>
 <div class="ui-g-12 ui-md-4" style="float:left">
         <button pButton type="button"  label="新增" (click)="setMining('add')"></button>
 </div>
 <div style="float: right;margin-bottom: 10px" [hidden]="!queryDisplay">
-        <span style="margin-right:10px">项目名称</span>
+        <span style="margin-right:10px">矿山名称</span>
         <p-autoComplete [(ngModel)]="filteredProjectName" [suggestions]="filteredProject" (completeMethod)="filteredName($event)"
-            placeholder="输入项目名称" ></p-autoComplete>
-            <span style="margin-right:10px;margin-left: 10px">矿权人</span>
+            placeholder="输入矿山名称" ></p-autoComplete>
+            <span style="margin-right:10px;margin-left: 10px">采矿权人</span>
             <p-autoComplete [(ngModel)]="filteredOwnerName"
-            placeholder="输入矿权人" ></p-autoComplete>
+            placeholder="输入采矿权人" ></p-autoComplete>
         <button pButton  type="button" label="查询" (click)="setMining('filtered')"></button>
 </div>
   <div style="clear: both;" class="p-table">
@@ -20,42 +20,33 @@
         [value]="miningInfoValue" 
         [loading]="loading"  
         columnResizeMode="expand"
-
+        [style]="{'min-width':'1200px'}"
         [resizableColumns]="true" 
         [scrollable]="true" 
         scrollHeight="400px" 
-        stateStorage="session" stateKey="statedemo-mining-info" 
-        selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
        >
         <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns" [style.width]="col.width">
             </colgroup>
         </ng-template>
-        <ng-template pTemplate="caption">
-                <div class="ui-helper-clearfix" style="text-align: right">
-                    
-                    <button type="button" pButton icon="fa fa-file-excel-o" iconPos="left" label="导出" (click)="exportExcel()" style="margin-right: 0.5em;" class="ui-button-success"></button>
-                </div>
-        </ng-template>
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <th style="width:8%" pResizableColumn>序号</th>
-                <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
+                <th *ngFor="let col of columns" pResizableColumn>
                     {{col.header}}
-                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                 </th>
-                <th style="width:250px" pResizableColumn>操作</th>
+                <th style="width:20%" pResizableColumn>操作</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
-            <tr [pSelectableRow]="rowData">
+            <tr>
                 <td style="width:8%">{{rowData.number}}</td>
                 <td *ngFor="let col of columns">
                     <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                     
                 </td>
-                <td style="width:250px">
+                <td style="width:20%">
                     <button pButton type="button"  class="operation-icon"  (click)="goDetails(rowData,'detail')" label="详情"></button>
                     <button pButton type="button" *ngIf = "modifyButton" class="operation-icon"  (click)="goDetails(rowData,'modify')" label="编辑"></button>
                     <button pButton type="button" *ngIf = "deleteDisplay" class="operation-icon"  (click)="setMining('delete',rowData)" label="删除"></button>
@@ -78,7 +69,7 @@
      <p-dialog header="新增采矿权项目" [(visible)]="miningInfoDisplay"  [maximizable]="true" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
            <form>
                <div class="form-group has-feedback">
-                   <label class="control-label">项目名称</label>
+                   <label class="control-label">矿山名称</label>
                    <input  
                     type="text" 
                     style="width:700px !important"  
@@ -89,7 +80,7 @@
                    >
                </div>
                <div class="form-group has-feedback">
-                <label class="control-label">矿权人</label>
+                <label class="control-label">采矿权人</label>
                 <div class="search">
                     <p-dropdown [options]="mineralOwner" [style]="{'width':'700px'}" name="ownerName" [(ngModel)]="miningProject.ownerId" placeholder="请选择一个矿权人" filter="true">
                         <ng-template let-car pTemplate="item">
@@ -292,7 +283,7 @@
                         name="mineralCharacteristics"
                         maxlength = '500'
                        ></textarea>
-                       <label class="control-label">主要成果</label>
+                       <label class="control-label">登记备案的储量/资源量</label>
                    </div>
                    <div>
                        <textarea 
@@ -307,7 +298,7 @@
                    </div>    
                </div>
                <div class="form-group has-feedback">
-                   <label class="control-label">初步认识</label>
+                   <label class="control-label">矿山资源前景分析</label>
                    <div>
                        <textarea 
                         rows="5" 
@@ -320,7 +311,7 @@
                        ></textarea>
                    </div>    
                </div>
-               <div class="form-group has-feedback">
+               <!-- <div class="form-group has-feedback">
                    <label class="control-label">存在的问题以及下一步工作</label>
                    <div>
                        <textarea 
@@ -333,7 +324,7 @@
                         maxlength = '500'
                        ></textarea>
                    </div>    
-               </div>
+               </div> -->
            </form>
            <div id="projectMap" class="map"></div>
            <p-footer>

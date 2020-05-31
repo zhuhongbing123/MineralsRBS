@@ -23,41 +23,33 @@
                
                [loading]="loading"  
                columnResizeMode="expand"
+               [style]="{'min-width':'1200px'}"
                [resizableColumns]="true" 
                [scrollable]="true" 
                 scrollHeight="400px" 
-                stateStorage="session" stateKey="statedemo-info" 
-                selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
         >
         <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns" [style.width]="col.width">
             </colgroup>
         </ng-template>
-        <ng-template pTemplate="caption">
-                <div class="ui-helper-clearfix" style="text-align: right">
-                   
-                    <button type="button" pButton icon="fa fa-file-excel-o" iconPos="left" label="导出" (click)="exportExcel()" style="margin-right: 0.5em;" class="ui-button-success"></button>
-                </div>
-        </ng-template>
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <th style="width:8%" pResizableColumn>序号</th>
-                <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
+                <th *ngFor="let col of columns" pResizableColumn>
                     {{col.header}}
-                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                 </th>
-                <th style="width:250px" pResizableColumn>操作</th>
+                <th style="width:20%" pResizableColumn>操作</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
-            <tr [pSelectableRow]="rowData">
+            <tr>
                 <td style="width:8%">{{rowData.number}}</td>
                 <td *ngFor="let col of columns">
                     <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                     
                 </td>
-                <td style="width:250px">
+                <td style="width:20%">
                     <button pButton type="button"  class="operation-icon"  (click)="goDetails(rowData,'detail')" label="详情"></button>
                     <button pButton type="button" *ngIf = "modifyButton" class="operation-icon"  (click)="goDetails(rowData,'modify')"  label="编辑"></button>
                     <button pButton type="button" *ngIf = "deleteButton" class="operation-icon"  (click)="setExplorationt('delete',rowData)"  label="删除"></button>
@@ -70,7 +62,7 @@
                 </div>
         </ng-template>
       </p-table>
-      <p-paginator [hidden]="!projectTotal"  [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,50,100,500,1000]" (onPageChange)="pageChange($event,'project')"></p-paginator>
+      <p-paginator [hidden]="!projectTotal"   [style]="{'min-width':'1200px'}" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,50,100,500,1000]" (onPageChange)="pageChange($event,'project')"></p-paginator>
   </div>
 </div>
 

@@ -3,10 +3,10 @@
 </div>
 
 <!-- 右侧菜单栏 -->
-<div class="fixed-control" style="right: 0px;z-index: 9999;">
+<div class="fixed-control" style="right: 0px;z-index: 9999;margin-top: 10px">
   
   <!-- 区域设定 -->
-  <div class="right-operation" [hidden]="!mapDrawDisplay">
+  <div class="right-operation"  [hidden]="!mapDrawDisplay">
     <div>
         <span>区域设定</span>
         <button class="right-operation-close" pButton type="button" icon="pi pi-times" label="关闭" (click)="mapDrawDisplay = false"></button>
@@ -30,9 +30,8 @@
         >
             <ng-template pTemplate="header" let-columns>
                 <tr>
-                    <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                    <th *ngFor="let col of columns">
                         {{col.header}}
-                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
                     <th style="width:58%">操作</th>
                 </tr>
@@ -67,9 +66,8 @@
                 <p-table [columns]="locationLabelTitle" [value]="locationLabelValue" [scrollable]="true" scrollHeight="300px"  [resizableColumns]="true" >
                     <ng-template pTemplate="header" let-columns>
                         <tr>
-                            <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                            <th *ngFor="let col of columns">
                                 {{col.header}}
-                                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                             </th>
                             <th style="width:58%">操作</th>
                         </tr>
@@ -108,9 +106,8 @@
                     >
                         <ng-template pTemplate="header" let-columns>
                             <tr>
-                                <th *ngFor="let col of columns"  [pSortableColumn]="col.field">
+                                <th *ngFor="let col of columns">
                                     {{col.header}}
-                                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                                 </th>
                                 <th style="width:60%">操作</th>
                             </tr>
@@ -149,15 +146,18 @@
         
     </div>
     <!-- 菜单按钮 -->
-    <div class="p-grid p-dir-col">
+    <div class="p-grid p-dir-col" style="padding: 5px;
+    margin-top: 0px;
+    margin-right: 5px;
+    background: #49779f;">
         <div class="p-col" [hidden]="!projectDisplay">
-            <button pButton type="button"  icon="fa fa-map-marker fa-lg" pTooltip="定位" tooltipPosition="left" (click)="openMineral()"></button>
+            <button pButton type="button"  icon="fa fa-map-marker fa-lg"  title="定位" (click)="openMineral()"></button>
         </div>
         <div class="p-col" [hidden]="!areaDisplay">
-          <button pButton type="button" icon="fa fa-map" (click)="mapInteraction()" pTooltip="区域标注" tooltipPosition="left"></button>
+          <button pButton type="button" icon="fa fa-map" (click)="mapInteraction()" title="区域标注" ></button>
         </div>
-        <div [hidden]="!poiDisplay">
-            <button pButton type="button" icon="fa fa-map-pin fa-lg" pTooltip="地点标注" tooltipPosition="left" (click)="signPoint('open')"></button>
+        <div class="p-col" [hidden]="!poiDisplay">
+            <button pButton type="button" icon="fa fa-map-pin fa-lg" title="地点标注" (click)="signPoint('open')"></button>
         </div>
       </div>
   </div>
@@ -226,6 +226,18 @@
         <label class="control-label">名称</label>
         <input  type="text" style="width:700px !important" disabled [(ngModel)]="projectName" name="projectName"  class="form-control">
     </div>
+    <!-- <div class="form-group has-feedback">
+        <label class="control-label">经纬度</label>
+        <div class="ui-inputgroup">
+            <span class="ui-inputgroup-addon">东经</span>
+            <input type="text" pInputText pKeyFilter="num" style="width:70px !important">
+            <span class="ui-inputgroup-addon">°</span>
+            <input type="text" pInputText pKeyFilter="num" style="width:70px !important">
+            <span class="ui-inputgroup-addon">'</span>
+        </div>
+ 
+       
+    </div> -->
     <div class="form-group has-feedback">
         <label class="control-label">填充色</label>
         <p-colorPicker [(ngModel)]="projectColor"></p-colorPicker>

@@ -15,7 +15,7 @@ export class RoleManagementComponent implements OnInit {
   public roleTitle: any;// 角色列表标题
   public roleValue: any;// 角色列表数据
   public roleTotal;//登录日志列表总数
-  public LIMIT_LOGIN=10;//登录日志列表每页显示数量
+  public LIMIT_LOGIN = 10;//登录日志列表每页显示数量
   public roleLink;//角色关联模块
   public selectedLinkModule;//已选择的角色关联模块
   public selectedRole;//已选择的角色
@@ -30,7 +30,7 @@ export class RoleManagementComponent implements OnInit {
   public selectedroleStatus;//已选角色状态值
   public roleCode;//角色编码
   public roleName;//角色名称
-  public addLinkDisplay=false;//关联模块弹出框是否显示
+  public addLinkDisplay = false;//关联模块弹出框是否显示
   public selectedLink;//已选择的关联列表数据
   public addLinkValue;//添加关联模块列表的数据
   public addLinkTitle;//添加关联模块列表标题
@@ -51,33 +51,33 @@ export class RoleManagementComponent implements OnInit {
   deleteUser = false;//删除用户按钮显示
   searchDisplay = false;//搜索按钮显示
   searchAPIDisplay = false;//API搜索显示
-  selectAPIDisplay  = false;//API分类下拉框显示
+  selectAPIDisplay = false;//API分类下拉框显示
 
   loading: boolean;//列表加载动画显示
-  filteredRole:any[];//搜索时显示下拉框的角色名
+  filteredRole: any[];//搜索时显示下拉框的角色名
   filteredRoleName: string;//搜索的角色名
   allRoleName;//所有角色名
 
-  apiClassify=[{
-    label:'全部',
-    value:0
+  apiClassify = [{
+    label: '全部',
+    value: 0
   }];//api分类
   selectApiClassify;//已选择的分类名称
   selectTeamId: number = 0;//api分类ID 0表示获取全部
   filteredAPIName;//搜索API名称
-  filteredAPI:any[];//搜索API下拉框值
+  filteredAPI: any[];//搜索API下拉框值
 
   constructor(private httpUtil: HttpUtil,
-              private messageService:MessageService,
-              private confirmationService: ConfirmationService,
-              private loginService: LoginService) { }
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private loginService: LoginService) { }
 
   ngOnInit() {
     this.getTableValue();
   }
 
   //初始化列表数据
-  getTableValue(){
+  getTableValue() {
     this.roleTitle = [
       { field: 'name', header: '名称' },
       { field: 'code', header: '编码' },
@@ -85,227 +85,227 @@ export class RoleManagementComponent implements OnInit {
 
     ];
     this.roleLink = [
-      {label: '授权API', value: '授权API'},
-      {label: '授权菜单', value: '授权菜单'},
-      {label: '关联用户', value: '关联用户'}
+      { label: '授权API', value: '授权API' },
+      { label: '授权菜单', value: '授权菜单' },
+      { label: '关联用户', value: '关联用户' }
     ];
     this.roleStatus = [
-      {label: '正常', value: '正常'},
-      {label: '禁用', value: '禁用'}
+      { label: '正常', value: '正常' },
+      { label: '禁用', value: '禁用' }
     ];
 
-    this.loading  = true;
+    this.loading = true;
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
-      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
+    if (!sessionStorage.getItem('api')) {
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '请重新登录' });
       this.loginService.exit();
       return;
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
-      if(element.uri ==='/role' && element.method =='POST'){
-        this.addDisplay =true;
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
+      if (element.uri === '/role' && element.method == 'POST') {
+        this.addDisplay = true;
       };
-      if(element.uri ==='/role' && element.method =='PUT'){
-        this.modifyDisplay =true;
+      if (element.uri === '/role' && element.method == 'PUT') {
+        this.modifyDisplay = true;
       };
-      if(element.uri ==='/role/*' && element.method =='DELETE'){
-        this.deleteDisplay =true;
+      if (element.uri === '/role/*' && element.method == 'DELETE') {
+        this.deleteDisplay = true;
       };
-      if(element.uri ==='/role/api/*/*/*' && element.method =='GET'){
-        this.viewAPI =true;
+      if (element.uri === '/role/api/*/*/*' && element.method == 'GET') {
+        this.viewAPI = true;
       }
-     
-      if(element.uri ==='/role/user/*/*/*' && element.method =='GET'){
-        this.viewUser =true;
+
+      if (element.uri === '/role/user/*/*/*' && element.method == 'GET') {
+        this.viewUser = true;
       }
-      if(element.uri ==='/role/search/*/*' && element.method =='POST'){
-        this.searchDisplay =true;
+      if (element.uri === '/role/search/*/*' && element.method == 'POST') {
+        this.searchDisplay = true;
       }
-      if(element.uri ==='/resource/search/-/*/*/*/*' && element.method =='POST'){
-        this.searchAPIDisplay =true;
+      if (element.uri === '/resource/search/-/*/*/*/*' && element.method == 'POST') {
+        this.searchAPIDisplay = true;
       }
-      if(element.uri ==='/role/api/-/*/*/*/*' && element.method =='GET'){
-        this.selectAPIDisplay =true;
+      if (element.uri === '/role/api/-/*/*/*/*' && element.method == 'GET') {
+        this.selectAPIDisplay = true;
       }
-      
-      
+
+
     });
-    if(!this.deleteDisplay && !this.modifyDisplay){
-      this.roleTitle.splice(this.roleTitle.length-1,1)
+    if (!this.deleteDisplay && !this.modifyDisplay) {
+      this.roleTitle.splice(this.roleTitle.length - 1, 1)
     }
-    if(!this.viewAPI && !this.viewUser){
-      this.roleTitle.splice(this.roleTitle.length-1,1)
+    if (!this.viewAPI && !this.viewUser) {
+      this.roleTitle.splice(this.roleTitle.length - 1, 1)
     }
     this.getRoleValue();
     this.getLinkUrl();
     this.getRoleName();
   }
   /* 获取角色数据 */
-  getRoleValue(){
-    this.httpUtil.get('role/'+this.startPage+'/'+this.limit).then(value=>{
+  getRoleValue() {
+    this.httpUtil.get('role/' + this.startPage + '/' + this.limit).then(value => {
       if (value.meta.code === 6666) {
         let data = value.data.data.list;
         this.roleTotal = value.data.data.total;
 
-        for(let i=0; i<data.length;i++){
-          data[i].number = (this.startPage-1)*this.limit+i +1;
-          if(data[i].status==1){
+        for (let i = 0; i < data.length; i++) {
+          data[i].number = (this.startPage - 1) * this.limit + i + 1;
+          if (data[i].status == 1) {
             data[i].status = '正常';
-          }else{
+          } else {
             data[i].status = '禁用';
           }
         }
         this.roleValue = data;
-        this.loading  = false;
+        this.loading = false;
       }
     })
   }
 
   /* 获取角色名字 */
-  getRoleName(){
-    this.httpUtil.get('role/name').then(value=>{
+  getRoleName() {
+    this.httpUtil.get('role/name').then(value => {
       if (value.meta.code === 6666) {
-          this.allRoleName = value.data.roleNames;
+        this.allRoleName = value.data.roleNames;
       }
     })
   }
 
   /* 获取搜索的角色 */
-  getFilteredRole(){
-    this.httpUtil.post('role/search/'+this.startPage+'/'+this.limit,{
-      roleName: this.filteredRoleName?this.filteredRoleName:''
-    }).then(value=>{
+  getFilteredRole() {
+    this.httpUtil.post('role/search/' + this.startPage + '/' + this.limit, {
+      roleName: this.filteredRoleName ? this.filteredRoleName : ''
+    }).then(value => {
       if (value.meta.code === 6666) {
         let data = value.data.roles.list;
         this.roleTotal = value.data.roles.total;
 
-        for(let i=0; i<data.length;i++){
-          data[i].number = (this.startPage-1)*this.limit+i +1;
-          if(data[i].status==1){
+        for (let i = 0; i < data.length; i++) {
+          data[i].number = (this.startPage - 1) * this.limit + i + 1;
+          if (data[i].status == 1) {
             data[i].status = '正常';
-          }else{
+          } else {
             data[i].status = '禁用';
           }
         }
         this.roleValue = data;
-        this.loading  = false;
+        this.loading = false;
       }
     })
   }
-  
-    /* 获取API分类 */
-    getApiClassify(){
-      this.httpUtil.get('resource/api/-1/1/10000').then(value=>{
-        if (value.meta.code === 6666) {
-          let data = value.data.data;
-          this.apiClassify=[{
-            label:'全部',
-            value:0
-          }];
-          for(let i in data){
-            if(data[i].name!=='分类集合(API类别请放入此集合)'){
-              this.apiClassify.push({
-                label:data[i].name,
-                value:data[i].id
-              })
-            }
-            
+
+  /* 获取API分类 */
+  getApiClassify() {
+    this.httpUtil.get('resource/api/-1/1/10000').then(value => {
+      if (value.meta.code === 6666) {
+        let data = value.data.data;
+        this.apiClassify = [{
+          label: '全部',
+          value: 0
+        }];
+        for (let i in data) {
+          if (data[i].name !== '分类集合(API类别请放入此集合)') {
+            this.apiClassify.push({
+              label: data[i].name,
+              value: data[i].id
+            })
           }
 
-        }else if (value.meta.code === 1008) {
-          this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '您无此api权限'});
-        }  else {
-          this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '获取失败'});
         }
-      });
 
-      
+      } else if (value.meta.code === 1008) {
+        this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '您无此api权限' });
+      } else {
+        this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '获取失败' });
+      }
+    });
+
+
   }
 
   /* 角色表格切换页码 */
-  rolePageChange(event){
-    this.startPage = event.page+1;
+  rolePageChange(event) {
+    this.startPage = event.page + 1;
     this.limit = event.rows;
-    if(this.filteredRoleName){
-      this.loading  = true;
+    if (this.filteredRoleName) {
+      this.loading = true;
       this.getFilteredRole();
-    }else{
+    } else {
       this.getRoleValue();
     }
-    
+
   }
 
   /* 右侧关联表格页码切换 */
-  linkPageChange(event,type){
-    let page = event.page+1;
+  linkPageChange(event, type) {
+    let page = event.page + 1;
     let rows = event.rows;
     let url;
     //url = this.addLinkUrl+'-/'+this.selectedRole.id;
-    if(type=='add'){
-      url = this.addLinkUrl+'-/'+this.selectedRole.id;
-      if(this.selectTeamId!==0){
-        url = 'role/api/-/'+this.selectedRole.id+'/'+this.selectTeamId+'/';
+    if (type == 'add') {
+      url = this.addLinkUrl + '-/' + this.selectedRole.id;
+      if (this.selectTeamId !== 0) {
+        url = 'role/api/-/' + this.selectedRole.id + '/' + this.selectTeamId + '/';
       }
       this.filteredAPIName = '';
-    }else if(type=='link'){
-      url = this.addLinkUrl+this.selectedRole.id;
+    } else if (type == 'link') {
+      url = this.addLinkUrl + this.selectedRole.id;
     }
-    
-    this.httpUtil.get(url+'/'+page+'/'+rows).then(value=>{
+
+    this.httpUtil.get(url + '/' + page + '/' + rows).then(value => {
       if (value.meta.code === 6666) {
         let data = value.data.data.list;
 
-        for(let i=0; i<data.length;i++){
-          data[i].number = (this.startPage-1)*this.limit+i +1;
-          if(data[i].status==1){
+        for (let i = 0; i < data.length; i++) {
+          data[i].number = (this.startPage - 1) * this.limit + i + 1;
+          if (data[i].status == 1) {
             data[i].status = '有效'
           }
         }
-        if(type=='add'){
+        if (type == 'add') {
           this.addLinkTotal = value.data.data.total;
           this.addLinkValue = data;
-        }else{
+        } else {
           this.linkTotal = value.data.data.total;
           this.linkTableValue = data;
         }
-        
+
       }
     })
   }
   /* 点击角色列表单选按钮 */
-  clickRole(data){
-    if(this.selectedRole){
+  clickRole(data) {
+    if (this.selectedRole) {
       this.clickRoleName = data.name;
       //当右侧列表显示并且已选择关联模块时
-      if(this.linkTableDisplay && this.selectedLinkModule){
+      if (this.linkTableDisplay && this.selectedLinkModule) {
         this.getLinkValue(data.id);
       }
-    }else{
+    } else {
       this.clickRoleName = '';
     }
   }
 
   /* 获取右侧关联列表数据 */
-  getLinkValue(id,type?){
-    this.httpUtil.get(this.addLinkUrl+id+'/'+this.startPage+'/'+this.limit).then(value=>{
+  getLinkValue(id, type?) {
+    this.httpUtil.get(this.addLinkUrl + id + '/' + this.startPage + '/' + this.limit).then(value => {
       if (value.meta.code === 6666) {
         let data = value.data.data.list;
         this.linkTotal = value.data.data.total;
 
-        for(let i=0; i< data.length;i++){
-          data[i].number = (this.startPage-1)*this.limit+i +1;
-          if(data[i].status==1){
+        for (let i = 0; i < data.length; i++) {
+          data[i].number = (this.startPage - 1) * this.limit + i + 1;
+          if (data[i].status == 1) {
             data[i].status = '有效'
           }
         }
         this.linkTableValue = data;
         //更新当前角色的授权API
-        if(type && this.addLinkUrl =='role/api/' && id==JSON.parse(localStorage.getItem('roleId'))){
-          this.httpUtil.get(this.addLinkUrl+id).then(value=>{
+        if (type && this.addLinkUrl == 'role/api/' && id == JSON.parse(sessionStorage.getItem('roleId'))) {
+          this.httpUtil.get(this.addLinkUrl + id).then(value => {
             if (value.meta.code === 6666) {
               let data = value.data.data;
-              localStorage.setItem('api', JSON.stringify(data));
+              sessionStorage.setItem('api', JSON.stringify(data));
             }
           })
         }
@@ -315,146 +315,146 @@ export class RoleManagementComponent implements OnInit {
 
 
   /* 角色列表的操作 */
-  setRole(type,value?){
+  setRole(type, value?) {
     this.roleCode = '';
     this.roleName = '';
     this.selectedroleStatus = '';
-    if(type =='add'){
+    if (type == 'add') {
       this.roleOpreationHeader = '添加角色';
       this.roleOpreationDisplay = true;
       return;
     }
     /* 搜索角色 */
-    if(type ==='filtered'){
+    if (type === 'filtered') {
       this.getFilteredRole();
       return;
     }
     this.selectedRole = value;
-    if(this.selectedRole){
-      if(type=='modify'){
-        this.roleOpreationHeader = '修改角色('+value.name+')';
+    if (this.selectedRole) {
+      if (type == 'modify') {
+        this.roleOpreationHeader = '修改角色(' + value.name + ')';
         this.roleOpreationDisplay = true;
         this.roleCode = this.selectedRole.code;
         this.roleName = this.selectedRole.name;
         this.selectedroleStatus = this.selectedRole.status;
-      }else{
+      } else {
         this.confirmationService.confirm({
-          message: '确认删除该角色('+value.name+')吗?',
+          message: '确认删除该角色(' + value.name + ')吗?',
           header: '删除角色',
           icon: 'pi pi-exclamation-triangle',
-          acceptLabel:'确定',
-          rejectLabel:'取消',
+          acceptLabel: '确定',
+          rejectLabel: '取消',
           accept: () => {
-            this.httpUtil.delete('role/'+this.selectedRole.id).then(value=>{
+            this.httpUtil.delete('role/' + this.selectedRole.id).then(value => {
               if (value.meta.code === 6666) {
                 this.getRoleValue();
               }
             })
           },
           reject: () => {
-          
+
           }
         });
       }
-      
-    }else{
-      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请选择角色'});
+
+    } else {
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '请选择角色' });
     }
-    
+
   }
 
   /* 新增修改角色保存 */
-  saveRole(){
-    if(!this.roleCode){
-      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '角色名称不能为空'});
+  saveRole() {
+    if (!this.roleCode) {
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '角色名称不能为空' });
       return;
     }
-    if(this.roleOpreationHeader =='添加角色'){
-      this.httpUtil.post('role',{
-        code:this.roleCode,
-        name:this.roleName,
-        status:this.selectedroleStatus=='正常'?1:0
-      }).then(value=>{
+    if (this.roleOpreationHeader == '添加角色') {
+      this.httpUtil.post('role', {
+        code: this.roleCode,
+        name: this.roleName,
+        status: this.selectedroleStatus == '正常' ? 1 : 0
+      }).then(value => {
         if (value.meta.code === 6666) {
-            this.getRoleValue();
-            this.roleOpreationDisplay = false;
-            this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '新增角色成功'});
+          this.getRoleValue();
+          this.roleOpreationDisplay = false;
+          this.messageService.add({ key: 'tc', severity: 'success', summary: '信息', detail: '新增角色成功' });
         }
       })
-    }else{
-      this.httpUtil.put('role',{
-        code:this.roleCode,
-        name:this.roleName,
-        status:this.selectedroleStatus=='正常'?1:0,
+    } else {
+      this.httpUtil.put('role', {
+        code: this.roleCode,
+        name: this.roleName,
+        status: this.selectedroleStatus == '正常' ? 1 : 0,
         createTime: this.selectedRole.createTime,
         id: this.selectedRole.id,
         updateTime: this.selectedRole.updateTime
-      }).then(value=>{
+      }).then(value => {
         if (value.meta.code === 6666) {
-            this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改角色成功'});
-            this.getRoleValue();
-            this.roleOpreationDisplay = false;
+          this.messageService.add({ key: 'tc', severity: 'success', summary: '信息', detail: '修改角色成功' });
+          this.getRoleValue();
+          this.roleOpreationDisplay = false;
         }
       })
     }
-    
+
   }
 
   /* 右侧关联模块列表的操作 */
-  setLink(type,value?){
-    let title =  this.selectedLinkModule.slice(2);
-    this.addLinkHeader = this.clickRoleName+'--添加'+title;
+  setLink(type, value?) {
+    let title = this.selectedLinkModule.slice(2);
+    this.addLinkHeader = this.clickRoleName + '--添加' + title;
     //批量删除
-    if(type=='deleteMore'){
+    if (type == 'deleteMore') {
       let resourceIds = [];
-      for(let i in  this.selectedDeleteLink){
+      for (let i in this.selectedDeleteLink) {
         resourceIds.push(this.selectedDeleteLink[i].id);
       }
       this.confirmationService.confirm({
         message: '确认删除授权的API吗?',
-        header: '删除'+title,
+        header: '删除' + title,
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel:'确定',
-        rejectLabel:'取消',
+        acceptLabel: '确定',
+        rejectLabel: '取消',
         accept: () => {
-          this.httpUtil.delete('role/authority/resources',{
+          this.httpUtil.delete('role/authority/resources', {
             "resourceIds": resourceIds,
             "roleId": this.selectedRole.id
-          
-          }).then(value=>{
+
+          }).then(value => {
             if (value.meta.code === 6666) {
-              this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '删除成功'});
-              this.getLinkValue(this.selectedRole.id,'delete');
+              this.messageService.add({ key: 'tc', severity: 'success', summary: '信息', detail: '删除成功' });
+              this.getLinkValue(this.selectedRole.id, 'delete');
             }
           })
         },
         reject: () => {
-        
+
         }
       });
       return;
     }
-    if(value){
+    if (value) {
       this.selectedLink = value;
     }
-    
+
     this.getLinkUrl();
-    if(type=='add'){
-      this.httpUtil.get(this.addLinkUrl+'-/'+this.selectedRole.id+'/1/10').then(value=>{
-        
+    if (type == 'add') {
+      this.httpUtil.get(this.addLinkUrl + '-/' + this.selectedRole.id + '/1/10').then(value => {
+
         if (value.meta.code === 6666) {
           let data = value.data.data.list;
           this.addLinkTotal = value.data.data.total;
 
-          for(let i=0; i<data.length;i++){
-            data[i].number = (this.startPage-1)*this.limit+i +1;
-            if(data[i].status==1){
-              if(this.selectedLinkModule==='关联用户'){
+          for (let i = 0; i < data.length; i++) {
+            data[i].number = (this.startPage - 1) * this.limit + i + 1;
+            if (data[i].status == 1) {
+              if (this.selectedLinkModule === '关联用户') {
                 data[i].status = '正常';
-              }else{
+              } else {
                 data[i].status = '有效';
               }
-              
+
             }
           }
           this.addLinkValue = data;
@@ -464,61 +464,61 @@ export class RoleManagementComponent implements OnInit {
           this.getApiClassify();
         }
       })
-      
-    }else{
-      let url,message;
-      if(this.addLinkUrl =='role/user/'){
-        url = 'user/authority/role/'+this.selectedLink.uid+'/'+this.selectedRole.id;
-        message = '确认删除用户('+value.username+')吗?'
-      }else{
-        url = 'role/authority/resource/'+this.selectedRole.id+'/'+this.selectedLink.id;
-        message = '确认删除API('+value.name+')吗?'
+
+    } else {
+      let url, message;
+      if (this.addLinkUrl == 'role/user/') {
+        url = 'user/authority/role/' + this.selectedLink.uid + '/' + this.selectedRole.id;
+        message = '确认删除用户(' + value.username + ')吗?'
+      } else {
+        url = 'role/authority/resource/' + this.selectedRole.id + '/' + this.selectedLink.id;
+        message = '确认删除API(' + value.name + ')吗?'
       }
       this.confirmationService.confirm({
         message: message,
-        header: '删除'+title,
+        header: '删除' + title,
         icon: 'pi pi-exclamation-triangle',
-        acceptLabel:'确定',
-        rejectLabel:'取消',
+        acceptLabel: '确定',
+        rejectLabel: '取消',
         accept: () => {
-          this.httpUtil.delete(url).then(value=>{
+          this.httpUtil.delete(url).then(value => {
             if (value.meta.code === 6666) {
-              this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '删除成功'});
-              this.getLinkValue(this.selectedRole.id,'delete');
+              this.messageService.add({ key: 'tc', severity: 'success', summary: '信息', detail: '删除成功' });
+              this.getLinkValue(this.selectedRole.id, 'delete');
             }
           })
         },
         reject: () => {
-        
+
         }
       });
     }
   }
 
   /* 设置关联模块的url和标题 */
-  getLinkUrl(){
-    if(this.selectedLinkModule==='授权API'){
+  getLinkUrl() {
+    if (this.selectedLinkModule === '授权API') {
       this.addLinkUrl = 'role/api/';
       this.addLinkTitle = [
-        { field: 'name', header: '名称' },  
+        { field: 'name', header: '名称' },
         { field: 'uri', header: 'URI' },
         { field: 'method', header: '访问方式' },
         { field: 'status', header: '状态' },
         { field: 'operation', header: '操作' }
       ]
-    }else if(this.selectedLinkModule==='授权菜单'){
+    } else if (this.selectedLinkModule === '授权菜单') {
       this.addLinkUrl = 'role/menu/';
       this.addLinkTitle = [
-        { field: 'name', header: '名称' },  
+        { field: 'name', header: '名称' },
         { field: 'code', header: '编码' },
         { field: 'uri', header: 'URI' },
         { field: 'status', header: '状态' },
         { field: 'operation', header: '操作' }
       ]
-    }else{
+    } else {
       this.addLinkUrl = 'role/user/';
       this.addLinkTitle = [
-        { field: 'username', header: '名称' },  
+        { field: 'username', header: '名称' },
         { field: 'phone', header: '电话' },
         { field: 'email', header: '邮箱' },
         { field: 'status', header: '状态' },
@@ -527,46 +527,46 @@ export class RoleManagementComponent implements OnInit {
     }
   }
   /* 保存添加的关联模块 */
-  saveAddLink(){
-      let url,body;
-     
-      if(this.selectedAddLink){
-        if(this.addLinkUrl =='role/user/'){
-          url = 'user/authority/role';
-          let uid = [];
-          for(let i in this.selectedAddLink){
-            uid.push(parseInt(this.selectedAddLink[i].uid));
-          }
-          body = {
-            uid:uid,
-            roleId:this.selectedRole.id
-          }
-        }else{
-          //添加API
-          url = 'role/authority/resources';
-          let resourceId = [];
-          for(let i in this.selectedAddLink){
-            resourceId.push(this.selectedAddLink[i].id);
-          }
-          body  = {
-            resourceIds:resourceId,
-            roleId:this.selectedRole.id.toString()
-          }
+  saveAddLink() {
+    let url, body;
+
+    if (this.selectedAddLink) {
+      if (this.addLinkUrl == 'role/user/') {
+        url = 'user/authority/role';
+        let uid = [];
+        for (let i in this.selectedAddLink) {
+          uid.push(parseInt(this.selectedAddLink[i].uid));
         }
-          this.httpUtil.post(url,body).then(value=>{
-            if (value.meta.code === 6666) {
-              this.getLinkValue(this.selectedRole.id,'add');
-              this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '授权添加成功'});
-              this.addLinkDisplay = false;
-            }else{
-              this.messageService.add({key: 'tc', severity:'error', summary: '警告', detail: '授权添加失败'});
-            }
-          })
+        body = {
+          uid: uid,
+          roleId: this.selectedRole.id
+        }
+      } else {
+        //添加API
+        url = 'role/authority/resources';
+        let resourceId = [];
+        for (let i in this.selectedAddLink) {
+          resourceId.push(this.selectedAddLink[i].id);
+        }
+        body = {
+          resourceIds: resourceId,
+          roleId: this.selectedRole.id.toString()
+        }
       }
+      this.httpUtil.post(url, body).then(value => {
+        if (value.meta.code === 6666) {
+          this.getLinkValue(this.selectedRole.id, 'add');
+          this.messageService.add({ key: 'tc', severity: 'success', summary: '信息', detail: '授权添加成功' });
+          this.addLinkDisplay = false;
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '警告', detail: '授权添加失败' });
+        }
+      })
+    }
   }
 
   /* 点击选择角色关联 */
-  clickLink(value,type){
+  clickLink(value, type) {
     this.linkTableDisplay = true;
     this.selectedLinkModule = type;
     this.selectedRole = value;
@@ -575,18 +575,18 @@ export class RoleManagementComponent implements OnInit {
     this.addUser = false;
     this.deleteUser = false;
     this.selectedDeleteLink = [];
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
-      if(element.uri ==='/role/authority/resource' && element.method =='POST' && type=='授权API'){
-        this.addAPI =true;
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
+      if (element.uri === '/role/authority/resource' && element.method == 'POST' && type == '授权API') {
+        this.addAPI = true;
       }
-      if(element.uri ==='/role/authority/resource/*/*' && element.method =='DELETE' && type=='授权API'){
-        this.deleteAPI =true;
+      if (element.uri === '/role/authority/resource/*/*' && element.method == 'DELETE' && type == '授权API') {
+        this.deleteAPI = true;
       }
-      if(element.uri ==='/user/authority/role' && element.method =='POST' && type=='关联用户'){
-        this.addUser =true;
+      if (element.uri === '/user/authority/role' && element.method == 'POST' && type == '关联用户') {
+        this.addUser = true;
       }
-      if(element.uri ==='/user/authority/role/*/*' && element.method =='DELETE' && type=='关联用户'){
-        this.deleteUser =true;
+      if (element.uri === '/user/authority/role/*/*' && element.method == 'DELETE' && type == '关联用户') {
+        this.deleteUser = true;
       }
     })
     this.getLinkUrl();
@@ -594,24 +594,24 @@ export class RoleManagementComponent implements OnInit {
   }
 
   /* 返回到角色列表 */
-  backRole(){
+  backRole() {
     this.linkTableDisplay = false;
     this.roleTableDisplay = true;
   }
 
   /* 搜索角色名 */
-  filteredRoles(event){
+  filteredRoles(event) {
     this.filteredRole = [];
-    for(let i in this.allRoleName){
+    for (let i in this.allRoleName) {
       let brand = this.allRoleName[i];
-      if(brand.toLowerCase().indexOf(event.query.toLowerCase()) >-1) {
-          this.filteredRole.push(brand);
+      if (brand.toLowerCase().indexOf(event.query.toLowerCase()) > -1) {
+        this.filteredRole.push(brand);
       }
     }
   }
 
   /* 选择资源类别 */
-  selectClassify(){
+  selectClassify() {
     this.startPage = 1;
     this.limit = 10;
     this.selectTeamId = this.selectApiClassify;
@@ -619,31 +619,31 @@ export class RoleManagementComponent implements OnInit {
     this.getApiValue();
   }
 
-   /* 获取api数据 */
-   getApiValue(){
-     let url;
-     if(this.selectTeamId==0){
-        url = 'role/api/-/'+this.selectedRole.id+'/'+this.startPage+'/'+this.limit
-     }else{
-       url = 'role/api/-/'+this.selectedRole.id+'/'+this.selectTeamId+'/'+this.startPage+'/'+this.limit
-     }
-    this.httpUtil.get(url).then(value=>{
+  /* 获取api数据 */
+  getApiValue() {
+    let url;
+    if (this.selectTeamId == 0) {
+      url = 'role/api/-/' + this.selectedRole.id + '/' + this.startPage + '/' + this.limit
+    } else {
+      url = 'role/api/-/' + this.selectedRole.id + '/' + this.selectTeamId + '/' + this.startPage + '/' + this.limit
+    }
+    this.httpUtil.get(url).then(value => {
       if (value.meta.code === 6666) {
         let data = value.data.data.list;
         this.addLinkTotal = value.data.data.total;
 
-        for(let i=0; i<data.length;i++){
-          data[i].number = (this.startPage-1)*this.limit+i +1;
-          if(data[i].status==1){
+        for (let i = 0; i < data.length; i++) {
+          data[i].number = (this.startPage - 1) * this.limit + i + 1;
+          if (data[i].status == 1) {
             data[i].status = '正常'
           }
-          if(data[i].status==9){
+          if (data[i].status == 9) {
             data[i].status = '禁用'
           }
-          for(let j in this.apiClassify){
-              if(data[i].parentId ==this.apiClassify[j].value && data[i].type!==3){
-                data[i]['classify'] = this.apiClassify[j].label;
-              }
+          for (let j in this.apiClassify) {
+            if (data[i].parentId == this.apiClassify[j].value && data[i].type !== 3) {
+              data[i]['classify'] = this.apiClassify[j].label;
+            }
           }
         }
         this.addLinkValue = data;
@@ -651,29 +651,29 @@ export class RoleManagementComponent implements OnInit {
     })
   }
   /* 通过名称搜索API */
-  getFilteredApi(){
+  getFilteredApi() {
     let url;
-    url = 'resource/search/-/'+this.selectedRole.id+'/'+this.selectTeamId+'/'+this.startPage+'/'+this.limit;
+    url = 'resource/search/-/' + this.selectedRole.id + '/' + this.selectTeamId + '/' + this.startPage + '/' + this.limit;
 
-    this.httpUtil.post(url,{
-      resourceName: this.filteredAPIName?this.filteredAPIName:''
-    }).then(value=>{
+    this.httpUtil.post(url, {
+      resourceName: this.filteredAPIName ? this.filteredAPIName : ''
+    }).then(value => {
       if (value.meta.code === 6666) {
         let data = value.data.resources.list;
         this.addLinkTotal = value.data.resources.total;
 
-        for(let i=0; i<data.length;i++){
-          data[i].number = (this.startPage-1)*this.limit+i +1;
-          if(data[i].status==1){
+        for (let i = 0; i < data.length; i++) {
+          data[i].number = (this.startPage - 1) * this.limit + i + 1;
+          if (data[i].status == 1) {
             data[i].status = '正常'
           }
-          if(data[i].status==9){
+          if (data[i].status == 9) {
             data[i].status = '禁用'
           }
-          for(let j in this.apiClassify){
-              if(data[i].parentId ==this.apiClassify[j].value){
-                data[i]['classify'] = this.apiClassify[j].label;
-              }
+          for (let j in this.apiClassify) {
+            if (data[i].parentId == this.apiClassify[j].value) {
+              data[i]['classify'] = this.apiClassify[j].label;
+            }
           }
         }
         this.addLinkValue = data;
@@ -681,5 +681,5 @@ export class RoleManagementComponent implements OnInit {
     })
   }
 
-  
+
 }

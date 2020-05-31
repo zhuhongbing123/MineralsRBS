@@ -24,6 +24,7 @@ export class OperationLogComponent implements OnInit {
   isClickSearch = false;//查询按钮点击
   loading: boolean;//列表加载动画显示
   searchDisplay = false;//查询按钮显示
+  searchNameDisplay = true;//用户名搜索框是否显示
   constructor(private httpUtil: HttpUtil,
               private loginService: LoginService,
               private messageService:MessageService) { }
@@ -44,20 +45,27 @@ export class OperationLogComponent implements OnInit {
       { field: 'succeed', header: '状态' }
     ];
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
+    if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
       this.loginService.exit();
       return;
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/log/operationLog/serach/*/*' && element.method =='POST'){
         this.searchDisplay =true;
       };
     })
     this.loading  = true;
     this.startTime = new Date(this.endTime.getFullYear(), this.endTime.getMonth() - 3, this.endTime.getDate());
-    this.getOperationLog();
+    if(sessionStorage.getItem('roleCode')=='role_admin'){
+      this.getOperationLog();
+    }else{
+      this.filteredUserName = sessionStorage.getItem('uid');
+      this.searchNameDisplay =false;
+      this.searchLog();
+    }
+    
     this.getUserName();
   }
   /* 获取所有日志数据 */
@@ -119,7 +127,12 @@ export class OperationLogComponent implements OnInit {
   pageChange(event){
     this.pageNumber = event.page+1;
     this.pageSize = event.rows;
-    this.getOperationLog();
+    if(this.filteredUserName){
+      this.searchLog();
+    }else{
+      this.getOperationLog();
+    }
+    
   }
 
   /* 过滤显示用户名 */

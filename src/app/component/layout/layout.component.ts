@@ -1,6 +1,6 @@
-import {Component, AfterViewInit, ElementRef, Renderer2, ViewChild, OnDestroy} from '@angular/core';
+import {Component, AfterViewInit, ElementRef, Renderer2, ViewChild, OnDestroy, HostListener} from '@angular/core';
 import {ScrollPanel} from 'primeng/primeng';
-
+declare let $;
 enum MenuOrientation {
     STATIC,
     OVERLAY,
@@ -44,25 +44,17 @@ export class LayoutComponent implements AfterViewInit {
     menuHoverActive: boolean;
 
     @ViewChild('layoutMenuScroller', { static: true }) layoutMenuScrollerViewChild: ScrollPanel;
-
+  /*   @HostListener("window:beforeunload", ["$event"]) unloadHandler(event: Event) {
+        this.onbeforeunload();
+      } */
     constructor(public renderer: Renderer2) {}
 
     ngAfterViewInit() {
         setTimeout(() => {this.layoutMenuScrollerViewChild.moveBar(); }, 100);
-        let that = this;
-         window.onbeforeunload = function(e) {
-             if(e.type=='beforeunload'){
-                that.onbeforeunload();
-             }
-        }
-        
+
     
     }
 
-    /* 关闭浏览器清除登录信息 */
-    onbeforeunload(){
-    localStorage.clear();
-  }
     onLayoutClick() {
         if (!this.topbarItemClick) {
             this.activeTopbarItem = null;

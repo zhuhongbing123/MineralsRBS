@@ -1,6 +1,6 @@
 
 <div>
-  <span>矿权管理 > 矿权项目</span>
+  <span>矿业权基本信息 > 矿业权名录</span>
 </div>
 <div class="ui-g-12 ui-md-4" style="float:left">
   <button pButton type="button" [hidden]="!addDisplay" label="新增" (click)="setMineral('add')"></button>
@@ -20,12 +20,10 @@
     [value]="mineralProjectValue"  
     [loading]="loading"
     columnResizeMode="expand"
-
+    [style]="{'min-width':'1200px'}"
     [resizableColumns]="true" 
     [scrollable]="true" 
     scrollHeight="400px" 
-    stateStorage="session" stateKey="statedemo-project" 
-    selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
   >
     <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
@@ -35,21 +33,20 @@
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th style="width:8%" pResizableColumn>序号</th>
-            <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
+            <th *ngFor="let col of columns" pResizableColumn>
                 {{col.header}}
-                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
             </th>
-            <th style="width:170px" pResizableColumn>操作</th>
+            <th style="width:15%" pResizableColumn>操作</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr [pSelectableRow]="rowData">
+        <tr>
             <td style="width:8%">{{rowData.number}}</td>
             <td *ngFor="let col of columns">
                 <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                
             </td>
-            <td style="width:170px">
+            <td style="width:15%">
                 <button pButton type="button" *ngIf = "modifDisplay" class="operation-icon"  (click)="setMineral('modify',rowData)" label="修改"></button>
                 <button pButton type="button" *ngIf = "deleteDisplay" class="operation-icon"  (click)="setMineral('delete',rowData)" label="删除"></button>
             </td>
@@ -67,7 +64,7 @@
 
 <div class="dialog-class textarea-style">
   <!-- 矿权项目增加弹出框 -->
-  <p-dialog header="新增矿权项目" [(visible)]="mineralProjectDisplay" [closable]=false [maximizable]="true" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+  <p-dialog header="新增矿权项目" [(visible)]="mineralProjectDisplay"  [maximizable]="true" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
           <form>
               <div class="form-group has-feedback">
                   <label class="control-label">项目名称</label>
@@ -331,8 +328,8 @@
           </form>
           <div id="projectMap" class="map"></div>
           <p-footer>
-              <button type="button" pButton (click)="saveMineralProject('save')" label="保存"></button>
-              <button type="button" pButton  (click)="saveMineralProject('cancel')" label="取消" class="ui-button-secondary"></button>
+              <button type="button" pButton (click)="saveMineralProject()" label="保存"></button>
+              <button type="button" pButton  (click)="mineralProjectDisplay = false" label="取消" class="ui-button-secondary"></button>
           </p-footer>
   </p-dialog>
  

@@ -1,0 +1,184 @@
+<p>绿色矿山 > 绿色矿山建设统计</p>
+<div class="ui-g-12 ui-md-4">
+  <button pButton  type="button" label="新增" (click)="setStatistics('add','')"></button>
+</div>
+<div style="clear: both;" class="p-table">
+  <p-table  [value]="miningStatisticsValue" [loading]="loading" [scrollable]="true" scrollHeight="400px"
+    [resizableColumns]="true" columnResizeMode="expand" [style]="{'min-width':'1200px'}">
+   <!--  <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col *ngFor="let col of columns" [style.width]="col.width">
+      </colgroup>
+    </ng-template> -->
+    <ng-template pTemplate="header">
+      <tr>
+        <th rowspan="3">序号</th>
+        <th rowspan="3">矿山名称</th>
+        <th rowspan="3">采矿权人</th>
+        <th colspan="6">绿色矿山建设情况</th>
+        <th  rowspan="3">备注</th>
+        <th  rowspan="3" style="width:15%">操作</th>
+      </tr>
+      <tr>
+        <th>实施方案</th>
+        <th>建设进程</th>
+        <th>自评情况</th>
+        <th>第三方评估结果</th>
+        <th>验收情况</th>
+        <th>评级</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+      <tr>
+        <td >{{rowData.number}}</td>
+        <td >{{rowData.projectName}}</td>
+        <td >{{rowData.owner_id}}</td>
+        <td >{{rowData.implementPlan}}</td>
+        <td>{{rowData.implementProgress}}</td>
+        <td>{{rowData.selfInvestigation}}</td>
+        <td>{{rowData.thirdPartyInvestigation}}</td>
+        <td>{{rowData.projectAcceptance}}</td>
+        <td>{{rowData.projectRating}}</td>
+        <td>{{rowData.comment}}</td>
+        <td style="width:15%">
+          <button pButton type="button" class="button-class" (click)="setStatistics('modify',rowData)" label="修改"></button>
+          <button pButton type="button" class="button-class" (click)="setStatistics('delete',rowData)" label="删除"></button>
+        </td>
+      </tr>
+      <!-- <tr>
+        <td style="width:8%">{{rowData.number}}</td>
+        <td *ngFor="let col of columns">
+          <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+
+        </td>
+        <td style="width:15%">
+          <button pButton type="button" *ngIf=" modifyButton" class="operation-icon" (click)="setReport('modify',rowData)" label="修改"></button>
+          <button pButton type="button" *ngIf="deleteButton" class="operation-icon" (click)="setReport('delete',rowData)" label="删除"></button>
+        </td>
+      </tr> -->
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div style="text-align: right;">
+        共{{reportTotal}}条
+      </div>
+    </ng-template>
+  </p-table>
+  <p-paginator [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30]"
+    (onPageChange)="pageChange($event)"></p-paginator>
+</div>
+
+<div class="dialog-class textarea-style">
+  <!-- 新增、修改出框 -->
+  <p-dialog header="{{reportTitle}}" [(visible)]="setStatisticsDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+    <form>
+      <div class="form-group has-feedback">
+        <label class="control-label">矿山名称</label>
+        <div class="search">
+          <p-dropdown [options]="allProjectName" [style]="{'width':'700px'}" name="projectId" [(ngModel)]="miningStatisticsInfo.projectId" placeholder="请选择一个矿山名称"
+            filter="true">
+            <ng-template let-car pTemplate="item">
+              <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+                <div style="font-size:14px;float:left;margin-top:4px">{{car.label}}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+
+      <div class="form-group has-feedback">
+        <label class="control-label">采矿权人</label>
+        <div class="search">
+          <p-dropdown [options]="mineralOwner" [style]="{'width':'700px'}" name="ownerId" [(ngModel)]="miningStatisticsInfo.ownerId"
+            placeholder="请选择一个矿权人" filter="true">
+            <ng-template let-car pTemplate="item">
+              <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+                <div style="font-size:14px;float:left;margin-top:4px">{{car.label}}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+
+      <div class="form-group has-feedback" >
+        <label class="control-label">实施方案</label>
+        <div>
+          <textarea 
+            rows="5" 
+            cols="30" 
+            pInputTextarea 
+            [(ngModel)]="miningStatisticsInfo.implementPlan" 
+            name="implementPlan"
+            style="width:700px"
+            class="text-style"
+          >
+          </textarea>
+        </div>
+      </div>
+
+      <div class="form-group has-feedback">
+        <label class="control-label">建设进程</label>
+        <div>
+          <textarea 
+            rows="5" 
+            cols="30" 
+            pInputTextarea 
+            [(ngModel)]="miningStatisticsInfo.implementProgress" 
+            name="implementProgress" 
+            style="width:700px"
+            class="text-style"
+          >
+          </textarea>
+        </div>
+      </div>
+
+      <div class="form-group has-feedback">
+        <label class="control-label">自评情况</label>
+        <div>
+          <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStatisticsInfo.selfInvestigation" name="selfInvestigation" style="width:700px"
+            class="text-style">
+          </textarea>
+        </div>
+      </div>
+
+      <div class="form-group has-feedback">
+        <label class="control-label">第三方评估结果</label>
+        <div>
+          <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStatisticsInfo.thirdPartyInvestigation" name="thirdPartyInvestigation" style="width:700px"
+            class="text-style">
+          </textarea>
+        </div>
+      </div>
+
+      <div class="form-group has-feedback">
+        <label class="control-label">验收情况</label>
+        <div>
+          <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStatisticsInfo.projectAcceptance" name="projectAcceptance" style="width:700px"
+            class="text-style">
+          </textarea>
+        </div>
+      </div>
+
+      <div class="form-group has-feedback">
+        <label class="control-label">评级</label>
+        <div>
+          <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStatisticsInfo.projectRating" name="projectRating" style="width:700px"
+            class="text-style">
+          </textarea>
+        </div>
+      </div>
+
+      <div class="form-group has-feedback">
+        <label class="control-label">备注</label>
+        <div>
+          <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStatisticsInfo.comment" name="comment" style="width:700px"
+            class="text-style">
+                </textarea>
+        </div>
+      </div>
+    </form>
+    <p-footer>
+      <button type="button" pButton (click)="saveStatistics()" label="保存"></button>
+      <button type="button" pButton (click)="setStatisticsDisplay=false" label="取消" class="ui-button-secondary"></button>
+    </p-footer>
+  </p-dialog>
+</div>

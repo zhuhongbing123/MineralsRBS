@@ -1,5 +1,5 @@
 <div>
-    <p>采矿权 > 采矿权项目信息 > {{miningProject.projectName}}</p>
+    <p>采矿权 > 采矿权信息 > {{miningProject.projectName}}</p>
   <p-tabMenu [model]="miningItems" [activeItem]="miningItems[0]"  (click)="menuClick($event.path[0].innerText)"></p-tabMenu>
 
   <!-- 项目详情 -->
@@ -9,11 +9,11 @@
           <table  class="table table-bordered" style=" color: #fff;word-break: break-all;">
               <tbody>
                   <tr>
-                      <td class="table-td">项目名称</td>
+                      <td class="table-td">矿山名称</td>
                       <td>{{miningProject.projectName}}</td>
                   </tr>
                   <tr>
-                    <td class="table-td">矿权人</td>
+                    <td class="table-td">采矿权人</td>
                     <td>{{miningProject.ownerName}}</td>
                   </tr>
                   <tr>
@@ -57,17 +57,17 @@
                       <td>{{miningProject.mineralCharacteristics}}</td>
                   </tr>
                   <tr>
-                      <td class="table-td">主要成果</td>
+                      <td class="table-td">登记备案的储量/资源量</td>
                       <td>{{miningProject.majorAchievement}}</td>
                   </tr>
                   <tr>
-                      <td class="table-td">初步认识</td>
+                      <td class="table-td">矿山资源前景分析</td>
                       <td>{{miningProject.preliminaryUnderstanding}}</td>
                   </tr>
-                  <tr>
+                  <!-- <tr>
                       <td class="table-td">存在的问题及下一步工作建议</td>
                       <td>{{miningProject.remarks}}</td>
-                  </tr>
+                  </tr> -->
               </tbody>
           </table>
           <button type="button" [hidden]="!modifyButton || !buttonType" pButton (click)="modifyProject()" label="修改"></button>
@@ -87,12 +87,10 @@
             [columns]="stageDetailTitle" 
             [value]="stageDetailValue" 
             columnResizeMode="expand"
-
+            [style]="{'min-width':'1200px'}"
             [resizableColumns]="true" 
             [scrollable]="true" 
             scrollHeight="400px" 
-            stateStorage="session" stateKey="statedemo-mining-details" 
-            selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
           >
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -102,21 +100,20 @@
           <ng-template pTemplate="header" let-columns>
               <tr>
                     <th style="width:8%" pResizableColumn>序号</th>
-                    <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
+                    <th *ngFor="let col of columns" pResizableColumn>
                         {{col.header}}
-                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
-                    <th style="width:180px" pResizableColumn>操作</th>
+                    <th style="width:15%" pResizableColumn>操作</th>
               </tr>
           </ng-template>
           <ng-template pTemplate="body" let-rowData let-columns="columns">
-              <tr [pSelectableRow]="rowData">
+              <tr>
                     <td style="width:8%">{{rowData.number}}</td>
                   <td *ngFor="let col of columns">
                       <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                       
                   </td>
-                  <td style="width:180px">
+                  <td style="width:15%">
                         <button pButton type="button" *ngIf = "modifyStageButton && buttonType" class="operation-icon"  (click)="setMining('modifyStage',rowData)" label="修改"></button>
                         <button pButton type="button" *ngIf = "deleteStageButton && buttonType" class="operation-icon"  (click)="setMining('deleteStage',rowData)" label="删除"></button>
                   </td>
@@ -144,12 +141,10 @@
                 [columns]="monitoringTitle" 
                 [value]="monitoringValue"
                 columnResizeMode="expand"
-       
+                [style]="{'min-width':'1200px'}"
                 [resizableColumns]="true" 
                 [scrollable]="true" 
                 scrollHeight="400px" 
-                stateStorage="session" stateKey="statedemo-mining-report" 
-                selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true"
               >
               <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
@@ -159,21 +154,20 @@
               <ng-template pTemplate="header" let-columns>
                   <tr>
                     <th style="width:8%" pResizableColumn>序号</th>
-                    <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
+                    <th *ngFor="let col of columns" pResizableColumn>
                         {{col.header}}
-                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
-                    <th style="width:180px" pResizableColumn>操作</th>
+                    <th style="width:15%" pResizableColumn>操作</th>
                   </tr>
               </ng-template>
               <ng-template pTemplate="body" let-rowData let-columns="columns">
-                  <tr  [pSelectableRow]="rowData">
+                  <tr>
                     <td style="width:8%">{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-
+                        
                     </td>
-                    <td style="width:180px">
+                    <td style="width:15%">
                         <button pButton type="button" *ngIf = " modifyValidationButton && buttonType" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)" label="修改"></button>
                         <button pButton type="button" *ngIf = " deleteValidationButton && buttonType" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)" label="删除"></button>
                     </td>
@@ -196,10 +190,10 @@
 
 <div class="dialog-class textarea-style">
   <!-- 采矿权项目修改弹出框 -->
-  <p-dialog header="{{miningTitle}}" [(visible)]="miningDisplay" [modal]="true" [closable]=false [responsive]="true" [style]="{width: '800px'}">
+  <p-dialog header="{{miningTitle}}" [(visible)]="miningDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
           <form>
               <div class="form-group has-feedback">
-                  <label class="control-label">项目名称</label>
+                  <label class="control-label">矿山名称</label>
                   <input  
                     type="text" 
                     style="width:700px !important"  
@@ -210,7 +204,7 @@
                   >
               </div>
               <div class="form-group has-feedback">
-                <label class="control-label">矿权人</label>
+                <label class="control-label">采矿权人</label>
                 <div class="search">
                     <p-dropdown [options]="mineralOwner" [style]="{'width':'700px'}" name="ownerName" [(ngModel)]="miningProject.ownerId" placeholder="请选择一个矿权人" filter="true">
                         <ng-template let-car pTemplate="item">
@@ -364,7 +358,7 @@
                   </div>    
               </div>
               <div class="form-group has-feedback">
-                  <label class="control-label">主要成果</label>
+                  <label class="control-label">登记备案的储量/资源量</label>
                   <div>
                       <textarea 
                         rows="5" 
@@ -378,7 +372,7 @@
                   </div>    
               </div>
               <div class="form-group has-feedback">
-                  <label class="control-label">初步认识</label>
+                  <label class="control-label">矿山资源前景分析</label>
                   <div>
                       <textarea 
                         rows="5" 
@@ -391,7 +385,7 @@
                       ></textarea>
                   </div>    
               </div>
-              <div class="form-group has-feedback">
+             <!--  <div class="form-group has-feedback">
                   <label class="control-label">存在的问题以及下一步工作</label>
                   <div>
                       <textarea 
@@ -404,7 +398,7 @@
                         maxlength = '500'
                       ></textarea>
                   </div>    
-              </div>
+              </div> -->
           </form>
           <p-footer>
               <button type="button" pButton (click)="saveMiningProject('save')" label="保存"></button>
@@ -415,8 +409,16 @@
   <!-- 开采阶段弹出框 -->
   <p-dialog header="{{miningTitle}}" [(visible)]="stageDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
       <form>
+        
+        <div class="form-group has-feedback">
+            <label class="control-label">证号</label>
+            <div>
+                <input type="text" style="width:700px !important" name="lisenceId" class="form-control" [(ngModel)]="miningStage.lisenceId"
+                    maxlength='200'>
+            </div>
+        </div>
           <div class="form-group has-feedback">
-              <label class="control-label">矿权人</label>
+              <label class="control-label">采矿权人</label>
               <div class="search">
                   <p-dropdown [options]="mineralOwner" name="ownerId" [style]="{'width':'700px'}" [(ngModel)]="miningStage.ownerId" placeholder="请选择一个矿权人" filter="true">
                       <ng-template let-car pTemplate="item">
@@ -427,36 +429,74 @@
                   </p-dropdown>
               </div>
           </div>
+
+        <div class="form-group has-feedback">
+            <label class="control-label">有效期</label>
+            <div>
+                <p-calendar [showIcon]="true" [(ngModel)]="stageStartTime" name="investigationStartTime" [monthNavigator]="true" [yearNavigator]="true"
+                    yearRange="1970:2030" dateFormat="yy.mm.dd"></p-calendar>
+                至
+                <p-calendar [showIcon]="true" [(ngModel)]="stageEndTime" name="investigationEndTime" [monthNavigator]="true" [yearNavigator]="true"
+                    yearRange="1970:2030" dateFormat="yy.mm.dd">
+                </p-calendar>
+            </div>
+        </div>
+
+        <div class="form-group has-feedback">
+            <label class="control-label">地址</label>
+            <div>
+                <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStage.address" name="address" style="width:700px !important"
+                    maxlength='500'></textarea>
+            </div>
+        </div>
+
+        <div class="form-group has-feedback">
+            <label class="control-label">经济类型</label>
+            <div>
+                <input type="text" style="width:700px !important" name="economyType" class="form-control" [(ngModel)]="miningStage.economyType"
+                    maxlength='200'>
+            </div>
+        </div>
+
+        <div class="form-group has-feedback">
+            <label class="control-label">开采矿种</label>
+            <div>
+                <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStage.miningMineralType" name="investigationOrganization"
+                    style="width:700px !important;resize:none" maxlength='500'></textarea>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <label class="control-label">开采方式</label>
+            <div>
+                <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStage.miningMethod" name="miningMethod"
+                    style="width:700px !important;resize:none" maxlength='500'></textarea>
+            </div>
+        </div>
+
+        <div class="form-group has-feedback">
+            <label class="control-label">生产规模(吨/年)</label>
+            <div>
+                <input type="text" style="width:700px !important" name="investigationCategory" class="form-control" [(ngModel)]="miningStage.miningProductionScale"
+                    maxlength='200' onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")' placeholder="只能输入整数或小数">
+            </div>
+        </div>
+
+        <div class="form-group has-feedback">
+            <label class="control-label">矿区面积(平方公里)</label>
+            <div>
+                <input id="miningArea" type="text" style="width:700px !important" name="miningArea" class="form-control" [(ngModel)]="miningStage.miningArea"
+                    maxlength='200' pInputText onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
+                    placeholder="只能输入整数或小数">
+        
+            </div>
+        
+        
+        </div>
+
+          
+   
           <div class="form-group has-feedback">
-              <label class="control-label">开始时间</label>
-              <div>
-                  <p-calendar 
-                    [showIcon]="true" 
-                    [(ngModel)]="stageStartTime" 
-                    name="investigationStartTime" 
-                    [monthNavigator]="true" 
-                    [yearNavigator]="true" 
-                    yearRange="1970:2030"
-                    dateFormat="yy.mm.dd"
-                  ></p-calendar>
-              </div>    
-          </div>
-          <div class="form-group has-feedback">
-              <label class="control-label">结束时间</label>
-              <div>
-                  <p-calendar 
-                    [showIcon]="true" 
-                    [(ngModel)]="stageEndTime" 
-                    name="investigationEndTime" 
-                    [monthNavigator]="true" 
-                    [yearNavigator]="true" 
-                    yearRange="1970:2030"
-                    dateFormat="yy.mm.dd"
-                  ></p-calendar>
-              </div>    
-          </div>
-          <div class="form-group has-feedback">
-              <label class="control-label">矿权范围</label>
+              <label class="control-label">矿区范围拐点坐标</label>
               <div>
                   <textarea 
                     rows="5" 
@@ -469,85 +509,30 @@
                   ></textarea>
               </div>    
           </div>
-          <div class="form-group has-feedback">
-              <label class="control-label">开采矿种</label>
-              <div>
-                  <textarea 
-                    rows="5" 
-                    cols="30" 
-                    pInputTextarea 
-                    [(ngModel)]="miningStage.miningMineralType" 
-                    name="investigationOrganization"
-                    style="width:700px !important;resize:none"
-                    maxlength = '500'
-                  ></textarea>
-              </div>    
-          </div>
-          <div class="form-group has-feedback">
-              <label class="control-label">生产规模(吨/年)</label>
-              <div>
-                  <input 
-                    type="text" 
-                    style="width:700px !important" 
-                    name="investigationCategory" 
-                    class="form-control" 
-                    [(ngModel)]="miningStage.miningProductionScale"
-                    maxlength = '200'
-                    onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
-                    placeholder="只能输入整数或小数"
-                  >
-              </div>    
-          </div>
-          <div class="form-group has-feedback">
-              <label class="control-label">开采面积(平方公里)</label>
-              <div>
-                  <input 
-                    id="miningArea"
-                    type="text" 
-                    style="width:700px !important" 
-                    name="miningArea" 
-                    class="form-control" 
-                    [(ngModel)]="miningStage.miningArea"
-                    maxlength = '200'
-                    pInputText
-                    onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
-                    placeholder="只能输入整数或小数"
-                  >
-            
-              </div>    
-           
-                
-          </div>
-          <div class="form-group has-feedback">
-              <label class="control-label">开采工作投入量</label>
-              <div>
-                  <input 
-                    type="text" 
-                    style="width:700px !important" 
-                    name="miningWorkload" 
-                    class="form-control" 
-                    [(ngModel)]="miningStage.miningWorkload"
-                    maxlength = '200'
-                  >
-              </div>    
-          </div>
-          <div class="form-group has-feedback">
-              <label class="control-label">开采投入金额(万元)</label>
-              <div>
-                  <input 
-                    type="text" 
-                    style="width:700px 
-                    !important" 
-                    name="miningInvestment" 
-                    class="form-control" 
-                    [(ngModel)]="miningStage.miningInvestment"
-                    maxlength = '200'
-                    onkeyup='this.value=this.value.replace(/[^\d.]/g,"").replace(/^\./g,"").replace(/\.{2,}/g,".")'
-                    placeholder="只能输入整数或小数"
-                  >
-              </div>    
-          </div>
           
+          
+          
+          <div class="form-group has-feedback">
+              <label class="control-label">开采深度</label>
+              <div>
+                  <input 
+                    type="text" 
+                    style="width:700px !important" 
+                    name="miningDepth" 
+                    class="form-control" 
+                    [(ngModel)]="miningStage.miningDepth"
+                    maxlength = '200'
+                  >
+              </div>    
+          </div>
+
+        <div class="form-group has-feedback">
+            <label class="control-label">备注</label>
+            <div>
+                <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStage.comment" name="comment" style="width:700px !important"
+                    maxlength='500'></textarea>
+            </div>
+        </div>
       </form>     
       <p-footer>
           <button type="button" pButton (click)="saveMiningStage()" label="保存"></button>

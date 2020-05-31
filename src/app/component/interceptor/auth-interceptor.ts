@@ -16,8 +16,8 @@ export class AuthInterceptor implements HttpInterceptor {
                ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const authToken = localStorage.getItem('token');
-    const uid =  localStorage.getItem('uid');
+    const authToken = sessionStorage.getItem('token');
+    const uid =  sessionStorage.getItem('uid');
     let authReq: any;
     if (authToken != null && uid != null) {
       authReq = req.clone({
@@ -46,7 +46,7 @@ export class AuthInterceptor implements HttpInterceptor {
               
               const jwt = event.body.data.jwt;
               // 更新AuthorizationToken
-              localStorage.setItem('token',jwt);
+              sessionStorage.setItem('token',jwt);
               // clone request 重新发起请求
               // retry(1);
               authReq = req.clone({
@@ -61,21 +61,21 @@ export class AuthInterceptor implements HttpInterceptor {
             // jwt过期  清空本地信息跳转登录界面
             if (event.body.meta &&  event.body.meta.code === 1006) {
               this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '长时间未操作，请重新登录'});
-              localStorage.clear();
+              sessionStorage.clear();
               this.loginService.exit();
               return;
             }
             // err jwt 情况本地信息跳转登录界面
             if (event.body.meta && event.body.meta.code === 1007) {
               
-              localStorage.clear();
+              sessionStorage.clear();
               this.loginService.exit();
               return;
             }
             //注销之后跳转登录界面
             if (event.body.meta && event.body.meta.code === 2004) {
               
-              localStorage.clear();
+              sessionStorage.clear();
               this.loginService.exit();
               return;
             }
@@ -95,7 +95,6 @@ export class AuthInterceptor implements HttpInterceptor {
       //catchError(this.handleError)
     );
   }
-  
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

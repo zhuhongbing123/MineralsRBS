@@ -3,17 +3,15 @@
 <div [hidden]="!roleTableDisplay" class="p-table">
 
     <div class="ui-g-12 ui-md-4" style="float: left;">
-            <button pButton [hidden]="!addDisplay" type="button" label="新增" (click)="setRole('add')"></button>
+        <button pButton [hidden]="!addDisplay" type="button" label="新增" (click)="setRole('add')"></button>
     </div>
     <div style="float: right;" [hidden]="!searchDisplay">
-        <p-autoComplete [(ngModel)]="filteredRoleName" [suggestions]="filteredRole" (completeMethod)="filteredRoles($event)"
-            placeholder="输入角色名" ></p-autoComplete>
-        <button pButton  type="button" label="查询" (click)="setRole('filtered')"></button>
+        <p-autoComplete [(ngModel)]="filteredRoleName" [suggestions]="filteredRole" (completeMethod)="filteredRoles($event)" placeholder="输入角色名"></p-autoComplete>
+        <button pButton type="button" label="查询" (click)="setRole('filtered')"></button>
     </div>
-    <div style="clear: both;"> 
-        <p-table [columns]="roleTitle" [value]="roleValue" [loading]="loading"
-        stateStorage="session" stateKey="statedemo-session" 
-        selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true">
+    <div style="clear: both;">
+        <p-table [columns]="roleTitle" [value]="roleValue" [loading]="loading" stateStorage="session" stateKey="statedemo-session"
+            selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true">
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th style="width:8%">序号</th>
@@ -26,149 +24,140 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
-                <tr [pSelectableRow]="rowData" >
+                <tr [pSelectableRow]="rowData">
                     <td style="width:8%">{{rowData.number}}</td>
                     <td *ngFor="let col of columns">
                         <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        
-                       
+
+
                         <!-- <span *ngIf = "col.field == 'link'"  (click)="clickLink(rowData,'授权菜单')" class="operation-icon">授权菜单</span> -->
-<!--                         <span *ngIf = "col.field == 'link' && viewUser"  (click)="clickLink(rowData,'关联用户')" class="operation-icon">关联用户</span> -->
+                        <!--                         <span *ngIf = "col.field == 'link' && viewUser"  (click)="clickLink(rowData,'关联用户')" class="operation-icon">关联用户</span> -->
                     </td>
-                    <td  style="width:120px">
-                        <button pButton type="button" *ngIf = "viewAPI"  (click)="clickLink(rowData,'授权API')" class="operation-icon" label="授权API"></button>
+                    <td style="width:120px">
+                        <button pButton type="button" *ngIf="viewAPI" (click)="clickLink(rowData,'授权API')" class="operation-icon" label="授权API"></button>
                     </td>
-                    <td  style="width:170px">
-                        <button pButton type="button" *ngIf = " modifyDisplay"  (click)="setRole('modify',rowData)" class="operation-icon" label="修改"> </button>
-                        <button pButton type="button" *ngIf = "deleteDisplay"  (click)="setRole('delete',rowData)" class="operation-icon" label="删除"> </button>
+                    <td style="width:170px">
+                        <button pButton type="button" *ngIf=" modifyDisplay" (click)="setRole('modify',rowData)" class="operation-icon" label="修改">
+                        </button>
+                        <button pButton type="button" *ngIf="deleteDisplay" (click)="setRole('delete',rowData)" class="operation-icon" label="删除">
+                        </button>
                     </td>
                 </tr>
             </ng-template>
             <ng-template pTemplate="summary">
                 <div style="text-align: right;">
-                   共{{roleTotal}}条
+                    共{{roleTotal}}条
                 </div>
             </ng-template>
         </p-table>
         <p-paginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="rolePageChange($event)"></p-paginator>
-    </div>    
+    </div>
 </div>
 
 
 <div class="dialog-class">
     <!-- 角色关联模块弹出框 -->
-    <p-dialog header="{{clickRoleName}}--{{selectedLinkModule}}" [(visible)]="linkTableDisplay" [modal]="true" [responsive]="true" [style]="{width: '1000px'}">
-            <div class="p-table" >
-                    
-                    <div style="clear:both;width: 100%" class="ui-g-12 ui-md-4">
-                        <button pButton type="button" [hidden]="!addAPI && !addUser" label="新增" (click)="setLink('add')"></button>
-                        <button pButton type="button" style="float:right" [disabled]="selectedDeleteLink.length<1" label="批量删除" (click)="setLink('deleteMore',selectedDeleteLink)"></button>
-                    </div>
-                    <div style="float:left;height: 600px;">
-                        <p-table [columns]="addLinkTitle" [value]="linkTableValue" [(selection)]="selectedDeleteLink"
-                        >
-                            <ng-template pTemplate="header" let-columns>
-                                <tr>
-                                    <th style="width: 3em">
-                                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
-                                    <th style="width:8%">序号</th>
-                                    <th *ngFor="let col of columns" [pSortableColumn]="col.field">
-                                        {{col.header}}
-                                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
-                                    </th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-rowData let-columns="columns">
-                                
-                                <tr>
-                                    <td>
-                                            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
-                                    </td>
-                                    <td>{{rowData.number}}</td>
-                                    <td *ngFor="let col of columns">
-                                        <span *ngIf = "col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                                        <button pButton type="button"  [hidden]="!deleteAPI" *ngIf = "col.field == 'operation'"  (click)="setLink('delete',rowData)" label="删除"> </button>
-                                    </td>
-                                    
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="summary">
-                                    <div style="text-align: right;">
-                                       共{{linkTotal}}条
-                                    </div>
-                            </ng-template>
-                        </p-table>
-                        <p-paginator [hidden]="!linkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'link')"></p-paginator>
-                    </div>
+    <p-dialog header="{{clickRoleName}}--{{selectedLinkModule}}" [(visible)]="linkTableDisplay" [modal]="true" [responsive]="true"
+        [style]="{width: '1000px'}">
+        <div class="p-table">
+
+            <div style="clear:both;width: 100%" class="ui-g-12 ui-md-4">
+                <button pButton type="button" [hidden]="!addAPI && !addUser" label="新增" (click)="setLink('add')"></button>
+                <button pButton type="button" style="float:right" [disabled]="selectedDeleteLink.length<1" label="批量删除" (click)="setLink('deleteMore',selectedDeleteLink)"></button>
             </div>
+            <div style="float:left;height: 600px;">
+                <p-table [columns]="addLinkTitle" [value]="linkTableValue" [(selection)]="selectedDeleteLink">
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th style="width: 3em">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th style="width:8%">序号</th>
+                            <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                                {{col.header}}
+                                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                            </td>
+                            <td>{{rowData.number}}</td>
+                            <td *ngFor="let col of columns">
+                                <span *ngIf="col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                                <button pButton type="button" [hidden]="!deleteAPI" *ngIf="col.field == 'operation'" (click)="setLink('delete',rowData)"
+                                    label="删除"> </button>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="summary">
+                        <div style="text-align: right;">
+                            共{{linkTotal}}条
+                        </div>
+                    </ng-template>
+                </p-table>
+                <p-paginator [hidden]="!linkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'link')"></p-paginator>
+            </div>
+        </div>
     </p-dialog>
 
 
     <!-- 编辑角色 -->
     <p-dialog header="{{roleOpreationHeader}}" [(visible)]="roleOpreationDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
-            <form>
-                    <div class="form-group has-feedback">
-                      <label class="control-label">编码</label>
-                      <input 
-                        [(ngModel)]="roleCode" 
-                        style="width:700px !important;" 
-                        type="text" 
-                        name="code" 
-                        class="form-control"
-                        maxlength = '100'
-                        autocomplete="off"
-                      >
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label class="control-label">名称</label>
-                        <input 
-                            [(ngModel)]="roleName" 
-                            style="width:700px !important;" 
-                            type="text" 
-                            name="roleName" 
-                            class="form-control"
-                            maxlength = '100'
-                            autocomplete="off"
-                        >
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label class="control-label">状态</label>
+        <form>
+            <div class="form-group has-feedback">
+                <label class="control-label">编码</label>
+                <input [(ngModel)]="roleCode" style="width:700px !important;" type="text" name="code" class="form-control" maxlength='100'
+                    autocomplete="off">
+            </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">名称</label>
+                <input [(ngModel)]="roleName" style="width:700px !important;" type="text" name="roleName" class="form-control" maxlength='100'
+                    autocomplete="off">
+            </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">状态</label>
 
-                        <select [(ngModel)]="selectedroleStatus" style="width:700px !important;" name="status" class="form-control">
-                                <option *ngFor="let item of roleStatus" value="{{item.value}}">{{item.label}}</option>
-                        </select>
-                    </div>
+                <select [(ngModel)]="selectedroleStatus" style="width:700px !important;" name="status" class="form-control">
+                    <option *ngFor="let item of roleStatus" value="{{item.value}}">{{item.label}}</option>
+                </select>
+            </div>
 
 
-            </form>        
+        </form>
 
-    
-            <p-footer>
-                <button type="button" pButton  (click)="saveRole()" label="保存"></button>
-                <button type="button" pButton  (click)="roleOpreationDisplay=false" label="取消" class="ui-button-secondary"></button>
-            </p-footer>
+
+        <p-footer>
+            <button type="button" pButton (click)="saveRole()" label="保存"></button>
+            <button type="button" pButton (click)="roleOpreationDisplay=false" label="取消" class="ui-button-secondary"></button>
+        </p-footer>
     </p-dialog>
     <!-- 添加角色关联模块 -->
     <p-dialog header="{{addLinkHeader}}" [(visible)]="addLinkDisplay" [modal]="true" [responsive]="true" [style]="{width: '1000px'}">
         <div class="search ui-g-12 ui-md-4" [hidden]="!selectAPIDisplay">
-                <p-dropdown [options]="apiClassify" [style]="{width:'300px'}" [(ngModel)]="selectApiClassify" (onChange)="selectClassify()" placeholder="资源类别" [virtualScroll]="true"  [filter]="true"></p-dropdown>
+            <p-dropdown [options]="apiClassify" [style]="{width:'300px'}" [(ngModel)]="selectApiClassify" (onChange)="selectClassify()"
+                placeholder="资源类别" [virtualScroll]="true" [filter]="true"></p-dropdown>
         </div>
         <div style="float: right;margin-top: 5px" [hidden]="!searchAPIDisplay">
-                <p-autoComplete [(ngModel)]="filteredAPIName" [suggestions]="filteredAPI"
-                    placeholder="输入API名称" ></p-autoComplete>
-                <button pButton  type="button" label="查询" (click)="getFilteredApi()"></button>
+            <p-autoComplete [(ngModel)]="filteredAPIName" [suggestions]="filteredAPI" placeholder="输入API名称"></p-autoComplete>
+            <button pButton type="button" label="查询" (click)="getFilteredApi()"></button>
         </div>
         <div class="p-table" style="height:600px;clear: both;">
-            <p-table [columns]="addLinkTitle" [value]="addLinkValue" [(selection)]="selectedAddLink" >
+            <p-table [columns]="addLinkTitle" [value]="addLinkValue" [(selection)]="selectedAddLink">
                 <ng-template pTemplate="header" let-columns>
                     <tr>
                         <th style="width: 3em">
-                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
-                        <th style="width:8%">序号</th>    
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th style="width:8%">序号</th>
                         <th *ngFor="let col of columns" [pSortableColumn]="col.field">
                             {{col.header}}
                             <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
-                        </th>   
+                        </th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -183,17 +172,18 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="summary">
-                        <div style="text-align: right;">
-                           共{{addLinkTotal}}条
-                        </div>
+                    <div style="text-align: right;">
+                        共{{addLinkTotal}}条
+                    </div>
                 </ng-template>
             </p-table>
-            <p-paginator [hidden]="!addLinkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="addLinkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'add')"></p-paginator>
+            <p-paginator [hidden]="!addLinkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="addLinkTotal" [rowsPerPageOptions]="[10,20,30]"
+                (onPageChange)="linkPageChange($event,'add')"></p-paginator>
         </div>
 
         <p-footer>
-            <button type="button" pButton  (click)="saveAddLink()" label="保存"></button>
-            <button type="button" pButton  (click)="addLinkDisplay=false" label="取消" class="ui-button-secondary"></button>
+            <button type="button" pButton (click)="saveAddLink()" label="保存"></button>
+            <button type="button" pButton (click)="addLinkDisplay=false" label="取消" class="ui-button-secondary"></button>
         </p-footer>
     </p-dialog>
 

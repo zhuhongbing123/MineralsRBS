@@ -23,27 +23,27 @@
                     yearRange="1970:2030"
                     dateFormat="yy.mm.dd"
                 ></p-calendar>
-                <span style="margin-right:10px;margin-left: 10px">用户名</span>
-                <p-autoComplete [(ngModel)]="filteredUserName" [suggestions]="filteredUser" (completeMethod)="filteredName($event)"
-                    placeholder="输入用户名称" ></p-autoComplete>
-                <button pButton  type="button" label="查询" (click)="searchLog()"></button>
+                    <span [hidden]="!searchNameDisplay" style="margin-right:10px;margin-left: 10px">用户名</span>
+                    <p-autoComplete [hidden]="!searchNameDisplay" [(ngModel)]="filteredUserName" [suggestions]="filteredUser" (completeMethod)="filteredName($event)"
+                        placeholder="输入用户名称" ></p-autoComplete>
+    
+                    <button  style="margin-left: 10px" pButton  type="button" label="查询" (click)="searchLog()"></button>
+            
+                
         </div>
         <div style="clear: both">
-            <p-table [columns]="operationLogTitle" [value]="operationLogValue"  [loading]="loading" 
-            stateStorage="session" stateKey="statedemo-operation" 
-            selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true">
+            <p-table [columns]="operationLogTitle" [value]="operationLogValue"  [loading]="loading" >
                     <ng-template pTemplate="header" let-columns>
                         <tr>
                             <th style="width:8%">序号</th>
-                            <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+                            <th *ngFor="let col of columns">
                                 {{col.header}}
-                                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                             </th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-rowData let-columns="columns">
                         <tr  [pSelectableRow]="rowData">
-                            <td>{{rowData.number}}</td>
+                            <td style="width:8%">{{rowData.number}}</td>
                             <td *ngFor="let col of columns" class="area-table-td">
                                 <span *ngIf = "col.field !== 'createTime'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                                 <span *ngIf = "col.field == 'createTime'" > {{rowData[col.field]*1000  | date:'yyyy-MM-dd HH:mm'}}</span>

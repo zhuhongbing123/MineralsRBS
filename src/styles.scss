@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import '../node_modules/ol/ol.css';
 @import "~element-angular/theme/index.css";
+@import "../node_modules/primeflex/primeflex.css";
 body {
     background: url('../src/assets/img/BgBanner.png') !important;
     color: white !important;
@@ -54,7 +55,7 @@ body {
     
       .ui-table .ui-table-tbody>tr,
       .ui-table .ui-table-tbody>tr:nth-child(even) {
-        background: #49779ff5;
+        background: radial-gradient(#49779ff5 100%, #f2f1ed 20%) !important;
         text-align: center;
         color: #fff !important;
       }
@@ -271,9 +272,9 @@ body .ui-button.ui-state-default.ui-button-secondary, body .ui-buttonset.ui-butt
   background-color: #f4f4f4 !important;
 }
 /* 下拉框字体颜色 */
-/* body .ui-dropdown-panel .ui-dropdown-items .ui-dropdown-item{
+body .ui-dropdown-panel .ui-dropdown-items .ui-dropdown-item{
   color: white !important;
-} */
+}
 body .ui-dropdown-panel .ui-dropdown-items .ui-dropdown-item:not(.ui-state-highlight):not(.ui-state-disabled):hover{
   color: #333333 !important;
 }
@@ -293,4 +294,9 @@ body .ui-table .ui-table-tbody > tr:nth-child(even).ui-state-highlight{
 }
 body .ui-table .ui-table-tbody > tr.ui-state-highlight{
   background-color: #337ab7 !important;
+}
+
+body .ui-dialog .ui-dialog-titlebar{
+  background: #4a789f!important;
+  color: #fff!important;
 }

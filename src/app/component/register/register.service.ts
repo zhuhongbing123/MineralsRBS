@@ -12,7 +12,7 @@ export class RegisterService {
     private baseUrl: string;//通用的URL地址
     constructor(private http: HttpClient, private router: Router,
                 private httpUtil: HttpUtil) {
-                    this.baseUrl = localStorage.getItem('IP');;
+                    this.baseUrl = sessionStorage.getItem('IP');;
                  }
 
     getTokenKey() {
@@ -27,7 +27,7 @@ export class RegisterService {
         password = CryptoJS.enc.Utf8.parse(password);
         // AES CBC加密模式
         password = CryptoJS.AES.encrypt(password, tokenKey, {iv: tokenKey, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7}).toString();
-        console.log(password);
+
     
         const param = new HttpParams().append('uid', uid)
           .append('username', username)

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { HttpUtil } from '../../../common/util/http-util';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { FALSE } from 'ol/functions';
 import { LoginService } from '../../login/login.service';
+import { Paginator } from 'primeng/primeng';
 
 @Component({
   selector: 'app-api-manage',
@@ -10,11 +11,12 @@ import { LoginService } from '../../login/login.service';
   styleUrls: ['./api-manage.component.scss']
 })
 export class ApiManageComponent implements OnInit {
-
+  @ViewChild('clickPaginator',{ static: true }) paginator: Paginator;
   public apiTableTitle;//api列表标题
   public apiTableValue;//api列表数据
   public apiTotal;//api列表总数
   public LIMIT_LOGIN=10;//api列表每页显示数量
+  pageLinkSize = 1;//显示的页数
   public apiClassify=[{
     label:'全部',
     value:0
@@ -35,7 +37,7 @@ export class ApiManageComponent implements OnInit {
   public accessMethod;//访问方式
   public apiStatus;//api状态
   public apiType;//api类型;
-  public selectApiClassify;//已选择的资源类别
+  public selectApiClassify =0;//已选择的资源类别
   public selectApiValue;//当前操作的api数据
   public saveType;//保存类型
   apiTitle;//弹出框标题
@@ -71,7 +73,7 @@ export class ApiManageComponent implements OnInit {
     ];
     this.loading = true;
     //只有管理员才能显示URI
-    if(localStorage.getItem('roleCode') !== 'role_admin'){
+    if(sessionStorage.getItem('roleCode') !== 'role_admin'){
       this.apiTableTitle.splice(3,1)
     }
 
@@ -91,13 +93,13 @@ export class ApiManageComponent implements OnInit {
       {label: '--API类别--', value: '3'}
     ];
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
+    if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
       this.loginService.exit();
       return;
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/resource/api' && element.method =='POST'){
           this.addButtonDisplay =true;
       }
@@ -215,6 +217,7 @@ export class ApiManageComponent implements OnInit {
     if(this.filteredAPIName){
       this.getFilteredApi();
     }else{
+      this.selectTeamId = this.selectApiClassify;
       this.getApiValue();
     }
     
@@ -223,6 +226,7 @@ export class ApiManageComponent implements OnInit {
   setApi(type,value?){
     //搜索API名称
     if(type=='filtered'){
+      this.selectApiClassify = 0;
       this.getFilteredApi();
       return;
     }
@@ -277,8 +281,11 @@ export class ApiManageComponent implements OnInit {
 
   /* 选择资源类别 */
   selectClassify(){
-    this.currentPage = 1;
-    this.pageSize = 10;
+    /* this.currentPage = 1;
+    this.pageSize = 10; */
+    this.paginator.changePage(0);
+    /* this.pageLinkSize = 0;
+    this.LIMIT_LOGIN = 10; */
     this.selectTeamId = this.selectApiClassify;
     this.getApiValue();
   }

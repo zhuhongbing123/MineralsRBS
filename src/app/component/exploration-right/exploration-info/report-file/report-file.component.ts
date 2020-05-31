@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { ExplorationInfoService } from '../exploration-info.service';
 import { MenuItem, ConfirmationService, MessageService } from 'primeng/api';
 import { ExplorationReport } from '../../../../common/util/app-config';
@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginService } from '../../../login/login.service';
 import { setTime } from '../../../../common/util/app-config';
+import { Paginator } from 'primeng/primeng';
 declare let PDFObject,$,Tiff;
 
 @Component({
@@ -21,6 +22,7 @@ export class ReportFileComponent implements OnInit {
   @Input() explorationProject;
   @Input() type;
   @Input() buttonType;
+  @ViewChild('clickPaginator',{ static: true }) paginator: Paginator;
   LIMIT_LOGIN = 10;//列表每页显示数量
   startPage = 1;//列表开始的页数
   limit = 10;//列表每页的行数
@@ -75,8 +77,15 @@ export class ReportFileComponent implements OnInit {
   reportTotal;//报告文件总数
   policyReportDisplay = false;//是否是政策报告页面
   uploadedFiles = [];//上传文件
-  fileUrl = localStorage.getItem('IP')+'mineral-policy/fileUpload';
+  fileUrl = sessionStorage.getItem('IP')+'mineral-policy/fileUpload';
   fileDisplay = false;//预览文件是否存在
+
+  fileClassify=[{
+    label:'全部',
+    value:0
+  }];
+  selectClassifyID = 0;//已选择分类ID
+
   constructor(private explorationInfoService:ExplorationInfoService,
               private httpUtil: HttpUtil,
               private confirmationService: ConfirmationService,
@@ -89,6 +98,17 @@ export class ReportFileComponent implements OnInit {
         this.reportDetailDisplay = true;
         this.reportCategory = value.reportCategory;
         this.explorationProject = value.explorationProject;
+        this.fileClassify=[{
+          label:'全部',
+          value:0
+        }];
+        for(let i in  this.reportCategory){
+          this.fileClassify.push({
+            label: this.reportCategory[i].reportCategoryName,
+            value: this.reportCategory[i].id
+          })
+        }
+        
         this.getReportClassify();
       }else{
         this.reportDetailDisplay = false;
@@ -105,22 +125,31 @@ export class ReportFileComponent implements OnInit {
 
   /* 初始化页面 */
   setTableValue(){
-    this.reportClassifyTitle = [
-      { field: 'reportName', header: '报告名称' },
-      { field: 'reportCategoryId', header: '报告分类名称' },
-      { field: 'reportDescription', header: '文件详情描述' },
-      { field: 'reportUploader', header: '文件上传用户' },
-      { field: 'creationTime', header: '报告上传日期' },
-      { field: 'updateTime', header: '报告更新日期' },
-      /* { field: 'operation', header: '操作' } */
-    ];
+    if(this.type =='policy'){
+      this.reportClassifyTitle = [
+        { field: 'reportName', header: '名称' },
+        { field: 'reportCategoryId', header: '分类分级' },
+        { field: 'reportDescription', header: '摘要' },
+        { field: 'reportUploader', header: '文件上传用户' },
+        { field: 'creationTime', header: '上传日期' }
+      ];
+    }else{
+      this.reportClassifyTitle = [
+        { field: 'reportName', header: '资料名称' },
+        { field: 'reportCategoryId', header: '资料分级' },
+        { field: 'reportDescription', header: '资料摘要' },
+        { field: 'reportUploader', header: '上传用户' },
+        { field: 'creationTime', header: '上传时间' }
+      ];
+    }
+    
     this.explorationItems = [
       {label: '项目详情', icon: 'fa fa-fw fa-bar-chart'},
       {label: '勘查阶段详情', icon: 'fa fa-fw fa-bar-chart'},
       {label: '探矿权报告', icon: 'fa fa-fw fa-bar-chart'}
     ];
     this.fileTitle = [
-      { field: 'name', header: '名称' },
+      { field: 'name', header: '资料名称' },
       { field: 'fileType', header: '文件类型' },
       { field: 'operation', header: '操作' },
     ]
@@ -128,13 +157,13 @@ export class ReportFileComponent implements OnInit {
       {label: 'Stats', icon: 'fa fa-fw fa-bar-chart'}
     ]
     //获取授权的API资源
-    if(!localStorage.getItem('api')){
+    if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
       this.loginService.exit();
       return;
     }
     //获取授权的API资源
-    JSON.parse(localStorage.getItem('api')).forEach(element => {
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
       if(element.uri ==='/report-viewer/toPdfFile' && element.method =='POST'){
         this.previewButton =true;
       }
@@ -198,22 +227,12 @@ export class ReportFileComponent implements OnInit {
           for(let i=0; i<data.length;i++){
             
             
-            data[i].creationTime =  data[i].creationTime?setTime(data[i].creationTime):'';
-            data[i].updateTime =  data[i].updateTime?setTime(data[i].updateTime):'';
+            data[i].creationTime =  data[i].creationTime?new Date(data[i].creationTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+            data[i].updateTime =  data[i].updateTime?new Date(data[i].updateTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
             data[i].reportCategoryId =  data[i].reportCategoryName;
-            /* for(let j in this.reportCategory){
-              if(data[i].reportCategoryId ===this.reportCategory[j].value){
-                data[i].reportCategoryId = this.reportCategory[j].reportCategoryName;
-              }
-
-            } */
+           
           }
-          //删除不是该矿权分类的报告
-          /* for(var i = data.length - 1; i >= 0; i--){
-            if(typeof(data[i].reportCategoryId)=='number'){
-              data.splice(i,1);
-            }
-          } */
+        
 
           for(let i=0;i<data.length;i++){
             data[i].number = (this.startPage-1)*this.limit+i +1;
@@ -230,12 +249,21 @@ export class ReportFileComponent implements OnInit {
     this.httpUtil.get('mineral-report-category/type/0/1/1000').then(value=>{
       if (value.meta.code === 6666) {
         let data = value.data.reportCategories.list;
+        this.fileClassify =[{
+          label:'全部',
+          value:0
+        }];
         for(var i = data.length - 1; i >= 0; i--){
+         
           data[i]['label'] = data[i].reportCategoryName;
           data[i]['value'] = data[i].id;
           if(data[i].reportType!==0){
               data.splice(i,1);
           }
+          this.fileClassify.push({
+            label:data[i].reportCategoryName,
+            value:data[i].id
+          })
         }
         this.reportCategory = data;
       }
@@ -247,8 +275,8 @@ export class ReportFileComponent implements OnInit {
             this.reportTotal = value.data.policies.total;
             for(let i=0; i<data.length;i++){
            
-              data[i].creationTime =  data[i].creationTime?setTime(data[i].creationTime):'';
-              data[i].updateTime =  data[i].updateTime?setTime(data[i].updateTime):'';
+              data[i].creationTime =  data[i].creationTime?new Date(data[i].creationTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+              data[i].updateTime =  data[i].updateTime?new Date(data[i].updateTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
               data[i].reportCategoryId =  data[i].reportCategoryName;
               /* for(let j in this.reportCategory){
                 if(data[i].reportCategoryId ===this.reportCategory[j].value){
@@ -292,7 +320,7 @@ export class ReportFileComponent implements OnInit {
             let path='';
             let dataList= data[i].replace(/^\/|\/$/g, "").split("\\");
             if(dataList.length>1){
-              for(let j=1; j<dataList.length;j++){
+              for(let j=0; j<dataList.length;j++){
                 path += dataList[j]+this.filePathType;
               }
               this.filePathType = '\\';
@@ -425,7 +453,7 @@ export class ReportFileComponent implements OnInit {
         this.explorationTitle = '增加采矿权文件';
       }
       if(this.type=='policy'){
-        this.explorationTitle = '增加政策文件';
+        this.explorationTitle = '增加文件';
       }
       
       return;
@@ -435,13 +463,13 @@ export class ReportFileComponent implements OnInit {
       this.modifyReport = true;
       this.reportDisplay = true;
       if(this.type=='exploration'){
-        this.explorationTitle = '修改探矿权文件('+value.reportCategoryId+')';
+        this.explorationTitle = '修改探矿权文件('+value.reportName+')';
       }
       if(this.type=='mining'){
-        this.explorationTitle = '修改采矿权文件('+value.reportCategoryId+')';
+        this.explorationTitle = '修改采矿权文件('+value.reportName+')';
       }
       if(this.type=='policy'){
-        this.explorationTitle = '修改政策文件('+value.reportCategoryId+')';
+        this.explorationTitle = '修改文件('+value.reportName+')';
         this.uploadedFiles = [];
         this.uploadedFiles.push({
           name: value.reportFilePath.split('\\')[value.reportFilePath.split('\\').length-1]
@@ -460,7 +488,7 @@ export class ReportFileComponent implements OnInit {
     }
     /* 查看报告文件 */
     if(type==='viewReport'){
-      
+
       //政策报告文件
       if(this.type=='policy'){
         this.previewFile(value);
@@ -493,7 +521,7 @@ export class ReportFileComponent implements OnInit {
       this.confirmationService.confirm({
         message: '确认删除该报告吗?',
         header: '删除报告',
-        icon: 'pi pi-exclamation-triangle',
+        icon: '',
         acceptLabel:'确定',
         rejectLabel:'取消',
         accept: () => {
@@ -519,6 +547,7 @@ export class ReportFileComponent implements OnInit {
     /* 矿业权、政策报告的搜索 */
     if(type=='filtered'){
       let info,url;
+      this.selectClassifyID = 0;
       if(this.policyReportDisplay){
         info={
           "reportNameLike": this.reportNameLike?this.reportNameLike:'',
@@ -551,8 +580,8 @@ export class ReportFileComponent implements OnInit {
           for(let i=0; i<data.length;i++){
             
       
-            data[i].creationTime =  data[i].creationTime?setTime(data[i].creationTime):'';
-            data[i].updateTime =  data[i].updateTime?setTime(data[i].updateTime):'';
+            data[i].creationTime =  data[i].creationTime?new Date(data[i].creationTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
+            data[i].updateTime =  data[i].updateTime?new Date(data[i].updateTime*1000).toLocaleDateString().replace(/\//g, "-"):'';
             data[i].reportCategoryId =  data[i].reportCategoryName;
             /* for(let j in this.reportCategory){
               if(data[i].reportCategoryId ===this.reportCategory[j].value){
@@ -634,8 +663,8 @@ export class ReportFileComponent implements OnInit {
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '报告分类不能为空'});
       return;
     }
-    if(!this.explorationReport.reportFilePath){
-      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '报告路径不能为空'});
+    if(this.type!=='policy' && !this.explorationReport.reportFilePath){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '报告文件路径不能为空'});
       return;
     }
     let reportInfo = {
@@ -645,7 +674,7 @@ export class ReportFileComponent implements OnInit {
       "reportDescription": this.explorationReport.reportDescription?this.explorationReport.reportDescription:'',
       "reportFilePath": this.explorationReport.reportFilePath?this.explorationReport.reportFilePath:'',
       "reportName": this.explorationReport.reportName,
-      "reportUploader": localStorage.getItem('uid'),
+      "reportUploader": sessionStorage.getItem('uid'),
       "updateTime": parseInt((new Date().getTime()/1000).toString())
     };
     let url = 'mineral-policy';
@@ -795,11 +824,11 @@ export class ReportFileComponent implements OnInit {
         break;
       case 'png':
         isInitialize = false;
-        this.imgUrl = localStorage.getItem('fileIP') +'mineral/upload/'+this.selectedFile.filePath;
+        this.imgUrl = sessionStorage.getItem('fileIP') +'mineral/upload/'+this.selectedFile.filePath;
         break;
       case 'jpg':
         isInitialize = false;
-        this.imgUrl = localStorage.getItem('fileIP') +'mineral/upload/'+this.selectedFile.filePath;
+        this.imgUrl = sessionStorage.getItem('fileIP') +'mineral/upload/'+this.selectedFile.filePath;
         break;  
       case 'pdf':
         isInitialize = false;
@@ -827,7 +856,10 @@ export class ReportFileComponent implements OnInit {
 
   /* 预览文件 */
   previewFile(value){
-    
+    if (!value.reportFilePath && !value.filePath ){
+      this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该报告没有上传文件'});
+      return;
+    }
     let url,filepath,path;
     let that = this;
     this.fileDisplay = false;
@@ -852,7 +884,7 @@ export class ReportFileComponent implements OnInit {
       this.fileType = this.selectedFile.label.split('.')[this.selectedFile.label.split('.').length-1];
       
     }
-    url = localStorage.getItem('fileIP') +filepath;
+    url = sessionStorage.getItem('fileIP') +filepath;
     this.viewFileDisplay=true;
     switch(this.fileType){
       case 'doc':
@@ -876,7 +908,7 @@ export class ReportFileComponent implements OnInit {
                 }
                 
               }
-                url = localStorage.getItem('fileIP') +'minerals-file/'+path;
+                url = sessionStorage.getItem('fileIP') +'minerals-file/'+path;
        
               this.lookPDF(url);
             }
@@ -884,11 +916,11 @@ export class ReportFileComponent implements OnInit {
         
         break;
       case 'png':
-        this.imgUrl = localStorage.getItem('fileIP') +filepath;
+        this.imgUrl = sessionStorage.getItem('fileIP') +filepath;
         break;
       case 'jpg':
 
-        this.imgUrl = localStorage.getItem('fileIP') +filepath;
+        this.imgUrl = sessionStorage.getItem('fileIP') +filepath;
         break;  
       case 'pdf':
         this.lookPDF(url);
@@ -935,6 +967,9 @@ export class ReportFileComponent implements OnInit {
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
     if(this.type=='policy'){
+      if(this.selectClassifyID!=0){
+        return;
+      }
       this.getReportCategory()
     }else{
       this.getReportClassify();
@@ -1151,4 +1186,72 @@ export class ReportFileComponent implements OnInit {
     this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '上传成功'});
   }
 
+
+  /* 选择文件分类搜索 */
+  selectClassify(id){
+    this.reportNameLike = '';//清空报告名称
+    this.paginator.changePage(0);
+    if(id==0){
+     
+      if(this.policyReportDisplay){
+        this.getReportCategory();
+      }else{
+        this.getReportClassify();
+      }
+      
+    }else{
+      //政策报告
+      if(this.policyReportDisplay){
+        this.httpUtil.get('mineral-policy/search/'+id+'/'+this.startPage+'/'+this.limit).then(value=>{
+          if (value.meta.code === 6666) {
+            let data = value.data.policies.list;
+            this.reportTotal = value.data.policies.total;
+            for(let i=0; i<data.length;i++){
+              
+              
+              data[i].creationTime =  data[i].creationTime?setTime(data[i].creationTime):'';
+              data[i].updateTime =  data[i].updateTime?setTime(data[i].updateTime):'';
+              data[i].reportCategoryId =  data[i].reportCategoryName;
+             
+            }
+          
+  
+            for(let i=0;i<data.length;i++){
+              data[i].number = (this.startPage-1)*this.limit+i +1;
+            }
+            this.reportClassifyValue = data;
+          }
+        })
+      }else{
+        let info = {
+          reportType:this.type=='mining'?2:1,
+          reportCategoryId:id,
+          projectId:this.explorationProject.id
+        }
+        this.httpUtil.post('mineral-project-report/searchCategory/'+this.startPage+'/'+this.limit,info).then(value=>{
+          if (value.meta.code === 6666) {
+
+            let data = value.data.reportInfos.list;
+            this.reportTotal = value.data.reportInfos.total;
+            for(let i=0; i<data.length;i++){
+              
+              
+              data[i].creationTime =  data[i].creationTime?setTime(data[i].creationTime):'';
+              data[i].updateTime =  data[i].updateTime?setTime(data[i].updateTime):'';
+              data[i].reportCategoryId =  data[i].reportCategoryName;
+             
+            }
+          
+  
+            for(let i=0;i<data.length;i++){
+              data[i].number = (this.startPage-1)*this.limit+i +1;
+            }
+            this.reportClassifyValue = data;
+          }
+        })
+      }
+      
+    }
+    
+}
 }

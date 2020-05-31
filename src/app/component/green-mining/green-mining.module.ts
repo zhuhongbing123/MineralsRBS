@@ -14,6 +14,7 @@ import { MapCommonModule } from '../../common/map/map.module';
 import { Map2dService } from '../../common/map/map2-d/map2-d.service';
 import { DataImportExportComponent } from 'src/app/component/green-mining/data-import-export/data-import-export.component';
 import { DataAnalyzeComponent } from 'src/app/component/green-mining/data-analyze/data-analyze.component';
+import { MiningStatisticsComponent } from './mining-statistics/mining-statistics.component';
 
 
 
@@ -42,7 +43,7 @@ import { DataAnalyzeComponent } from 'src/app/component/green-mining/data-analyz
     
   ],
   providers: [CarService,Map2dService],
-  declarations: [DataImportExportComponent,DataAnalyzeComponent],
+  declarations: [DataImportExportComponent,DataAnalyzeComponent, MiningStatisticsComponent],
   exports:[]
 })
 export class GreenMiningModule { }
