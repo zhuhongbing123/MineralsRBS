@@ -35,6 +35,7 @@ export class ReportFileComponent implements OnInit {
   modifyReport = false;//是否修改报告文件
   pdfDisplay = false;//显示pdf预览
   loadingDisplay = false;
+  uploadDisplay = false;//显示下载按钮
   explorationTitle;//弹出框标题
   itemsExcel: MenuItem[];
   fileTree = [];//报告文件树形结构数据
@@ -197,6 +198,10 @@ export class ReportFileComponent implements OnInit {
         if(element.uri ==='/mineral-project-report/file' && element.method =='POST'){
           this.viewButton =true;
         }
+      }
+
+      if (this.modifyButton && this.deleteButton){
+        this.uploadDisplay = true;
       }
       
       
@@ -855,7 +860,7 @@ export class ReportFileComponent implements OnInit {
   }
 
   /* 预览文件 */
-  previewFile(value){
+  previewFile(value,type?){
     if (!value.reportFilePath && !value.filePath ){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '该报告没有上传文件'});
       return;
@@ -885,7 +890,10 @@ export class ReportFileComponent implements OnInit {
       
     }
     url = sessionStorage.getItem('fileIP') +filepath;
-    this.viewFileDisplay=true;
+    if(!type){
+      this.viewFileDisplay = true;
+    }
+    
     switch(this.fileType){
       case 'doc':
       case 'docx':
@@ -909,28 +917,54 @@ export class ReportFileComponent implements OnInit {
                 
               }
                 url = sessionStorage.getItem('fileIP') +'minerals-file/'+path;
-       
-              this.lookPDF(url);
+              if(type){
+                this.uploadFile(url)
+              }else{
+                this.lookPDF(url);
+              }
+              
             }
         })
         
         break;
       case 'png':
         this.imgUrl = sessionStorage.getItem('fileIP') +filepath;
+        if (type) {
+          this.uploadFile(this.imgUrl);
+          return;
+        }
         break;
       case 'jpg':
 
         this.imgUrl = sessionStorage.getItem('fileIP') +filepath;
+        if (type) {
+          this.uploadFile(this.imgUrl);
+          return;
+        }
         break;  
       case 'pdf':
-        this.lookPDF(url);
+        if (type) {
+          this.uploadFile(url)
+        } else {
+          this.lookPDF(url);
+        }
         break;  
       case 'xlsx':
         document.getElementById('result').innerHTML ='';
-        this.excelChange(url);
+        if (type) {
+          this.uploadFile(url)
+        } else {
+          this.excelChange(url);
+        }
+        
         break;  
       case 'txt':
+        if (type) {
+          this.uploadFile(url);
+          return;
+        }
         let xhr = new XMLHttpRequest();
+        
         xhr.open('GET', url, false);
         xhr.overrideMimeType("text/html;charset=utf-8");//默认为utf-8
         xhr.send(null);
@@ -941,8 +975,13 @@ export class ReportFileComponent implements OnInit {
         this.txtTable = xhr.responseText;
         break;   
       case 'tif':
+        if (type) {
+          this.uploadFile(url);
+          return;
+        }
         let xhrTif = new XMLHttpRequest();
         xhrTif.responseType = 'arraybuffer';
+        
         xhrTif.open('GET', url);
         
         xhrTif.onload = function (e) {
@@ -1253,5 +1292,18 @@ export class ReportFileComponent implements OnInit {
       
     }
     
-}
-}
+  }
+
+  //下载文件
+  uploadFile(url){
+    //window.open(url);
+    var a = document.createElement('a');
+    a.setAttribute("href", url);
+        a.setAttribute("download", "");
+        var evObj = document.createEvent('MouseEvents');
+        evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
+        a.dispatchEvent(evObj);
+   
+    
+  }
+} 

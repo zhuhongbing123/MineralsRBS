@@ -34,7 +34,7 @@ export class MineralProjectComponent implements OnInit {
   modifDisplay = false;//修改按钮显示
   deleteDisplay = false;//删除按钮显示
   searchDisplay = false;//查询按钮显示
-
+  detailsDisplay = false;//详情按钮显示
   filteredProjectName;//项目名称
   filteredProject:any[];//搜索项目时下拉框的项目名称
   allProjectName;//所有项目名称
@@ -44,6 +44,7 @@ export class MineralProjectComponent implements OnInit {
   addProjectArea = false;//新增项目区域
   addAreaCommon: Subscription;
   mineralOwner:any[];//矿权人
+  inputDisabled = false;//弹出框的输入框是否禁止输入
 
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
@@ -118,8 +119,10 @@ export class MineralProjectComponent implements OnInit {
       }
       if(element.uri ==='/mineral-project/search/*/*' && element.method =='POST'){
         this.searchDisplay =true;
-      }
-    
+      } 	
+      if (element.uri === '/mineral-project/*' && element.method == 'GET') {
+        this.detailsDisplay = true;
+      } 
     });
 
     if(!this.deleteDisplay){
@@ -203,6 +206,7 @@ export class MineralProjectComponent implements OnInit {
   /* 操作 */
   setMineral(type,value?){
     this.isModify = false;
+    this.inputDisabled = false;
     if(type=='modify'){
       this.explorationStartTime = value.explorationStartTime?new Date(value.explorationStartTime):'';
       this.miningStartTime = value.miningStartTime?new Date(value.miningStartTime):'';
@@ -211,6 +215,17 @@ export class MineralProjectComponent implements OnInit {
       this.addProjectArea = false;
       this.isModify = true;
 
+      return;
+    }
+    //详情
+    if (type ==='details'){
+      this.explorationStartTime = value.explorationStartTime ? new Date(value.explorationStartTime) : '';
+      this.miningStartTime = value.miningStartTime ? new Date(value.miningStartTime) : '';
+      this.mineralProject = value;
+      this.mineralProjectDisplay = true;
+      this.addProjectArea = false;
+      this.isModify = true;
+      this.inputDisabled = true;
       return;
     }
     // 搜索

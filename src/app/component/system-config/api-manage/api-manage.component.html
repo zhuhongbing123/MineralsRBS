@@ -1,4 +1,4 @@
-<p>系统配置 > API管理</p>
+<p>系统配置 > API授权管理</p>
 <div class="search ui-g-12 ui-md-4">
         <button pButton [hidden]="!addButtonDisplay" style="margin-right:20px" type="button" label="新增" (click)="setApi('add','')"></button>
         <p-dropdown [options]="apiClassify" [style]="{width:'300px'}" [(ngModel)]="selectApiClassify" (onChange)="selectClassify()" placeholder="资源类别" [virtualScroll]="true"  [filter]="true"></p-dropdown>

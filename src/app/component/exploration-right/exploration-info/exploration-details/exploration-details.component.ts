@@ -115,7 +115,7 @@ export class ExplorationDetailsComponent implements OnInit {
       if(element.uri ==='/mineral-explore-stage' && element.method =='PUT'){
         this.modifyStageButton =true;
       }
-      if(element.uri ==='/mineral-explore-stage' && element.method =='DELETE'){
+      if(element.uri ==='/mineral-explore-stage/*' && element.method =='DELETE'){
         this.deleteStageButton =true;
       }
     });

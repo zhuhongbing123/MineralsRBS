@@ -106,7 +106,7 @@ export class ApiManageComponent implements OnInit {
       if(element.uri ==='/resource/api' && element.method =='PUT'){
         this.modifyDisplay =true;
       }
-      if(element.uri ==='/resource/api' && element.method =='DELETE'){
+      if(element.uri ==='/resource/api/*' && element.method =='DELETE'){
         this.deleteDisplay =true;
       }
       if(element.uri ==='/resource/search/*/*' && element.method =='POST'){

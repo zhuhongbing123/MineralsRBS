@@ -13,6 +13,7 @@ export class MiningStatisticsComponent implements OnInit {
   LIMIT_LOGIN = 10;//列表每页显示数量
   startPage = 1;//列表开始的页数
   limit = 10;//列表每页的行数
+  statisticsTotal;//列表总数量
   miningStatisticsInfo: MiningStatistics = new MiningStatistics();//一条矿山统计数据
 
   miningStatisticsTitle: any;//矿山统计标题
@@ -21,6 +22,9 @@ export class MiningStatisticsComponent implements OnInit {
   allProjectName;//所有的项目名称
   mineralOwner;//所有矿权人名称
   modifyStatistics = false;//是否修改
+  addButton = false;//新增按钮是否显示
+  putButton = false;//修改按钮是否显示
+  deleteButton = false;//删除按钮是否显示
   constructor(private httpUtil: HttpUtil,
               private confirmationService: ConfirmationService,
               private messageService: MessageService,) { }
@@ -41,6 +45,17 @@ export class MiningStatisticsComponent implements OnInit {
       { field: 'projectRating', header: '评级' },
       { field: 'comment', header: '备注' }
     ];
+    JSON.parse(sessionStorage.getItem('api')).forEach(element => {
+      if (element.uri === '/mineral-green-mining/*' && element.method == 'DELETE') {
+        this.deleteButton = true;
+      }
+      if (element.uri === '/mineral-green-mining' && element.method == 'POST') {
+        this.addButton = true;
+      }
+      if (element.uri === '/mineral-green-mining' && element.method == 'PUT') {
+        this.putButton = true;
+      }
+    })
     this.getProjectName();
   };
   
@@ -49,6 +64,7 @@ export class MiningStatisticsComponent implements OnInit {
     this.httpUtil.get('mineral-green-mining/list/' + this.startPage + '/' + this.limit).then(value=>{
       if (value.meta.code === 6666) {
         let data = value.data.greenMinings.list;
+        this.statisticsTotal = value.data.greenMinings.total;
         for (let i = 0; i < data.length; i++){
           data[i]['number'] = (this.startPage - 1) * this.limit + i + 1;
           for (let j in this.mineralOwner){
@@ -167,5 +183,13 @@ export class MiningStatisticsComponent implements OnInit {
         this.setStatisticsDisplay = false;
       }
     })
+  }
+
+  pageChange(event, type) {
+    this.startPage = event.page + 1;//列表开始的页数
+    this.limit = event.rows;//列表每页的行数
+    this.getMiningStatistics();
+
+
   }
 }

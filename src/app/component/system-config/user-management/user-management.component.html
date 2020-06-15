@@ -2,9 +2,9 @@
 
 <div class="p-table">
     
-    <div style="clear: both;margin-bottom: 10px;" [hidden]="!searchDisplay">
+    <div style="clear: both;margin-bottom: 10px;" >
             <div class="ui-g-12 ui-md-4">
-                    <button pButton type="button"  label="新增" (click)="setUserRole('','add')"></button>
+                    <button pButton type="button" [hidden]="!addDisplay" label="新增" (click)="setUserRole('','add')"></button>
             </div>
             <div style="float:right" [hidden]="!searchDisplay">
                     <p-autoComplete [(ngModel)]="filteredUserName" [suggestions]="filteredUser" (completeMethod)="filteredUsers($event)"

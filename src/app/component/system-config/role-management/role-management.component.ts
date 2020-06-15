@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpUtil } from '../../../common/util/http-util';
 import { MessageService, ConfirmationService, Message } from 'primeng/api';
 import { LoginService } from '../../login/login.service';
+import { Paginator } from 'primeng/primeng';
 
 @Component({
   selector: 'app-role-management',
@@ -9,6 +10,7 @@ import { LoginService } from '../../login/login.service';
   styleUrls: ['./role-management.component.scss']
 })
 export class RoleManagementComponent implements OnInit {
+  @ViewChild('clickPaginator', { static: true }) paginator: Paginator;
   msgs: Message[] = [];
   startPage = 1;//列表开始的页数
   limit = 10;//列表每页的行数
@@ -461,7 +463,6 @@ export class RoleManagementComponent implements OnInit {
           this.selectedAddLink = '';
           this.selectApiClassify = 0;
           this.addLinkDisplay = true;
-          this.getApiClassify();
         }
       })
 
@@ -568,6 +569,7 @@ export class RoleManagementComponent implements OnInit {
   /* 点击选择角色关联 */
   clickLink(value, type) {
     this.linkTableDisplay = true;
+    this.selectApiClassify = '';
     this.selectedLinkModule = type;
     this.selectedRole = value;
     this.addAPI = false;
@@ -590,6 +592,7 @@ export class RoleManagementComponent implements OnInit {
       }
     })
     this.getLinkUrl();
+    this.getApiClassify();
     this.clickRole(this.selectedRole);
   }
 
@@ -611,26 +614,36 @@ export class RoleManagementComponent implements OnInit {
   }
 
   /* 选择资源类别 */
-  selectClassify() {
+  selectClassify(type?) {
     this.startPage = 1;
     this.limit = 10;
+    this.paginator.changePage(0);
     this.selectTeamId = this.selectApiClassify;
     this.filteredAPIName = '';
-    this.getApiValue();
+    this.getApiValue(type);
   }
 
   /* 获取api数据 */
-  getApiValue() {
+  getApiValue(type?) {
     let url;
-    if (this.selectTeamId == 0) {
-      url = 'role/api/-/' + this.selectedRole.id + '/' + this.startPage + '/' + this.limit
-    } else {
-      url = 'role/api/-/' + this.selectedRole.id + '/' + this.selectTeamId + '/' + this.startPage + '/' + this.limit
+    if(type){//已经添加的API
+      if (this.selectTeamId == 0) {
+        url = 'role/api/' + this.selectedRole.id + '/' + this.startPage + '/' + this.limit
+      } else {
+        url = 'role/api/' + this.selectedRole.id + '/' + this.selectTeamId + '/' + this.startPage + '/' + this.limit
+      }
+    }else{
+      if (this.selectTeamId == 0) {
+        url = 'role/api/-/' + this.selectedRole.id + '/' + this.startPage + '/' + this.limit
+      } else {
+        url = 'role/api/-/' + this.selectedRole.id + '/' + this.selectTeamId + '/' + this.startPage + '/' + this.limit
+      }
     }
+    
     this.httpUtil.get(url).then(value => {
       if (value.meta.code === 6666) {
         let data = value.data.data.list;
-        this.addLinkTotal = value.data.data.total;
+        
 
         for (let i = 0; i < data.length; i++) {
           data[i].number = (this.startPage - 1) * this.limit + i + 1;
@@ -645,15 +658,27 @@ export class RoleManagementComponent implements OnInit {
               data[i]['classify'] = this.apiClassify[j].label;
             }
           }
+        } 
+        if(type){
+          this.linkTableValue = data;
+          this.linkTotal = value.data.data.total;
+        }else{
+          this.addLinkValue = data;
+          this.addLinkTotal = value.data.data.total;
         }
-        this.addLinkValue = data;
+        
       }
     })
   }
   /* 通过名称搜索API */
-  getFilteredApi() {
+  getFilteredApi(type?) {
     let url;
-    url = 'resource/search/-/' + this.selectedRole.id + '/' + this.selectTeamId + '/' + this.startPage + '/' + this.limit;
+    if(type){
+      url = 'resource/search/' + this.selectedRole.id + '/' + this.selectTeamId + '/' + this.startPage + '/' + this.limit;
+    }else{
+      url = 'resource/search/-/' + this.selectedRole.id + '/' + this.selectTeamId + '/' + this.startPage + '/' + this.limit;
+    }
+    
 
     this.httpUtil.post(url, {
       resourceName: this.filteredAPIName ? this.filteredAPIName : ''
@@ -676,7 +701,12 @@ export class RoleManagementComponent implements OnInit {
             }
           }
         }
-        this.addLinkValue = data;
+        if(type){
+          this.linkTableValue = data;
+        }else{
+          this.addLinkValue = data;
+        }
+        
       }
     })
   }

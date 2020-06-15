@@ -24,3 +24,12 @@
   .layout-wrapper .layout-menu li a{
     color: #ffffff !important;
   }
+
+  .bottom_title{
+    
+    bottom: 10px;
+    position: fixed;
+    z-index: 999;
+    text-align: center;
+    width: 235px;
+  }

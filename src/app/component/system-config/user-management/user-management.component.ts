@@ -27,7 +27,7 @@ export class UserManagementComponent implements OnInit {
   pageNumber = 1;//列表第几页
   userTitle;//弹出框标题
 
-  addDisplay = false;//添加用户角色
+  addDisplay = false;//添加用户
   modifyDisplay = false;//修改用户角色
   deleteRoleDisplay = false;//删除用户角色
   searchDisplay = false;//搜索用户按钮

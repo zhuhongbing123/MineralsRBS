@@ -100,7 +100,7 @@
                         <th *ngFor="let col of columns" pResizableColumn>
                             {{col.header}}
                         </th>
-                        <th style="width:22%" pResizableColumn *ngIf="buttonType">操作</th>
+                        <th style="width:270px" pResizableColumn *ngIf="buttonType">操作</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -110,10 +110,10 @@
                             <span *ngIf = "col.field !== 'operation'"  pTooltip=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
 
                         </td>
-                        <td style="width:22%" *ngIf="buttonType">
-                            <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('modifyReport',rowData)" label="修改"></button>
-                            <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('viewReport',rowData)" label="查看文件"></button>
-                            <button pButton type="button"  class="operation-icon"  (click)="setExplorationt('deleteReport',rowData)"  label="删除"></button>
+                        <td style="width:270px" *ngIf="buttonType">
+                            <button pButton type="button" [hidden]="!modifyButton" class="operation-icon"  (click)="setExplorationt('modifyReport',rowData)" label="修改"></button>
+                            <button pButton type="button" [hidden]="!viewButton" class="operation-icon"  (click)="setExplorationt('viewReport',rowData)" label="查看文件"></button>
+                            <button pButton type="button" [hidden]="!deleteButton" class="operation-icon"  (click)="setExplorationt('deleteReport',rowData)"  label="删除"></button>
                         </td>
                     </tr>
                 </ng-template>
@@ -215,6 +215,7 @@
                                     <span *ngIf = "col.field !== 'operation' && col.field == 'name'" class="click-file" (click)="treeSelect(rowData)"> {{rowData[col.field]}}</span>
                                     <span *ngIf = "col.field !== 'operation' && col.field == 'fileType'"> {{rowData[col.field]}}</span>
                                     <span *ngIf = "col.field == 'operation' && rowData.file" class="click-file" (click)="previewFile(rowData)"> 预览</span>
+                                    <span *ngIf="col.field == 'operation'&& rowData.file && uploadDisplay" class="upload-file" (click)="previewFile(rowData,'upload')"> 下载</span>
                                 </td>
                             </tr>
                         </ng-template>

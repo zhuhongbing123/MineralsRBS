@@ -20,15 +20,26 @@
         [value]="miningInfoValue" 
         [loading]="loading"  
         columnResizeMode="expand"
-        [style]="{'min-width':'1200px'}"
         [resizableColumns]="true" 
         [scrollable]="true" 
         scrollHeight="400px" 
+         stateStorage="session" 
+         stateKey="statedemo-mining-info" 
+         selectionMode="single" 
+         [resizableColumns]="true" 
+         [reorderableColumns]="true"
        >
         <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns" [style.width]="col.width">
             </colgroup>
+        </ng-template>
+        <ng-template pTemplate="caption">
+            <div class="ui-helper-clearfix" style="text-align: right">
+        
+                <button type="button" pButton icon="fa fa-file-excel-o" iconPos="left" label="导出" (click)="exportExcel()" style="margin-right: 0.5em;"
+                    class="ui-button-success"></button>
+            </div>
         </ng-template>
         <ng-template pTemplate="header" let-columns>
             <tr>

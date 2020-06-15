@@ -36,7 +36,7 @@
             <th *ngFor="let col of columns" pResizableColumn>
                 {{col.header}}
             </th>
-            <th style="width:15%" pResizableColumn>操作</th>
+            <th style="width:20%" pResizableColumn>操作</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -46,7 +46,8 @@
                 <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                
             </td>
-            <td style="width:15%">
+            <td style="width:20%">
+                <button pButton type="button" *ngIf="detailsDisplay" class="operation-icon" (click)="setMineral('details',rowData)" label="详情"></button>
                 <button pButton type="button" *ngIf = "modifDisplay" class="operation-icon"  (click)="setMineral('modify',rowData)" label="修改"></button>
                 <button pButton type="button" *ngIf = "deleteDisplay" class="operation-icon"  (click)="setMineral('delete',rowData)" label="删除"></button>
             </td>
@@ -91,7 +92,7 @@
               </div>
               <div class="form-group has-feedback">
                 <label class="control-label">项目定位区域</label>
-                <button type="button" pButton (click)="viewMap()" label="查看"></button>
+                <button type="button" [disabled] = "inputDisabled" pButton (click)="viewMap()" label="查看"></button>
               </div>  
               <div class="form-group has-feedback" [hidden]="miningStartTime">
                   <label class="control-label">探矿权首立时间</label>
@@ -328,7 +329,7 @@
           </form>
           <div id="projectMap" class="map"></div>
           <p-footer>
-              <button type="button" pButton (click)="saveMineralProject()" label="保存"></button>
+              <button type="button" pButton [disabled] = "inputDisabled" (click)="saveMineralProject()" label="保存"></button>
               <button type="button" pButton  (click)="mineralProjectDisplay = false" label="取消" class="ui-button-secondary"></button>
           </p-footer>
   </p-dialog>

@@ -1,6 +1,6 @@
 <p>绿色矿山 > 绿色矿山建设统计</p>
 <div class="ui-g-12 ui-md-4">
-  <button pButton  type="button" label="新增" (click)="setStatistics('add','')"></button>
+  <button pButton  type="button" label="新增" [hidden]="!addButton" (click)="setStatistics('add','')"></button>
 </div>
 <div style="clear: both;" class="p-table">
   <p-table  [value]="miningStatisticsValue" [loading]="loading" [scrollable]="true" scrollHeight="400px"
@@ -17,7 +17,7 @@
         <th rowspan="3">采矿权人</th>
         <th colspan="6">绿色矿山建设情况</th>
         <th  rowspan="3">备注</th>
-        <th  rowspan="3" style="width:15%">操作</th>
+        <th  rowspan="3" style="width:15%" [hidden]="!putButton && !deleteButton">操作</th>
       </tr>
       <tr>
         <th>实施方案</th>
@@ -40,9 +40,9 @@
         <td>{{rowData.projectAcceptance}}</td>
         <td>{{rowData.projectRating}}</td>
         <td>{{rowData.comment}}</td>
-        <td style="width:15%">
-          <button pButton type="button" class="button-class" (click)="setStatistics('modify',rowData)" label="修改"></button>
-          <button pButton type="button" class="button-class" (click)="setStatistics('delete',rowData)" label="删除"></button>
+        <td style="width:15%" [hidden]="!putButton && !deleteButton">
+          <button pButton [hidden]="!putButton" type="button" class="button-class" (click)="setStatistics('modify',rowData)" label="修改"></button>
+          <button pButton [hidden]="!deleteButton" type="button" class="button-class" (click)="setStatistics('delete',rowData)" label="删除"></button>
         </td>
       </tr>
       <!-- <tr>
@@ -59,11 +59,11 @@
     </ng-template>
     <ng-template pTemplate="summary">
       <div style="text-align: right;">
-        共{{reportTotal}}条
+        共{{statisticsTotal}}条
       </div>
     </ng-template>
   </p-table>
-  <p-paginator [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30]"
+  <p-paginator [hidden]="!statisticsTotal" [rows]="LIMIT_LOGIN" [totalRecords]="statisticsTotal" [rowsPerPageOptions]="[10,20,30]"
     (onPageChange)="pageChange($event)"></p-paginator>
 </div>
 

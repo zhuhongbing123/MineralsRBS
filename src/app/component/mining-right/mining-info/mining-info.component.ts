@@ -372,16 +372,19 @@ export class MiningInfoComponent implements OnInit {
     let data = JSON.parse(JSON.stringify(this.miningInfoValue));
     for(let project of data) {
       let info = {
-        '项目名称': project.projectName,
-        '矿权人 ': project.owner_id,
-        '采矿权首立时间': project.miningStartTime,
-        '开始时间': project.stageStartTime,
-        '结束时间': project.stageEndTime,
-        '矿权范围': project.projectArea,
-        '开采矿种': project.miningMineralType,
-        '生产规模(吨/年)': project.miningProductionScale,
-        '开采投入工作量': project.miningWorkload,
-        '开采投入金额(万元)': project.miningInvestment
+        '矿山名称': project.projectName ? project.projectName:'',
+        '证号': project.lisenceId ? project.lisenceId:'',
+        '采矿权人 ': project.owner_id ? project.owner_id:'',
+        '地址': project.address ? project.address:'',
+        '经济类型': project.economyType ? project.economyType:'',
+        '开采矿种': project.miningMineralType ? project.miningMineralType:'',
+        '开采方式': project.miningMethod ? project.miningMethod:'',
+        '生产规模(吨/年)': project.miningProductionScale ? project.miningProductionScale:'', 
+        '矿区面积(平方公里)': project.miningArea ? project.miningArea:'',
+        '有效期': project.stageStartTime?project.stageStartTime + '~' + project.stageEndTime:'',
+        '矿区拐点坐标': project.projectArea ? project.projectArea:'',
+        '开采深度': project.miningDepth ? project.miningDepth:'',
+        '备注': project.comment ? project.comment:''
       }
         exploration.push(info);
     }
