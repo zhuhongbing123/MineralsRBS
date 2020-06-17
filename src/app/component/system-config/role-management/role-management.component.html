@@ -71,7 +71,7 @@
             </div>
             <div style="float: right;margin-top: 5px" [hidden]="!searchAPIDisplay">
                 <p-autoComplete [(ngModel)]="filteredAPIName" [suggestions]="filteredAPI" placeholder="输入API名称"></p-autoComplete>
-                <button pButton type="button" label="查询" (click)="getFilteredApi('all')"></button>
+                <button pButton type="button" label="查询" (click)="getFilteredApi('link')"></button>
             </div>
             <div style="float:left;height: 600px;">
                 <p-table [columns]="addLinkTitle" [value]="linkTableValue" [(selection)]="selectedDeleteLink">
@@ -109,7 +109,7 @@
                         </div>
                     </ng-template>
                 </p-table>
-                <p-paginator #clickPaginator [hidden]="!linkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'link',true)"></p-paginator>
+                <p-paginator #clickPaginator [hidden]="!linkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'link')"></p-paginator>
             </div>
         </div>
     </p-dialog>
@@ -153,7 +153,7 @@
         </div>
         <div style="float: right;margin-top: 5px" [hidden]="!searchAPIDisplay">
             <p-autoComplete [(ngModel)]="filteredAPIName" [suggestions]="filteredAPI" placeholder="输入API名称"></p-autoComplete>
-            <button pButton type="button" label="查询" (click)="getFilteredApi()"></button>
+            <button pButton type="button" label="查询" (click)="getFilteredApi('add')"></button>
         </div>
         <div class="p-table" style="height:600px;clear: both;">
             <p-table [columns]="addLinkTitle" [value]="addLinkValue" [(selection)]="selectedAddLink">
@@ -186,8 +186,8 @@
                     </div>
                 </ng-template>
             </p-table>
-            <p-paginator #clickPaginator [hidden]="!addLinkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="addLinkTotal" [rowsPerPageOptions]="[10,20,30]"
-                (onPageChange)="linkPageChange($event,'add',true)"></p-paginator>
+            <p-paginator #clickAddPaginator [hidden]="!addLinkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="addLinkTotal" [rowsPerPageOptions]="[10,20,30]"
+                (onPageChange)="linkPageChange($event,'add')"></p-paginator>
         </div>
 
         <p-footer>

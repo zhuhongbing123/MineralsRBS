@@ -10,7 +10,8 @@ import { Paginator } from 'primeng/primeng';
   styleUrls: ['./role-management.component.scss']
 })
 export class RoleManagementComponent implements OnInit {
-  @ViewChild('clickPaginator', { static: true }) paginator: Paginator;
+  @ViewChild('clickPaginator', { static: true }) paginator: Paginator; 
+  @ViewChild('clickAddPaginator', { static: true }) addPaginator: Paginator;
   msgs: Message[] = [];
   startPage = 1;//列表开始的页数
   limit = 10;//列表每页的行数
@@ -68,6 +69,7 @@ export class RoleManagementComponent implements OnInit {
   selectTeamId: number = 0;//api分类ID 0表示获取全部
   filteredAPIName;//搜索API名称
   filteredAPI: any[];//搜索API下拉框值
+  isSelect = false;//是否选择下拉框
 
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
@@ -127,7 +129,7 @@ export class RoleManagementComponent implements OnInit {
       if (element.uri === '/resource/search/-/*/*/*/*' && element.method == 'POST') {
         this.searchAPIDisplay = true;
       }
-      if (element.uri === '/role/api/*/*/*/*' && element.method == 'GET') {
+      if (element.uri === '/resource/api/*/*/*' && element.method == 'GET') {
         this.selectAPIDisplay = true;
       }
 
@@ -235,11 +237,15 @@ export class RoleManagementComponent implements OnInit {
   }
 
   /* 右侧关联表格页码切换 */
-  linkPageChange(event, type, pageChange) {
+  linkPageChange(event, type) {
     let page = event.page + 1;
     let rows = event.rows;
     let url;
-    if (!pageChange) return;//是否点击的分页按钮
+    if (this.isSelect) {//是否选择的下拉框
+      this.isSelect = false;
+      return;
+    }
+      
     //url = this.addLinkUrl+'-/'+this.selectedRole.id;
     if (type == 'add') {
       url = this.addLinkUrl + '-/' + this.selectedRole.id;
@@ -250,6 +256,18 @@ export class RoleManagementComponent implements OnInit {
     } else if (type == 'link') {
       url = this.addLinkUrl + this.selectedRole.id;
     }
+
+  
+    this.selectTeamId = this.selectApiClassify ? this.selectApiClassify:0;
+      this.startPage = event.page + 1;
+      this.limit = event.rows;
+      //选择下拉框后切换页码
+    if (this.selectApiClassify){
+      this.getFilteredApi(type);
+      //this.selectApiClassify = '';
+      return;
+    }
+   
 
     this.httpUtil.get(url + '/' + page + '/' + rows).then(value => {
       if (value.meta.code === 6666) {
@@ -614,7 +632,13 @@ export class RoleManagementComponent implements OnInit {
   selectClassify(type?) {
     this.startPage = 1;
     this.limit = 10;
-    this.paginator.changePage(0);
+    this.isSelect = true;
+    if (!this.addLinkDisplay){
+      this.paginator.changePage(0);
+    }else{
+      this.addPaginator.changePage(0);
+    }
+    
     this.selectTeamId = this.selectApiClassify;
     this.filteredAPIName = '';
     this.getApiValue(type);
@@ -672,9 +696,9 @@ export class RoleManagementComponent implements OnInit {
     })
   }
   /* 通过名称搜索API */
-  getFilteredApi(type?) {
+  getFilteredApi(type) {
     let url;
-    if(type){
+    if(type=='link'){
       url = 'resource/search/' + this.selectedRole.id + '/' + this.selectTeamId + '/' + this.startPage + '/' + this.limit;
     }else{
       url = 'resource/search/-/' + this.selectedRole.id + '/' + this.selectTeamId + '/' + this.startPage + '/' + this.limit;
@@ -686,7 +710,7 @@ export class RoleManagementComponent implements OnInit {
     }).then(value => {
       if (value.meta.code === 6666) {
         let data = value.data.resources.list;
-        this.addLinkTotal = value.data.resources.total;
+       
 
         for (let i = 0; i < data.length; i++) {
           data[i].number = (this.startPage - 1) * this.limit + i + 1;
@@ -702,10 +726,12 @@ export class RoleManagementComponent implements OnInit {
             }
           }
         }
-        if(type){
+        if(type =='link'){
           this.linkTableValue = data;
+          this.linkTotal = value.data.resources.total;
         }else{
           this.addLinkValue = data;
+          this.addLinkTotal = value.data.resources.total;
         }
         
       }
