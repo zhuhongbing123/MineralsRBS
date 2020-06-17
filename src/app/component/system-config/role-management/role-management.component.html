@@ -96,7 +96,8 @@
                             <td>{{rowData.number}}</td>
                             <td *ngFor="let col of columns">
                                 <span *ngIf="col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                                <button pButton type="button" [hidden]="!deleteAPI" *ngIf="col.field == 'operation'" (click)="setLink('delete',rowData)"
+                                <button pButton type="button" [hidden]="!deleteAPI || rowData['uri']==='/role/*/*' || rowData['uri']==='/user/list/*/*' || rowData['uri']==='/user/password' || rowData['uri']==='/log/operationLog/*/*' || rowData['uri']==='/user/exit' || rowData['uri']==='/role/api/*'" 
+                                    *ngIf="col.field == 'operation'" (click)="setLink('delete',rowData)"
                                     label="删除"> </button>
                             </td>
 
@@ -108,7 +109,7 @@
                         </div>
                     </ng-template>
                 </p-table>
-                <p-paginator #clickPaginator [hidden]="!linkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'link')"></p-paginator>
+                <p-paginator #clickPaginator [hidden]="!linkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'link',true)"></p-paginator>
             </div>
         </div>
     </p-dialog>
@@ -186,7 +187,7 @@
                 </ng-template>
             </p-table>
             <p-paginator #clickPaginator [hidden]="!addLinkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="addLinkTotal" [rowsPerPageOptions]="[10,20,30]"
-                (onPageChange)="linkPageChange($event,'add')"></p-paginator>
+                (onPageChange)="linkPageChange($event,'add',true)"></p-paginator>
         </div>
 
         <p-footer>

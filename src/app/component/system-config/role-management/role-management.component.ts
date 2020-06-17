@@ -127,7 +127,7 @@ export class RoleManagementComponent implements OnInit {
       if (element.uri === '/resource/search/-/*/*/*/*' && element.method == 'POST') {
         this.searchAPIDisplay = true;
       }
-      if (element.uri === '/role/api/-/*/*/*/*' && element.method == 'GET') {
+      if (element.uri === '/role/api/*/*/*/*' && element.method == 'GET') {
         this.selectAPIDisplay = true;
       }
 
@@ -215,10 +215,6 @@ export class RoleManagementComponent implements OnInit {
 
         }
 
-      } else if (value.meta.code === 1008) {
-        this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '您无此api权限' });
-      } else {
-        this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '获取失败' });
       }
     });
 
@@ -239,10 +235,11 @@ export class RoleManagementComponent implements OnInit {
   }
 
   /* 右侧关联表格页码切换 */
-  linkPageChange(event, type) {
+  linkPageChange(event, type, pageChange) {
     let page = event.page + 1;
     let rows = event.rows;
     let url;
+    if (!pageChange) return;//是否点击的分页按钮
     //url = this.addLinkUrl+'-/'+this.selectedRole.id;
     if (type == 'add') {
       url = this.addLinkUrl + '-/' + this.selectedRole.id;
@@ -626,6 +623,8 @@ export class RoleManagementComponent implements OnInit {
   /* 获取api数据 */
   getApiValue(type?) {
     let url;
+    this.linkTotal = 0;
+    this.addLinkTotal = 0;
     if(type){//已经添加的API
       if (this.selectTeamId == 0) {
         url = 'role/api/' + this.selectedRole.id + '/' + this.startPage + '/' + this.limit
@@ -644,7 +643,11 @@ export class RoleManagementComponent implements OnInit {
       if (value.meta.code === 6666) {
         let data = value.data.data.list;
         
-
+        if (type) {
+          this.linkTotal = value.data.data.total;
+        } else {
+          this.addLinkTotal = value.data.data.total;
+        }
         for (let i = 0; i < data.length; i++) {
           data[i].number = (this.startPage - 1) * this.limit + i + 1;
           if (data[i].status == 1) {
@@ -661,10 +664,8 @@ export class RoleManagementComponent implements OnInit {
         } 
         if(type){
           this.linkTableValue = data;
-          this.linkTotal = value.data.data.total;
         }else{
           this.addLinkValue = data;
-          this.addLinkTotal = value.data.data.total;
         }
         
       }

@@ -48,6 +48,7 @@ export class MenuComponent implements OnInit {
    let loginLog = false;
    let operationLog = false;
    let greenMining = false;
+   let allProjectName = false;//所有矿权项目名称
     this.models = [
       {
         label: '矿业权基本信息', icon: 'iconfont iconironstone',
@@ -158,6 +159,9 @@ export class MenuComponent implements OnInit {
         case '/mineral-green-mining/list/*/*':
           greenMining = true;
           continue;
+        case '/mineral-project/name/*':
+          allProjectName = true;
+          continue;
       }
     }
 
@@ -172,29 +176,31 @@ export class MenuComponent implements OnInit {
    /*  if(!policyFile && !policyReport){
       this.models.splice(0,1)
     } */
+    /* 探矿权权限 */
     if(!explorationFile){
       this.models[2].items.splice(0,1);
     }
-    if(!explorationInfo && this.models[2].items.length==2){
+    if ((!explorationInfo || !mineralOwner) && this.models[2].items.length==2 ){
       this.models[2].items.splice(1,1)
-    }else if(!explorationInfo){
+    } else if (!explorationInfo || !mineralOwner){
       this.models[2].items.splice(0,1)
     }
     /* if(!explorationInfo && !explorationFile){
       this.models.splice(1,1)
     } */
+    //采矿权权限
     if(!miningFile){
       this.models[3].items.splice(0,1)
     }
-    if(!miningInfo && this.models[3].items.length==2){
+    if ((!miningInfo || !mineralOwner) && this.models[3].items.length==2){
       this.models[3].items.splice(1,1)
-    }else if(!miningInfo){
+    } else if (!miningInfo || !mineralOwner){
       this.models[3].items.splice(0,1)
     }
    /*  if(!miningFile && !miningInfo){
       this.models.splice(2,1)
     } */
-    if(!mineralProject){
+    if (!mineralProject || !mineralOwner){
       this.models[0].items.splice(0,1)
     }
     if(!mineralOwner && this.models[0].items.length==2){
@@ -205,7 +211,7 @@ export class MenuComponent implements OnInit {
   /*   if(!mineralProject && !mineralOwner){
       this.models.splice(3,1)
     } */
-    if (!greenMining){
+    if (!greenMining || !allProjectName || !mineralOwner){
       this.models[5].items.splice(0,1)
     }
     if(!userManage){
