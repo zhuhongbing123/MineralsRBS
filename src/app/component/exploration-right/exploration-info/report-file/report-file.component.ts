@@ -137,7 +137,7 @@ export class ReportFileComponent implements OnInit {
     }else{
       this.reportClassifyTitle = [
         { field: 'reportName', header: '资料名称' },
-        { field: 'reportCategoryId', header: '资料分级' },
+        { field: 'reportCategoryId', header: '资料分类' },
         { field: 'reportDescription', header: '资料摘要' },
         { field: 'reportUploader', header: '上传用户' },
         { field: 'creationTime', header: '上传时间' }
