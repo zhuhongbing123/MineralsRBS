@@ -357,7 +357,7 @@ export class MiningDetailsComponent implements OnInit {
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '矿权人不能为空'});
       return;
     }
-    if(this.stageStartTime.getTime()>this.stageEndTime.getTime()){
+    if (this.stageStartTime && this.stageEndTime && this.stageStartTime.getTime()>this.stageEndTime.getTime()){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '开始时间不能晚于结束时间'});
       return;
     }
@@ -463,6 +463,9 @@ saveMiningProject(type){
       }
       this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
       this.miningDisplay = false;
+    } else {
+      this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+      return;
     }
   })
 }

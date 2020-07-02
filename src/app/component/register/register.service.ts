@@ -38,7 +38,7 @@ export class RegisterService {
     
         let body; 
         body= {
-          'uid': uid,
+          'uid': username,
           'username': username,
           'password': password,
           'methodName': 'register',
@@ -49,7 +49,7 @@ export class RegisterService {
         if(url=='user/password'){
           body = {
             "password": password,
-            "userId": uid,
+            "userId": username,
             "userKey": userKey
           }
         }

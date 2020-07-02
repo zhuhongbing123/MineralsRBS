@@ -94,7 +94,7 @@
                 <label class="control-label">项目定位区域</label>
                 <button type="button" [disabled] = "inputDisabled" pButton (click)="viewMap()" label="查看"></button>
               </div>  
-              <div class="form-group has-feedback" [hidden]="miningStartTime">
+              <div class="form-group has-feedback">
                   <label class="control-label">探矿权首立时间</label>
                   <div>
                       <p-calendar 
@@ -109,7 +109,7 @@
                       </p-calendar>
                   </div>    
               </div>
-              <div class="form-group has-feedback" [hidden]="miningStartTime">
+              <div class="form-group has-feedback">
                   <label class="control-label">探矿权范围</label>
                   <input 
                     type="text" 
@@ -120,7 +120,7 @@
                     maxlength = '200'
                   >
               </div>
-              <div class="form-group has-feedback" [hidden]="explorationStartTime">
+              <div class="form-group has-feedback">
                   <label class="control-label">采矿权首立时间</label>
                   <div>
                       <p-calendar 
@@ -134,7 +134,7 @@
                       ></p-calendar>
                   </div>   
               </div>
-              <div class="form-group has-feedback"  [hidden]="explorationStartTime">
+              <div class="form-group has-feedback" >
                   <label class="control-label">采矿权范围</label>
                   <input 
                     type="text" 

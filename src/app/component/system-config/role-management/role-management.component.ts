@@ -396,6 +396,9 @@ export class RoleManagementComponent implements OnInit {
           this.getRoleValue();
           this.roleOpreationDisplay = false;
           this.messageService.add({ key: 'tc', severity: 'success', summary: '信息', detail: '新增角色成功' });
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     } else {
@@ -411,6 +414,9 @@ export class RoleManagementComponent implements OnInit {
           this.messageService.add({ key: 'tc', severity: 'success', summary: '信息', detail: '修改角色成功' });
           this.getRoleValue();
           this.roleOpreationDisplay = false;
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }

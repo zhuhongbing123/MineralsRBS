@@ -181,6 +181,9 @@ export class MineralOwnerComponent implements OnInit {
           this.getMineralOwnerValue();
           this.ownerDisplay = false;
           this.filteredOwnerName = '';
+        }else{
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }else{
@@ -192,6 +195,9 @@ export class MineralOwnerComponent implements OnInit {
           this.getMineralOwnerValue();
           this.ownerDisplay = false;
           this.filteredOwnerName = '';
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }

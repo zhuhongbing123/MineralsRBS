@@ -196,14 +196,14 @@ export class UserManagementComponent implements OnInit {
     if(type=='add'){
       this.password = '';
       this.userName = '';
-      this.accountName = '';
+     // this.accountName = '';
       this.comfirmPassword = '';
       this.userDisplay = true;
       return;
     }
     if(type=='modify'){
       this.userName = value.userName;
-      this.accountName = value.uid;
+      //this.accountName = value.userName;
       this.modifyPasswordDisplay = true;
       return;
     }
@@ -334,10 +334,10 @@ export class UserManagementComponent implements OnInit {
       url = 'user/password';
       this.password = this.newPassword;
     }else{
-      if(!this.accountName){
-          this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '账户名称不能为空'});
-          return;
-      }
+      // if(!this.accountName){
+      //     this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '账户名称不能为空'});
+      //     return;
+      // }
       if(!this.userName){
         this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '用户名称不能为空'});
         return;

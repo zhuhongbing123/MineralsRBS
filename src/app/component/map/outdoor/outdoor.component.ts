@@ -556,6 +556,10 @@ export class OutdoorComponent implements OnInit {
             this.getMapLocationAreaAll();
             this.getMieralLocation();
             this.labelInfoDisplay = false;
+          this.messageService.add({ key: 'tc', severity: 'success', summary: '信息', detail: '修改成功' });
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }else{
@@ -575,6 +579,10 @@ export class OutdoorComponent implements OnInit {
             this.getMapLocationLabel();
             this.getMieralLocation();
             this.labelInfoDisplay = false;
+          this.messageService.add({ key: 'tc', severity: 'success', summary: '信息', detail: '添加成功' });
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }
@@ -612,6 +620,9 @@ export class OutdoorComponent implements OnInit {
             this.getMapLocationLabelAll();
             this.getMieralLocation();
             this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
         
       })
@@ -642,6 +653,9 @@ export class OutdoorComponent implements OnInit {
             this.getMapLocationLabelAll();
             this.getMieralLocation();
             this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
         
       })

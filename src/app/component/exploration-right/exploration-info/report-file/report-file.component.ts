@@ -172,37 +172,54 @@ export class ReportFileComponent implements OnInit {
         this.isClickSearch =true;
       } 
       //矿业权政策报告API资源
-      if(this.type =='policy'){
-        if(element.uri ==='/mineral-policy' && element.method =='POST'){
+      if(this.type =='policy'){//政策
+        if (element.uri ==='/mineral-project-report/policy/report/add'){
           this.addButton =true;
         }
-        if(element.uri ==='/mineral-policy' && element.method =='PUT'){
+        if (element.uri ==='/mineral-project-report/policy/report/edit'){
           this.modifyButton =true;
         }
-        if(element.uri ==='/mineral-policy/*' && element.method =='DELETE'){
+        if (element.uri ==='/mineral-project-report/policy/report/delete'){
           this.deleteButton =true;
         }
-        if(element.uri ==='/mineral-policy/file' && element.method =='POST'){
+        if (element.uri ==='/mineral-project-report/policy/report/list'){
           this.viewButton =true;
+        }
+      } else if (this.type == 'exploration'){
+        if (element.uri ==='/mineral-project-report/exporation/report/add'){
+          this.addButton =true;
+        }
+        if (element.uri ==='/mineral-project-report/exporation/report/edit'){
+          this.modifyButton =true;
+        }
+        if (element.uri ==='/mineral-project-report/exporation/report/delete'){
+          this.deleteButton =true;
+        }
+        if (element.uri ==='/mineral-project-report/exporation/report/list'){
+          this.viewButton =true;
+        }
+        if (element.uri === '/mineral-project-report/exporation/report/download') {
+          this.uploadDisplay = true;
         }
       }else{
-        if(element.uri ==='/mineral-project-report' && element.method =='POST'){
-          this.addButton =true;
+        if (element.uri === '/mineral-project-report/mining/report/add') {
+          this.addButton = true;
         }
-        if(element.uri ==='/mineral-project-report' && element.method =='PUT'){
-          this.modifyButton =true;
+        if (element.uri === '/mineral-project-report/mining/report/edit') {
+          this.modifyButton = true;
         }
-        if(element.uri ==='/mineral-project-report/*' && element.method =='DELETE'){
-          this.deleteButton =true;
+        if (element.uri === '/mineral-project-report/mining/report/delete') {
+          this.deleteButton = true;
         }
-        if(element.uri ==='/mineral-project-report/file' && element.method =='POST'){
-          this.viewButton =true;
+        if (element.uri === '/mineral-project-report/mining/report/list') {
+          this.viewButton = true;
+        }
+        if (element.uri === '/mineral-project-report/mining/report/download') {
+          this.uploadDisplay = true;
         }
       }
 
-      if (this.modifyButton && this.deleteButton){
-        this.uploadDisplay = true;
-      }
+      
       
       
     });
@@ -700,6 +717,9 @@ export class ReportFileComponent implements OnInit {
           }
           
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }else{
@@ -712,6 +732,9 @@ export class ReportFileComponent implements OnInit {
             this.getReportClassify();
           }
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }

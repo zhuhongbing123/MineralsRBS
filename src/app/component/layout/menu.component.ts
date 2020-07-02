@@ -33,22 +33,30 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
    // this.getMenuValue();
-   let api = JSON.parse(sessionStorage.getItem('api'));
-   let policyFile = false;//政策文件
-   let policyReport = false;//政策报告
-   let explorationFile = false;//探矿权文件
-   let explorationInfo = false;//探矿权报告
-   let miningFile = false;//采矿权文件
-   let miningInfo = false;//采矿权报告
-   let mineralProject = false;//矿业权名录
-   let mineralOwner = false;//矿权人名录
-   let roleManage = false;
-   let userManage = false;
-   let apiManage = false;
-   let loginLog = false;
-   let operationLog = false;
-   let greenMining = false;
-   let allProjectName = false;//所有矿权项目名称
+    let api = JSON.parse(sessionStorage.getItem('api'));
+    let mineralProject = false;//矿业权名录
+    let mineralOwner = false;//矿权人名录
+    let policyFile = false;//政策分类名录
+    let policyReport = false;//政策文件列表
+    let explorationFile = false;//探矿权资料类别目录
+    let explorationInfo = false;//探矿权信息
+    let miningFile = false;//采矿权资料类别目录
+    let miningInfo = false;//采矿权信息
+    
+    let powerMonitoring = false;//电量监控
+    let cameraMonitoring = false;//安全监控
+    let environmentMonitoring = false;//环境监控
+    let disasterMonitoring = false;//灾害监控
+    let miningStatistics = false;//绿色矿山建设统计
+    let outDoor = false;//矿权地图
+    let threeMap = false;//矿山地图
+    let roleManage = false;//角色管理
+    let userManage = false;//用户管理
+    let apiManage = false;//API授权管理
+    let loginLog = false;//登录日志
+    let operationLog = false;//操作日志
+    // let greenMining = false;
+    // let allProjectName = false;//所有矿权项目名称
     this.models = [
       {
         label: '矿业权基本信息', icon: 'iconfont iconironstone',
@@ -126,46 +134,78 @@ export class MenuComponent implements OnInit {
     for(let i in api){
      
       switch(api[i].uri){
-        case '/mineral-report-category/type/*/*/*':
-          policyFile = true;
-          explorationFile = true;
-          miningFile = true;
-          continue;
-        case '/mineral-policy/list/*/*':
-          policyReport = true;
-          continue; 
-        case '/mineral-project/type/*/*/*':
-          explorationInfo = true;
-          miningInfo = true;
-          continue; 
-        case '/mineral-project/list/*/*':
+        case '/mineral-project/menu/list':
           mineralProject = true;
-          continue;
-        case '/mineral-owner/list/*/*':
-          mineralOwner = true;
           continue; 
-        case '/user/list/*/*':
-          userManage = true;
-          continue;   
-        case '/resource/api/*/*/*':
-          apiManage = true;
-          continue;   
-        case '/log/accountLog/*/*':
-          loginLog = true;
-          continue;    
-        case '/log/operationLog/*/*':
-          operationLog = true;
-          continue;  
-        case '/mineral-green-mining/list/*/*':
-          greenMining = true;
+        case '/mineral-owner/menu/list':
+          mineralOwner = true;
           continue;
-        case '/mineral-project/name/*':
-          allProjectName = true;
+       
+        case '/mineral-policy-file/menu/list':
+          policyFile  = true;
+          continue; 
+        case '/mineral-policy-report/menu/list':
+          policyReport  = true;
+          continue;
+        case '/exploration-file/menu/list':
+          explorationFile  = true;
+          continue; 
+        case '/exploration-info/menu/list':
+          explorationInfo  = true;
+          continue;   
+        case '/mining-file/menu/list':
+          miningFile  = true;
+          continue;   
+        case '/mining-info/menu/list':
+          miningInfo = true;
+          continue;    
+        case '/power-monitoring/menu/list':
+          powerMonitoring  = true;
+          continue;  
+        case '/camera-monitoring/menu/list':
+          cameraMonitoring  = true;
+          continue;
+        case '/environment-monitoring/menu/list':
+          environmentMonitoring  = true;
+          continue;
+        case '/disaster-monitoring/menu/list':
+          disasterMonitoring  = true;
+          continue;
+        case '/green-mining-statistics/menu/list':
+          miningStatistics = true;
+          continue;
+        case '/out-door/menu/list':
+          outDoor = true;
+          continue;
+        case '/three-map/menu/list':
+          threeMap = true;
+          continue;
+        case '/role-manage/menu/list':
+          roleManage  = true;
+          continue;
+        case '/user-manage/menu/list':
+          userManage = true;
+          continue;
+        case '/api-manage/menu/list':
+          apiManage = true;
+          continue;
+        case '/login-log/menu/list':
+          loginLog = true;
+          continue;
+        case '/operation-log/menu/list':
+          operationLog = true;
           continue;
       }
     }
-
-    if(!policyFile){
+    if (!mineralProject) {
+      this.models[0].items.splice(0, 1)
+    }
+    if (!mineralOwner && this.models[0].items.length == 2) {
+      this.models[0].items.splice(1, 1)
+    } else if (!mineralOwner) {
+      this.models[0].items.splice(0, 1)
+    }
+    if (!policyFile){
       this.models[1].items.splice(0,1)
      }
     if(!policyReport && this.models[1].items.length==2){
@@ -173,65 +213,107 @@ export class MenuComponent implements OnInit {
     }else if(!policyReport){
       this.models[1].items.splice(0,1)
     }
-   /*  if(!policyFile && !policyReport){
-      this.models.splice(0,1)
-    } */
+ 
     /* 探矿权权限 */
     if(!explorationFile){
       this.models[2].items.splice(0,1);
     }
-    if ((!explorationInfo || !mineralOwner) && this.models[2].items.length==2 ){
+    if ((!explorationInfo) && this.models[2].items.length==2 ){
       this.models[2].items.splice(1,1)
-    } else if (!explorationInfo || !mineralOwner){
+    } else if (!explorationInfo){
       this.models[2].items.splice(0,1)
     }
-    /* if(!explorationInfo && !explorationFile){
-      this.models.splice(1,1)
-    } */
+
     //采矿权权限
     if(!miningFile){
       this.models[3].items.splice(0,1)
     }
-    if ((!miningInfo || !mineralOwner) && this.models[3].items.length==2){
+    if ((!miningInfo) && this.models[3].items.length==2){
       this.models[3].items.splice(1,1)
-    } else if (!miningInfo || !mineralOwner){
+    } else if (!miningInfo){
       this.models[3].items.splice(0,1)
     }
-   /*  if(!miningFile && !miningInfo){
-      this.models.splice(2,1)
-    } */
-    if (!mineralProject || !mineralOwner){
-      this.models[0].items.splice(0,1)
+    //电量监控权限
+    if (!powerMonitoring ) {
+      this.models[4].items.splice(0, 1)
     }
-    if(!mineralOwner && this.models[0].items.length==2){
-      this.models[0].items.splice(1,1)
-    }else if(!mineralOwner){
-      this.models[0].items.splice(0,1)
+
+    //安全监控
+    if (!cameraMonitoring && this.models[4].items.length == 4) {
+      this.models[4].items.splice(1, 1);
+    } else if (!cameraMonitoring){
+      this.models[4].items.splice(0, 1)
     }
-  /*   if(!mineralProject && !mineralOwner){
-      this.models.splice(3,1)
-    } */
-    if (!greenMining || !allProjectName || !mineralOwner){
-      this.models[5].items.splice(0,1)
+
+    //环境监控
+    if (!environmentMonitoring  && this.models[4].items.length == 4) {
+      this.models[4].items.splice(2, 1);
+    } else if (!environmentMonitoring && this.models[4].items.length == 3) {
+      this.models[4].items.splice(1, 1)
+    } else if (!environmentMonitoring && this.models[4].items.length == 2) {
+      this.models[4].items.splice(0, 1)
     }
-    if(!userManage){
-      this.models[7].items.splice(1,1)
+
+    //灾害监控
+    if (!disasterMonitoring  && this.models[4].items.length == 4) {
+      this.models[4].items.splice(3, 1);
+    } else if (!disasterMonitoring  && this.models[4].items.length == 3) {
+      this.models[4].items.splice(2, 1)
+    } else if (!disasterMonitoring  && this.models[4].items.length == 2) {
+      this.models[4].items.splice(1, 1)
+    } else if (!disasterMonitoring && this.models[4].items.length == 1) {
+      this.models[4].items.splice(0, 1)
     }
+
+    //绿色矿山建设统计
+    if (!miningStatistics ) {
+      this.models[5].items.splice(0, 1)
+    }
+
+    //矿权地图
+    if (!outDoor) {
+      this.models[6].items.splice(0, 1)
+    }
+    //矿山地图
+
+    if (!threeMap  && this.models[6].items.length == 2) {
+      this.models[6].items.splice(1, 1)
+    } else if (!threeMap ) {
+      this.models[6].items.splice(0, 1)
+    }
+ 
+    //角色管理
+    if (!userManage) {
+      this.models[7].items.splice(0, 1)
+    }
+
+    //用户管理
+
+    if (!userManage && this.models[7].items.length == 5) {
+      this.models[7].items.splice(1, 1)
+    } else if (!userManage) {
+      this.models[7].items.splice(0, 1)
+    }
+
+    //API授权管理
     if(!apiManage && this.models[7].items.length==5){
       this.models[7].items.splice(2,1)
-    }else if(!apiManage){
+    } else if (!apiManage && this.models[7].items.length == 4){
       this.models[7].items.splice(1,1)
+    } else if (!apiManage && this.models[7].items.length == 3) {
+      this.models[7].items.splice(0, 1)
     }
-    if(!loginLog  || sessionStorage.getItem('roleCode')!=="role_admin"){
-      if(this.models[7].items.length==5){
-        this.models[7].items.splice(3,1)
-      }else if(this.models[7].items.length==4){
-        this.models[7].items.splice(2,1)
-      }else{
-        this.models[7].items.splice(1,1)
-      }
-      
-    }
+    //登录日志
+    if (!loginLog  && this.models[7].items.length==5){
+      this.models[7].items.splice(3,1)
+    } else if (!loginLog && this.models[7].items.length==4){
+      this.models[7].items.splice(2,1)
+    } else if (!loginLog && this.models[7].items.length == 3) {
+      this.models[7].items.splice(1, 1)
+    } else if (!loginLog && this.models[7].items.length == 2) {
+      this.models[7].items.splice(0, 1)
+    } 
+    //操作日志  
     if(!operationLog){
       if(this.models[7].items.length==5 ){
         this.models[7].items.splice(4,1)
@@ -239,8 +321,10 @@ export class MenuComponent implements OnInit {
         this.models[7].items.splice(3,1)
       }else if(this.models[7].items.length==3){
         this.models[7].items.splice(2,1)
-      }else{
+      } else if (this.models[7].items.length == 2){
         this.models[7].items.splice(1,1)
+      } else if (this.models[7].items.length == 1) {
+        this.models[7].items.splice(0,1)
       }
       
     }

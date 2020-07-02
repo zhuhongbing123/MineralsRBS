@@ -307,10 +307,15 @@ export class ApiManageComponent implements OnInit {
         type: this.apiEditor.type,
         uri: this.apiEditor.uri
       }).then(value=>{
-        this.getApiValue();
-        this.getApiClassify();
-        this.apiEditorDisplay = false;
-        this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
+        if (value.meta.code === 6666) {
+          this.getApiValue();
+          this.getApiClassify();
+          this.apiEditorDisplay = false;
+          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
+        }
       })
     }else{
       this.httpUtil.put('resource/api',{
@@ -326,10 +331,15 @@ export class ApiManageComponent implements OnInit {
         updateTime: this.selectApiValue.updateTime,
         uri: this.apiEditor.uri
       }).then(value=>{
-        this.getApiValue();
-        this.getApiClassify();
-        this.apiEditorDisplay = false;
-        this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
+        if (value.meta.code === 6666) {
+          this.getApiValue();
+          this.getApiClassify();
+          this.apiEditorDisplay = false;
+          this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
+        }
       })
     }
     

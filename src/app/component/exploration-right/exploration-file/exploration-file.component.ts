@@ -158,6 +158,9 @@ export class ExplorationFileComponent implements OnInit {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
           this.getReportCategory();
           this.setReporteDisplay = false;
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }else{
@@ -171,6 +174,9 @@ export class ExplorationFileComponent implements OnInit {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
           this.getReportCategory();
           this.setReporteDisplay = false;
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }

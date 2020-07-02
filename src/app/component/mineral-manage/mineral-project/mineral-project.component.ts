@@ -67,10 +67,7 @@ export class MineralProjectComponent implements OnInit {
   }
   ngAfterViewInit(){
     this.addAreaCommon.unsubscribe();
-    /* this.OlFloorMap = new Openlayer(this.map2dService);
-    this.OlFloorMap.mapDivId = 'projectMapss';
-    this.OlFloorMap.fullMap = false;
-    this.OlFloorMap.initMap(); */
+
     let that = this;
     window.onresize = function(){
       if(document.getElementById('main_content')){
@@ -281,6 +278,9 @@ export class MineralProjectComponent implements OnInit {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改成功'});
           this.mineralProjectDisplay = false;
           this.getExplorationInfo();
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }else{
@@ -290,6 +290,9 @@ export class MineralProjectComponent implements OnInit {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
           this.mineralProjectDisplay = false;
           this.getExplorationInfo();
+        } else {
+          this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+          return;
         }
       })
     }

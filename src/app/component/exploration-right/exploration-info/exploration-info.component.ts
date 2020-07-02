@@ -339,8 +339,8 @@ export class ExplorationInfoComponent implements OnInit {
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
           this.explorationtDisplay = false;
           this.getExplorationInfo();
-      } else if (value.meta.code === 1111 && value.meta.msg === '数据冲突操作失败') {
-          this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '该项目名称已存在，请重新输入' });
+      } else if (value.meta.code === 1111) {
+          this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: value.meta.msg });
           return;
       }
       })

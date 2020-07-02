@@ -326,6 +326,9 @@ export class MiningInfoComponent implements OnInit {
         this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加成功'});
         this.miningInfoDisplay = false;
         this.getMiningInfo();
+      } else {
+        this.messageService.add({ key: 'tc', severity: 'error', summary: '信息', detail: value.meta.msg });
+        return;
       }
     })
   }
