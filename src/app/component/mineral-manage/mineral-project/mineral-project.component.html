@@ -16,41 +16,52 @@
 </div>
 <div style="clear: both;" class="p-table">
   <p-table 
-    [columns]="mineralProjectTitle" 
+    [columns]="selectedColumns" 
     [value]="mineralProjectValue"  
     [loading]="loading"
     columnResizeMode="expand"
     [style]="{'min-width':'1200px'}"
     [resizableColumns]="true" 
-    [scrollable]="true" 
-    scrollHeight="400px" 
+    [scrollable]="true"
   >
     <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
             <col *ngFor="let col of columns" [style.width]="col.width">
         </colgroup>
     </ng-template>
+    <ng-template pTemplate="caption">
+        <!-- 菜单操作 -->
+        <div style="text-align:left">
+            <p-multiSelect [options]="mineralProjectTitle" [(ngModel)]="selectedColumns" optionLabel="header" selectedItemsLabel="共{0}列标题"
+                [style]="{minWidth: '200px'}" defaultLabel="请选择标题列"></p-multiSelect>
+        </div>
+    </ng-template>
     <ng-template pTemplate="header" let-columns>
         <tr>
-            <th style="width:8%" pResizableColumn>序号</th>
-            <th *ngFor="let col of columns" pResizableColumn>
-                {{col.header}}
+            <!-- <th style="width:8%" pResizableColumn>序号</th> -->
+            <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field"  [class]="col.field=='operation'?'operation-title':''">
+                 {{col.header}}
+                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
             </th>
-            <th style="width:20%" pResizableColumn>操作</th>
+            <!-- <th style="width:20%" pResizableColumn>操作</th> -->
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr>
-            <td style="width:8%">{{rowData.number}}</td>
-            <td *ngFor="let col of columns">
+            <!-- <td style="width:8%">{{rowData.number}}</td> -->
+            <td *ngFor="let col of columns"  [class]="col.field=='operation'?'operation-title':'table-truncation-text'">
                 <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-               
+                <div *ngIf="col.field == 'operation'">
+                    <button pButton type="button" *ngIf="detailsDisplay" class="operation-icon" (click)="setMineral('details',rowData)" label="详情"></button>
+                    <button pButton type="button" *ngIf="modifDisplay" class="operation-icon" (click)="setMineral('modify',rowData)" label="修改"></button>
+                    <button pButton type="button" *ngIf="deleteDisplay" class="operation-icon" (click)="setMineral('delete',rowData)" label="删除"></button>
+                </div>
             </td>
-            <td style="width:20%">
+            <!-- <td style="width:20%">
                 <button pButton type="button" *ngIf="detailsDisplay" class="operation-icon" (click)="setMineral('details',rowData)" label="详情"></button>
                 <button pButton type="button" *ngIf = "modifDisplay" class="operation-icon"  (click)="setMineral('modify',rowData)" label="修改"></button>
                 <button pButton type="button" *ngIf = "deleteDisplay" class="operation-icon"  (click)="setMineral('delete',rowData)" label="删除"></button>
-            </td>
+            </td> -->
         </tr>
     </ng-template>
     <ng-template pTemplate="summary">
@@ -59,7 +70,7 @@
             </div>
     </ng-template>
   </p-table>
-  <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+  <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event)"></p-paginator>
 
 </div>
 
@@ -76,12 +87,13 @@
                     name="projectName"  
                     class="form-control"
                     maxlength = '100'
+                    [disabled] = 'inputDisabled'
                   >
               </div>
               <div class="form-group has-feedback">
                 <label class="control-label">矿权人</label>
                 <div class="search">
-                    <p-dropdown [options]="mineralOwner" [style]="{'width':'700px'}" name="ownerName" [(ngModel)]="mineralProject.ownerId" placeholder="请选择一个矿权人" filter="true">
+                    <p-dropdown [disabled] = "inputDisabled" [options]="mineralOwner" [style]="{'width':'700px'}" name="ownerName" [(ngModel)]="mineralProject.ownerId" placeholder="请选择一个矿权人" filter="true">
                         <ng-template let-car pTemplate="item">
                             <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
                                 <div style="font-size:14px;float:left;margin-top:4px">{{car.label}}</div>
@@ -105,6 +117,7 @@
                         [yearNavigator]="true" 
                         yearRange="1970:2030"
                         dateFormat="yy.mm.dd"
+                         [disabled] = 'inputDisabled'
                       >
                       </p-calendar>
                   </div>    
@@ -118,6 +131,7 @@
                     class="form-control" 
                     [(ngModel)]="mineralProject.explorationArea"
                     maxlength = '200'
+                    [disabled] = 'inputDisabled'
                   >
               </div>
               <div class="form-group has-feedback">
@@ -131,6 +145,7 @@
                         [monthNavigator]="true" 
                         [yearNavigator]="true" 
                         yearRange="1970:2030"
+                        [disabled] = 'inputDisabled'
                       ></p-calendar>
                   </div>   
               </div>
@@ -144,6 +159,7 @@
                     [(ngModel)]="mineralProject.miningArea" 
                     [ngModelOptions]="{standalone: true}"
                     maxlength = '200'
+                    [disabled] = 'inputDisabled'
                   >
               </div>
               <div class="form-group has-feedback" >
@@ -157,6 +173,7 @@
                         [(ngModel)]="mineralProject.investigationFinalStage" 
                         name="investigationFinalStage"
                         maxlength = '500'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>    
               </div>
@@ -170,7 +187,8 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.areaGeologicBackground" 
                         name="areaGeologicBackground"
-                        maxlength = '500'
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>
               </div>
@@ -184,7 +202,8 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.geophysicalGeochemical" 
                         name="geophysicalGeochemical"
-                        maxlength = '500'
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>    
               </div>
@@ -198,7 +217,8 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.mineralGeologicalStratum" 
                         name="mineralGeologicalStratum"
-                        maxlength = '500'
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>    
               </div>
@@ -212,7 +232,8 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.mineralGeologicalStructure" 
                         name="mineralGeologicalStructure"
-                        maxlength = '500'
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>    
               </div>
@@ -226,8 +247,9 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.mineralGeologicalMagmatite" 
                         name="mineralGeologicalMagmatite"
-                        maxlength = '500'
-                      ></textarea>
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
+                      ></textarea>  
                   </div>    
               </div>
               <div class="form-group has-feedback">
@@ -239,7 +261,8 @@
                     class="form-control" 
                     [(ngModel)]="mineralProject.mineralBeltOwner" 
                     name="mineralBeltOwner"
-                    maxlength = '500'
+                    maxlength = '1200'
+                    [disabled] = 'inputDisabled'
                   >
               </div>
               <div class="form-group has-feedback">
@@ -252,7 +275,8 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.mineralBeltGeologic" 
                         name="mineralBeltGeologic"
-                        maxlength = '500'
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>    
               </div>
@@ -266,7 +290,8 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.rockAlteration" 
                         name="rockAlteration"
-                        maxlength = '500'
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>    
               </div>
@@ -280,7 +305,8 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.mineralCharacteristics" 
                         name="mineralCharacteristics"
-                        maxlength = '500'
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>    
               </div>
@@ -294,7 +320,8 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.majorAchievement" 
                         name="majorAchievement"
-                        maxlength = '500'
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>    
               </div>
@@ -308,7 +335,8 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.preliminaryUnderstanding" 
                         name="preliminaryUnderstanding"
-                        maxlength = '500'
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>    
               </div>
@@ -322,10 +350,26 @@
                         pInputTextarea 
                         [(ngModel)]="mineralProject.remarks" 
                         name="remarks"
-                        maxlength = '500'
+                        maxlength = '1200'
+                        [disabled] = 'inputDisabled'
                       ></textarea>
                   </div>    
               </div>
+            <div class="form-group has-feedback">
+                <div>
+                    <label class="control-label">登记备案的储量/资源量</label>
+                    <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.registeredResources" name="registeredResources"
+                        maxlength='50'></textarea>
+                </div>
+            </div>
+            
+            <div class="form-group has-feedback">
+                <label class="control-label">矿山资源前景分析</label>
+                <div>
+                    <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="mineralProject.mineralFuture" name="mineralFuture"
+                        maxlength='1200'></textarea>
+                </div>
+            </div>
           </form>
           <div id="projectMap" class="map"></div>
           <p-footer>

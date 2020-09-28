@@ -9,6 +9,7 @@
   <div class="right-operation"  [hidden]="!mapDrawDisplay">
     <div>
         <span>区域设定</span>
+        <button style="margin-left:20px" pButton type="button" label="显示所有区域" (click)="showArea('area')"></button>
         <button class="right-operation-close" pButton type="button" icon="pi pi-times" label="关闭" (click)="mapDrawDisplay = false"></button>
     </div>
     <div [hidden]="!addAreaDisplay" class="search">
@@ -25,7 +26,6 @@
             [columns]="areaLocationTitle" 
             [value]="areaLocationValue" 
             [scrollable]="true" 
-            scrollHeight="300px"  
             [resizableColumns]="true"
         >
             <ng-template pTemplate="header" let-columns>
@@ -50,7 +50,7 @@
                 </tr>
             </ng-template>
         </p-table>
-        <p-paginator [hidden]="!areaTotal" [rows]="LIMIT_LOGIN" [totalRecords]="areaTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'area')"></p-paginator>
+        <p-paginator [hidden]="!areaTotal" [rows]="LIMIT_LOGIN" [totalRecords]="areaTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event,'area')"></p-paginator>
     </div>
   </div>
   
@@ -58,6 +58,7 @@
     <div class="right-operation" [hidden]="!locationIconDisplay">
         <div>
             <span>地点标注</span>
+            <button style="margin-left:20px" pButton type="button" label="显示所有标注" (click)="showArea('location')"></button>
             <button class="right-operation-close" pButton type="button" icon="pi pi-times" label="关闭" (click)="locationIconDisplay = false"></button>
         </div>
         <button pButton  type="button" label="新增" (click)="openSignPoint()" [hidden]="!addPoiDisplay"></button>
@@ -86,13 +87,14 @@
                         </tr>
                     </ng-template>
                 </p-table>
-                <p-paginator [hidden]="!labelTotal" [rows]="LIMIT_LOGIN" [totalRecords]="labelTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'label')"></p-paginator>
+                <p-paginator [hidden]="!labelTotal" [rows]="LIMIT_LOGIN" [totalRecords]="labelTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event,'label')"></p-paginator>
         </div>
     </div>
        <!-- 项目列表 -->
     <div class="right-operation" [hidden]="!locationMineralDisplay">
             <div>
                 <span>项目列表</span>
+                <button style="margin-left:20px" pButton type="button"  label="显示所有项目区域" (click)="showArea('project')"></button>
                 <button class="right-operation-close" pButton type="button" icon="pi pi-times" label="关闭" (click)="locationMineralDisplay = false"></button>
 
             </div>
@@ -127,7 +129,7 @@
                             </tr>
                         </ng-template>
                     </p-table>
-                    <p-paginator [hidden]="!mineralTotal" [rows]="LIMIT_LOGIN" [totalRecords]="mineralTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'mineral')"></p-paginator>
+                    <p-paginator [hidden]="!mineralTotal" [rows]="LIMIT_LOGIN" [totalRecords]="mineralTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event,'mineral')"></p-paginator>
             </div>
             
     </div>

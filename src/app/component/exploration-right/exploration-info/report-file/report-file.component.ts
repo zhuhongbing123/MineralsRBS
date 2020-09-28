@@ -80,12 +80,14 @@ export class ReportFileComponent implements OnInit {
   uploadedFiles = [];//上传文件
   fileUrl = sessionStorage.getItem('IP')+'mineral-policy/fileUpload';
   fileDisplay = false;//预览文件是否存在
+  selectedColumns: any[];//选择的菜单列
 
   fileClassify=[{
     label:'全部',
     value:0
   }];
   selectClassifyID = 0;//已选择分类ID
+  excelReport = false;//是否是Excel报告
 
   constructor(private explorationInfoService:ExplorationInfoService,
               private httpUtil: HttpUtil,
@@ -143,7 +145,7 @@ export class ReportFileComponent implements OnInit {
         { field: 'creationTime', header: '上传时间' }
       ];
     }
-    
+    this.selectedColumns = this.reportClassifyTitle;
     this.explorationItems = [
       {label: '项目详情', icon: 'fa fa-fw fa-bar-chart'},
       {label: '勘查阶段详情', icon: 'fa fa-fw fa-bar-chart'},
@@ -510,10 +512,11 @@ export class ReportFileComponent implements OnInit {
     }
     /* 查看报告文件 */
     if(type==='viewReport'){
-
+      
       //政策报告文件
       if(this.type=='policy'){
         this.previewFile(value);
+        
         return;
       }
       /* 获取文件 */
@@ -767,6 +770,7 @@ export class ReportFileComponent implements OnInit {
             var workbook = XLSX.read(data, {type: 'array'});
             that.outputWorkbook(workbook)
         }else{
+          that.excelReport = false;
           that.fileDisplay = true;
         }
     };
@@ -916,7 +920,7 @@ export class ReportFileComponent implements OnInit {
     if(!type){
       this.viewFileDisplay = true;
     }
-    
+    this.excelReport = false;
     switch(this.fileType){
       case 'doc':
       case 'docx':
@@ -951,6 +955,7 @@ export class ReportFileComponent implements OnInit {
         
         break;
       case 'png':
+      case 'PNG':
         this.imgUrl = sessionStorage.getItem('fileIP') +filepath;
         if (type) {
           this.uploadFile(this.imgUrl);
@@ -958,6 +963,7 @@ export class ReportFileComponent implements OnInit {
         }
         break;
       case 'jpg':
+      case 'JPG':
 
         this.imgUrl = sessionStorage.getItem('fileIP') +filepath;
         if (type) {
@@ -974,6 +980,7 @@ export class ReportFileComponent implements OnInit {
         break;  
       case 'xlsx':
         document.getElementById('result').innerHTML ='';
+        this.excelReport = true;
         if (type) {
           this.uploadFile(url)
         } else {
@@ -1327,6 +1334,20 @@ export class ReportFileComponent implements OnInit {
         evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
         a.dispatchEvent(evObj);
    
+    
+  }
+  //返回报告列表
+  backReport(){
+    
+    this.viewFileDisplay = false;
+    if (this.excelReport){
+      document.getElementsByClassName('ui-table-scrollable-header')[0]['style'].position = 'relative';
+      document.getElementsByClassName('ui-table-scrollable-header')[0]['style'].bottom = '-22px';
+      document.getElementsByClassName('ui-table-summary')[0]['style'].position = 'relative';
+      document.getElementsByClassName('ui-table-summary')[0]['style'].top = '-22px';
+      document.getElementsByClassName('ui-paginator')[0]['style'].position = 'relative';
+      document.getElementsByClassName('ui-paginator')[0]['style'].top = '-22px';
+    }
     
   }
 } 

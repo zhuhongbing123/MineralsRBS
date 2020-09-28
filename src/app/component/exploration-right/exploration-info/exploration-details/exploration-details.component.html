@@ -84,10 +84,9 @@
         <button style="float: right;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回"></button>
         <div style="clear:both">
             <p-table 
-            [columns]="explorationDetailTitle" 
+            [columns]="selectedColumns" 
             [value]="explorationDetailValue"
-            [scrollable]="true" 
-            scrollHeight="400px" 
+            [scrollable]="true"
             [resizableColumns]="true"  
             columnResizeMode="expand"
             [style]="{'min-width':'1200px'}"
@@ -97,27 +96,31 @@
                     <col *ngFor="let col of columns" [style.width]="col.width">
                 </colgroup>
             </ng-template>
+            <ng-template pTemplate="caption">
+                <!-- 菜单操作 -->
+                <div style="text-align:left">
+                    <p-multiSelect [options]="explorationDetailTitle" [(ngModel)]="selectedColumns" optionLabel="header" selectedItemsLabel="共{0}列标题"
+                        [style]="{minWidth: '200px'}" defaultLabel="请选择标题列"></p-multiSelect>
+                </div>
+            </ng-template>
             <ng-template pTemplate="header" let-columns>
                 <tr>
-                    <th style="width:8%" pResizableColumn>序号</th>
-                    <th *ngFor="let col of columns" pResizableColumn>
+                    <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field" [class]="col.field=='operation'?'operation-title':''">
                         {{col.header}}
-                    </th>
-                    <th style="width:15%" *ngIf="!modifyStageButton && !deleteStageButton || buttonType" pResizableColumn>
-                        操作
+                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns">
                 <tr>
-                    <td style="width:8%">{{rowData.number}}</td>
-                    <td *ngFor="let col of columns">
-                        <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        
-                    </td>
-                    <td  style="width:15%" *ngIf="!modifyStageButton && !deleteStageButton || buttonType">
-                        <button pButton type="button" *ngIf = " modifyStageButton && buttonType" class="operation-icon"  (click)="setExplorationt('modifyStage',rowData)" label="修改"></button>
-                        <button pButton type="button" *ngIf = " deleteStageButton && buttonType" class="operation-icon"  (click)="setExplorationt('deleteStage',rowData)" label="删除"></button>
+                    <td *ngFor="let col of columns" [class]="col.field=='operation'?'operation-title':'table-truncation-text'">
+                        <span *ngIf="col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                        <div *ngIf="col.field == 'operation'">
+                            <button pButton type="button" *ngIf=" modifyStageButton && buttonType" class="operation-icon" (click)="setExplorationt('modifyStage',rowData)"
+                                label="修改"></button>
+                            <button pButton type="button" *ngIf=" deleteStageButton && buttonType" class="operation-icon" (click)="setExplorationt('deleteStage',rowData)"
+                                label="删除"></button>
+                        </div>
                     </td>
                 </tr>
             </ng-template>
@@ -127,7 +130,7 @@
                     </div>
             </ng-template>
             </p-table>
-            <p-paginator [hidden]="!detailTotal" [rows]="LIMIT_LOGIN" [totalRecords]="detailTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+            <p-paginator [hidden]="!detailTotal" [rows]="LIMIT_LOGIN" [totalRecords]="detailTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event)"></p-paginator>
         </div>
     </div>
 
@@ -172,9 +175,16 @@
                            ></p-calendar>
                       </div>    
                   </div>
-                  <div class="form-group has-feedback" [hidden]="modifyExploration">
+                  <div class="form-group has-feedback">
                       <label class="control-label">探矿权范围</label>
-                      <input type="text" style="width:700px !important"  maxlength = '200' name="explorationArea" class="form-control" [(ngModel)]="explorationProject.explorationArea">
+                      <input 
+                        type="text" 
+                        style="width:700px !important"  
+                        maxlength = '200' 
+                        name="projectArea" 
+                        class="form-control" 
+                        [(ngModel)]="explorationProject.explorationArea"
+                      >
                   </div>
                   <div class="form-group has-feedback" [hidden]="modifyExploration">
                       <label class="control-label">采矿权首立时间</label>
@@ -218,7 +228,7 @@
                             [(ngModel)]="explorationProject.areaGeologicBackground" 
                             name="areaGeologicBackground"
                             class="text-style"
-                            maxlength = '500'
+                            maxlength = '1200'
                           ></textarea>
                       </div>
                   </div>
@@ -232,7 +242,7 @@
                             [(ngModel)]="explorationProject.geophysicalGeochemical" 
                             name="geophysicalGeochemical"
                             class="text-style"
-                            maxlength = '500'
+                            maxlength = '1200'
                           ></textarea>
                       </div>    
                   </div>
@@ -242,7 +252,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
-                            maxlength = '500'
+                            maxlength = '1200'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.mineralGeologicalStratum" 
                             name="mineralGeologicalStratum"
@@ -256,7 +266,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
-                            maxlength = '500'
+                            maxlength = '1200'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.mineralGeologicalStructure" 
                             name="mineralGeologicalStructure"
@@ -270,7 +280,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
-                            maxlength = '500'
+                            maxlength = '1200'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.mineralGeologicalMagmatite" 
                             name="mineralGeologicalMagmatite"
@@ -288,7 +298,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
-                            maxlength = '500'
+                            maxlength = '1200'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.mineralBeltGeologic" 
                             name="mineralBeltGeologic"
@@ -302,7 +312,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
-                            maxlength = '500'
+                            maxlength = '1200'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.rockAlteration" 
                             name="rockAlteration"
@@ -316,7 +326,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
-                            maxlength = '500'
+                            maxlength = '1200'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.mineralCharacteristics" 
                             name="mineralCharacteristics"
@@ -330,7 +340,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
-                            maxlength = '500'
+                            maxlength = '1200'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.majorAchievement" 
                             name="majorAchievement"
@@ -344,7 +354,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
-                            maxlength = '500'
+                            maxlength = '1200'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.preliminaryUnderstanding" 
                             name="preliminaryUnderstanding"
@@ -358,7 +368,7 @@
                           <textarea 
                             rows="5" 
                             cols="30" 
-                            maxlength = '500'
+                            maxlength = '1200'
                             pInputTextarea 
                             [(ngModel)]="explorationProject.remarks" 
                             name="remarks"
@@ -447,7 +457,7 @@
                       <textarea 
                         rows="5" 
                         cols="30" 
-                        maxlength = '500'
+                        maxlength = '200'
                         pInputTextarea 
                         [(ngModel)]="explorationStage.investigationOrganization" 
                         name="investigationOrganization"
@@ -458,7 +468,7 @@
               <div class="form-group has-feedback">
                   <label class="control-label">类别</label>
                   <div>
-                      <input type="text"  maxlength = '200' style="width:700px !important" name="investigationCategory" class="form-control" [(ngModel)]="explorationStage.investigationCategory">
+                      <input type="text"  maxlength = '100' style="width:700px !important" name="investigationCategory" class="form-control" [(ngModel)]="explorationStage.investigationCategory">
                   </div>    
               </div>
               <div class="form-group has-feedback">
@@ -479,13 +489,13 @@
               <div class="form-group has-feedback">
                   <label class="control-label">勘查矿种</label>
                   <div>
-                      <input type="text"  maxlength = '200' style="width:700px !important" name="investigationMineralType" class="form-control" [(ngModel)]="explorationStage.investigationMineralType">
+                      <input type="text"  maxlength = '20' style="width:700px !important" name="investigationMineralType" class="form-control" [(ngModel)]="explorationStage.investigationMineralType">
                   </div>    
               </div>
               <div class="form-group has-feedback">
                   <label class="control-label">勘查阶段</label>
                   <div>
-                      <input type="text"  maxlength = '200' style="width:700px !important" name="investigationStage" class="form-control" [(ngModel)]="explorationStage.investigationStage">
+                      <input type="text"  maxlength = '1200' style="width:700px !important" name="investigationStage" class="form-control" [(ngModel)]="explorationStage.investigationStage">
                   </div>    
               </div>
               <div class="form-group has-feedback">
@@ -494,7 +504,7 @@
                     <textarea 
                         rows="5" 
                         cols="30" 
-                        maxlength='1000' 
+                        maxlength='1200' 
                         pInputTextarea 
                         [(ngModel)]="explorationStage.investigationWorkload" 
                         name="investigationWorkload"

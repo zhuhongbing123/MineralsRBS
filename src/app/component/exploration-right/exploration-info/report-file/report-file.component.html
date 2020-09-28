@@ -1,8 +1,8 @@
 
   <!--文件预览页面  -->       
-  <p-sidebar [(visible)]="viewFileDisplay" [fullScreen]="true" [baseZIndex]="10000">
+  <p-sidebar [(visible)]="viewFileDisplay" [fullScreen]="true" [baseZIndex]="10000" [showCloseIcon]="false">
     <h3 style="font-weight:normal;width: 50%;float: left;">{{selectedFile.label}}</h3>
-    <button pButton type="button" style="float:right;top:20px;z-index: 999;" (click)="viewFileDisplay = false"  label="返回" ></button>
+    <button pButton type="button" style="float:right;top:20px;z-index: 999;" (click)="backReport()"  label="返回" ></button>
     <div [hidden]="fileDisplay">
         <div id="example-pdf" class="example-pdf" [hidden]="fileType!=='pdf'&&fileType!=='doc'&&fileType!=='pptx'&&fileType!=='docx'">
 
@@ -72,10 +72,10 @@
         </div>
         <div style="clear:both;margin-top: 10px;">
             <p-table 
-                [columns]="reportClassifyTitle" 
+                [columns]="selectedColumns" 
                 [value]="reportClassifyValue"   
                 [scrollable]="true" 
-                scrollHeight="400px" 
+               
                 [resizableColumns]="true"  
                 columnResizeMode="expand"
                 [style]="{'min-width':'1200px'}"
@@ -85,28 +85,27 @@
                         <col *ngFor="let col of columns" [style.width]="col.width">
                     </colgroup>
                 </ng-template>
+                <ng-template pTemplate="caption">
+                    <!-- 菜单操作 -->
+                    <div style="text-align:left">
+                        <p-multiSelect [options]="reportClassifyTitle" [(ngModel)]="selectedColumns" optionLabel="header" selectedItemsLabel="共{0}列标题"
+                            [style]="{minWidth: '200px'}" defaultLabel="请选择标题列"></p-multiSelect>
+                    </div>
+                </ng-template>
                 <ng-template pTemplate="header" let-columns>
                     <tr>
-                        <th style="width:8%" pResizableColumn>序号</th>
-                        <!-- 
-                        <th style="width:8%">报告分类名称</th>
-                        <th>报告日期</th>
-                        <th>报告文件路径</th>
-                        <th>文件详情描述</th>
-                        <th>文件上传用户</th>
-                        <th>报告上传日期</th>
-                        <th>报告更新日期</th>
-                        <th>操作</th> -->
-                        <th *ngFor="let col of columns" pResizableColumn>
+                        <th style="width:8%">序号</th>
+                        <th *ngFor="let col of columns"  [pSortableColumn]="col.field">
                             {{col.header}}
+                            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                         </th>
-                        <th style="width:270px" pResizableColumn *ngIf="buttonType">操作</th>
+                        <th style="width:270px" *ngIf="buttonType">操作</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-rowData let-columns="columns">
                     <tr>
                         <td style="width:8%" class="ui-resizable-column">{{rowData.number}}</td>
-                        <td *ngFor="let col of columns" class="ui-resizable-column">
+                        <td *ngFor="let col of columns" class="ui-resizable-column" class="table-truncation-text">
                             <span *ngIf = "col.field !== 'operation'"  pTooltip=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
 
                         </td>
@@ -123,7 +122,7 @@
                         </div>
                 </ng-template>
             </p-table>
-            <p-paginator #clickPaginator [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+            <p-paginator #clickPaginator [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event)"></p-paginator>
         </div>
     </div>
    

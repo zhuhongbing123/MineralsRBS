@@ -18,7 +18,7 @@ import { ProjectMapComponent } from 'src/app/component/exploration-right/explora
 import { DynamicDialogModule } from 'primeng/components/dynamicdialog/dynamicdialog';
 import { ElModule } from 'element-angular';
 import { Map2dService } from '../../common/map/map2-d/map2-d.service';
-
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @NgModule({
   imports: [
@@ -44,7 +44,8 @@ import { Map2dService } from '../../common/map/map2-d/map2-d.service';
     ColorPickerModule,
     SpinnerModule,
     ElModule.forRoot(),
-    TooltipModule
+    TooltipModule,
+    MultiSelectModule
   ],
   providers: [CarService,ExplorationInfoService,DialogService,Map2dService],
   declarations: [

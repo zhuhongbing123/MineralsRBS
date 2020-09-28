@@ -3,7 +3,7 @@
   <button pButton  type="button" label="新增" [hidden]="!addButton" (click)="setStatistics('add','')"></button>
 </div>
 <div style="clear: both;" class="p-table">
-  <p-table  [value]="miningStatisticsValue" [loading]="loading" [scrollable]="true" scrollHeight="400px"
+  <p-table  [value]="miningStatisticsValue" [scrollable]="true"
     [resizableColumns]="true" columnResizeMode="expand" [style]="{'min-width':'1200px'}">
    <!--  <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
@@ -63,13 +63,13 @@
       </div>
     </ng-template>
   </p-table>
-  <p-paginator [hidden]="!statisticsTotal" [rows]="LIMIT_LOGIN" [totalRecords]="statisticsTotal" [rowsPerPageOptions]="[10,20,30]"
+  <p-paginator [hidden]="!statisticsTotal" [rows]="LIMIT_LOGIN" [totalRecords]="statisticsTotal" [rowsPerPageOptions]="[10,20,30,50,100]"
     (onPageChange)="pageChange($event)"></p-paginator>
 </div>
 
 <div class="dialog-class textarea-style">
   <!-- 新增、修改出框 -->
-  <p-dialog header="{{reportTitle}}" [(visible)]="setStatisticsDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+  <p-dialog header="{{statisticsTitle}}" [(visible)]="setStatisticsDisplay" [modal]="true" [responsive]="true" [style]="{width: '800px'}">
     <form>
       <div class="form-group has-feedback">
         <label class="control-label">矿山名称</label>

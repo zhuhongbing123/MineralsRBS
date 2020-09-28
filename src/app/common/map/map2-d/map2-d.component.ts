@@ -30,7 +30,9 @@ export class Map2DComponent implements OnInit {
                     this.outdoorComponent.areaOpacity = 1;
                     this.outdoorComponent.areaInfoDisplay = true;
                   }else{
+                    this.outdoorComponent.areaOpacity = 1;
                     this.outdoorComponent.mineralInfoDisplay=true;
+
                   }
                   this.outdoorComponent.areaCoordinate = value.points;
                   this.zoom = this.OlFloorMap.map.getView().getZoom();

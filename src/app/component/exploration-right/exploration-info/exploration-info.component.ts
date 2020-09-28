@@ -36,7 +36,8 @@ export class ExplorationInfoComponent implements OnInit {
   miningStartTime;//采矿权首立时间
   mineralOwner:any[] = [];//矿权人
   reportCategory;//报告分类数据
-
+  selectedColumns: any[];//下拉选择的菜单
+ 
 
   explorationTitle;//弹出框标题
   fileTree = [];//报告文件树形结构数据
@@ -83,6 +84,7 @@ export class ExplorationInfoComponent implements OnInit {
   public setTableValue(){
     
     this.explorationInfoTitle=[
+      { field: 'number', header: '序号' },
       { field: 'projectName', header: '项目名称' },
       { field: 'owner_id', header: '矿权人' },
       { field: 'explorationStartTime', header: '探矿权首立时间' },
@@ -91,8 +93,10 @@ export class ExplorationInfoComponent implements OnInit {
       { field: 'investigationStage', header: '勘查阶段' },
       { field: 'investigationMineralType', header: '勘查矿种' },
       { field: 'investigationWorkload', header: '工作量' },
-      { field: 'investigationInvestment', header: '投入金额(万元)' }
+      { field: 'investigationInvestment', header: '投入金额(万元)' },
+      { field: 'operation', header: '操作' }
     ];
+    this.selectedColumns = this.explorationInfoTitle;
     this.loading = true;
     //获取授权的API资源
     if(!sessionStorage.getItem('api')){

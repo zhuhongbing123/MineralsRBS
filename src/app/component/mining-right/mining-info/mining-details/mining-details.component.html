@@ -58,11 +58,11 @@
                   </tr>
                   <tr>
                       <td class="table-td">登记备案的储量/资源量</td>
-                      <td>{{miningProject.majorAchievement}}</td>
+                      <td>{{miningProject.registeredResources}}</td>
                   </tr>
                   <tr>
                       <td class="table-td">矿山资源前景分析</td>
-                      <td>{{miningProject.preliminaryUnderstanding}}</td>
+                      <td>{{miningProject.mineralFuture}}</td>
                   </tr>
                   <!-- <tr>
                       <td class="table-td">存在的问题及下一步工作建议</td>
@@ -84,24 +84,31 @@
       <button style="float: right;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回"></button>
       <div style="clear:both">
           <p-table 
-            [columns]="stageDetailTitle" 
+            [columns]="selectedStageColumns" 
             [value]="stageDetailValue" 
             columnResizeMode="expand"
             [style]="{'min-width':'1200px'}"
             [resizableColumns]="true" 
-            [scrollable]="true" 
-            scrollHeight="400px" 
+            [scrollable]="true"
           >
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns" [style.width]="col.width">
             </colgroup>
           </ng-template>
+        <ng-template pTemplate="caption">
+            <!-- 菜单操作 -->
+            <div style="text-align:left">
+                <p-multiSelect [options]="stageDetailTitle" [(ngModel)]="selectedStageColumns" optionLabel="header" selectedItemsLabel="共{0}列标题"
+                    [style]="{minWidth: '200px'}" defaultLabel="请选择标题列"></p-multiSelect>
+            </div>
+        </ng-template>
           <ng-template pTemplate="header" let-columns>
               <tr>
                     <th style="width:8%" pResizableColumn>序号</th>
-                    <th *ngFor="let col of columns" pResizableColumn>
+                    <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
                         {{col.header}}
+                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
                     <th style="width:15%" pResizableColumn>操作</th>
               </tr>
@@ -109,7 +116,7 @@
           <ng-template pTemplate="body" let-rowData let-columns="columns">
               <tr>
                     <td style="width:8%">{{rowData.number}}</td>
-                  <td *ngFor="let col of columns">
+                  <td *ngFor="let col of columns" class="table-truncation-text">
                       <span title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
                       
                   </td>
@@ -125,7 +132,7 @@
                 </div>
             </ng-template>
           </p-table>
-          <p-paginator [hidden]="!stageTotal" [rows]="LIMIT_LOGIN"  [totalRecords]="stageTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'stage')"></p-paginator>
+          <p-paginator [hidden]="!stageTotal" [rows]="LIMIT_LOGIN"  [totalRecords]="stageTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event,'stage')"></p-paginator>
       </div>    
   </div>
 
@@ -138,38 +145,47 @@
           <button style="float: right;margin-top: 10px;margin-bottom: 10px;" type="button" pButton  (click)="goBack()" label="返回"></button>
           <div style="clear:both">
               <p-table 
-                [columns]="monitoringTitle" 
+                [columns]="selectedReportColumns" 
                 [value]="monitoringValue"
                 columnResizeMode="expand"
                 [style]="{'min-width':'1200px'}"
                 [resizableColumns]="true" 
                 [scrollable]="true" 
-                scrollHeight="400px" 
               >
               <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
                         <col *ngFor="let col of columns" [style.width]="col.width">
                     </colgroup>
                 </ng-template>
+                <ng-template pTemplate="caption">
+                   
+                    <!-- 菜单操作 -->
+                    <div style="text-align:left">
+                        <p-multiSelect [options]="monitoringTitle" [(ngModel)]="selectedReportColumns" optionLabel="header" selectedItemsLabel="共{0}列标题"
+                            [style]="{minWidth: '200px'}" defaultLabel="请选择标题列"></p-multiSelect>
+                    </div>
+                </ng-template>
               <ng-template pTemplate="header" let-columns>
                   <tr>
-                    <th style="width:8%" pResizableColumn>序号</th>
-                    <th *ngFor="let col of columns" pResizableColumn>
+       
+                    <th *ngFor="let col of columns" [pSortableColumn]="col.field" [class]="col.field=='operation'?'operation-title':''">
                         {{col.header}}
+                        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     </th>
-                    <th style="width:15%" pResizableColumn>操作</th>
+
                   </tr>
               </ng-template>
               <ng-template pTemplate="body" let-rowData let-columns="columns">
                   <tr>
-                    <td style="width:8%">{{rowData.number}}</td>
-                    <td *ngFor="let col of columns">
+       
+                    <td *ngFor="let col of columns" [class]="col.field=='operation'?'operation-title':'table-truncation-text'">
                         <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                        
-                    </td>
-                    <td style="width:15%">
-                        <button pButton type="button" *ngIf = " modifyValidationButton && buttonType" class="operation-icon"  (click)="setMining('modifyMonitoring',rowData)" label="修改"></button>
-                        <button pButton type="button" *ngIf = " deleteValidationButton && buttonType" class="operation-icon"  (click)="setMining('deleteMonitoring',rowData)" label="删除"></button>
+                        <div *ngIf="col.field == 'operation'">
+                            <button pButton type="button" *ngIf=" modifyValidationButton && buttonType" class="operation-icon" (click)="setMining('modifyMonitoring',rowData)"
+                                label="修改"></button>
+                            <button pButton type="button" *ngIf=" deleteValidationButton && buttonType" class="operation-icon" (click)="setMining('deleteMonitoring',rowData)"
+                                label="删除"></button>
+                        </div>
                     </td>
                   </tr>
               </ng-template>
@@ -179,7 +195,7 @@
                     </div>
                 </ng-template>
               </p-table>
-              <p-paginator [hidden]="!validationTotal" [rows]="LIMIT_LOGIN" [totalRecords]="validationTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'validation')"></p-paginator>
+              <p-paginator [hidden]="!validationTotal" [rows]="LIMIT_LOGIN" [totalRecords]="validationTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event,'validation')"></p-paginator>
           </div>    
       </div>
   </div>
@@ -233,6 +249,17 @@
                       ></p-calendar>
                   </div>    
               </div>
+            <div class="form-group has-feedback">
+                <label class="control-label">采矿权范围</label>
+                <input 
+                    type="text" 
+                    style="width:700px !important" 
+                    name="miningArea" 
+                    class="form-control" 
+                    [(ngModel)]="miningProject.miningArea"
+                    maxlength='200'
+                >
+            </div>
               <div class="form-group has-feedback">
                   <label class="control-label">区域地质背景</label>
                   <div>
@@ -243,7 +270,7 @@
                         [(ngModel)]="miningProject.areaGeologicBackground" 
                         name="areaGeologicBackground"
                         style="width:700px !important"
-                        maxlength = '500'
+                        maxlength = '1200'
                       ></textarea>
                   </div>
               </div>
@@ -257,7 +284,7 @@
                         [(ngModel)]="miningProject.geophysicalGeochemical" 
                         name="geophysicalGeochemical"
                         style="width:700px !important"
-                        maxlength = '500'
+                        maxlength = '1200'
                       ></textarea>
                   </div>    
               </div>
@@ -271,7 +298,7 @@
                         [(ngModel)]="miningProject.mineralGeologicalStratum" 
                         name="mineralGeologicalStratum"
                         style="width:700px !important"
-                        maxlength = '500'
+                        maxlength = '1200'
                       ></textarea>
                   </div>    
               </div>
@@ -285,7 +312,7 @@
                         [(ngModel)]="miningProject.mineralGeologicalStructure" 
                         name="mineralGeologicalStructure"
                         style="width:700px !important"
-                        maxlength = '500'
+                        maxlength = '1200'
                       ></textarea>
                   </div>    
               </div>
@@ -299,7 +326,7 @@
                         [(ngModel)]="miningProject.mineralGeologicalMagmatite" 
                         name="mineralGeologicalMagmatite"
                         style="width:700px !important"
-                        maxlength = '500'
+                        maxlength = '1200'
                       ></textarea>
                   </div>    
               </div>
@@ -312,7 +339,7 @@
                     class="form-control" 
                     [(ngModel)]="miningProject.mineralBeltOwner" 
                     name="mineralBeltOwner"
-                    maxlength = '200'
+                    maxlength = '1200'
                   >
               </div>
               <div class="form-group has-feedback">
@@ -325,7 +352,7 @@
                         [(ngModel)]="miningProject.mineralBeltGeologic" 
                         name="mineralBeltGeologic"
                         style="width:700px !important"
-                        maxlength = '500'
+                        maxlength = '1200'
                       ></textarea>
                   </div>    
               </div>
@@ -339,7 +366,7 @@
                         [(ngModel)]="miningProject.rockAlteration" 
                         name="rockAlteration"
                         style="width:700px !important"
-                        maxlength = '500'
+                        maxlength = '1200'
                       ></textarea>
                   </div>    
               </div>
@@ -353,7 +380,7 @@
                         [(ngModel)]="miningProject.mineralCharacteristics" 
                         name="mineralCharacteristics"
                         style="width:700px !important"
-                        maxlength = '500'
+                        maxlength = '1200'
                       ></textarea>
                   </div>    
               </div>
@@ -364,10 +391,10 @@
                         rows="5" 
                         cols="30" 
                         pInputTextarea 
-                        [(ngModel)]="miningProject.majorAchievement" 
-                        name="majorAchievement"
+                        [(ngModel)]="miningProject.registeredResources" 
+                        name="registeredResources"
                         style="width:700px !important"
-                        maxlength = '500'
+                        maxlength = '50'
                       ></textarea>
                   </div>    
               </div>
@@ -378,10 +405,10 @@
                         rows="5" 
                         cols="30" 
                         pInputTextarea 
-                        [(ngModel)]="miningProject.preliminaryUnderstanding" 
-                        name="preliminaryUnderstanding"
+                        [(ngModel)]="miningProject.mineralFuture" 
+                        name="mineralFuture"
                         style="width:700px !important"
-                        maxlength = '500'
+                        maxlength = '1200'
                       ></textarea>
                   </div>    
               </div>
@@ -414,7 +441,7 @@
             <label class="control-label">证号</label>
             <div>
                 <input type="text" style="width:700px !important" name="lisenceId" class="form-control" [(ngModel)]="miningStage.lisenceId"
-                    maxlength='200'>
+                    maxlength='18'>
             </div>
         </div>
           <div class="form-group has-feedback">
@@ -446,7 +473,7 @@
             <label class="control-label">地址</label>
             <div>
                 <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStage.address" name="address" style="width:700px !important"
-                    maxlength='500'></textarea>
+                    maxlength='250'></textarea>
             </div>
         </div>
 
@@ -454,7 +481,7 @@
             <label class="control-label">经济类型</label>
             <div>
                 <input type="text" style="width:700px !important" name="economyType" class="form-control" [(ngModel)]="miningStage.economyType"
-                    maxlength='200'>
+                    maxlength='100'>
             </div>
         </div>
 
@@ -462,14 +489,14 @@
             <label class="control-label">开采矿种</label>
             <div>
                 <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStage.miningMineralType" name="investigationOrganization"
-                    style="width:700px !important;resize:none" maxlength='500'></textarea>
+                    style="width:700px !important;resize:none" maxlength='50'></textarea>
             </div>
         </div>
         <div class="form-group has-feedback">
             <label class="control-label">开采方式</label>
             <div>
                 <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStage.miningMethod" name="miningMethod"
-                    style="width:700px !important;resize:none" maxlength='500'></textarea>
+                    style="width:700px !important;resize:none" maxlength='50'></textarea>
             </div>
         </div>
 
@@ -505,7 +532,7 @@
                     [(ngModel)]="miningStage.projectArea" 
                     name="projectArea"
                     style="width:700px !important"
-                    maxlength = '500'
+                    maxlength = '1200'
                   ></textarea>
               </div>    
           </div>
@@ -513,7 +540,7 @@
           
           
           <div class="form-group has-feedback">
-              <label class="control-label">开采深度</label>
+              <label class="control-label">开采深度(米)</label>
               <div>
                   <input 
                     type="text" 
@@ -521,7 +548,7 @@
                     name="miningDepth" 
                     class="form-control" 
                     [(ngModel)]="miningStage.miningDepth"
-                    maxlength = '200'
+                    maxlength = '20'
                   >
               </div>    
           </div>
@@ -530,7 +557,7 @@
             <label class="control-label">备注</label>
             <div>
                 <textarea rows="5" cols="30" pInputTextarea [(ngModel)]="miningStage.comment" name="comment" style="width:700px !important"
-                    maxlength='500'></textarea>
+                    maxlength='1200'></textarea>
             </div>
         </div>
       </form>     

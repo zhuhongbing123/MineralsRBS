@@ -58,6 +58,8 @@ export class MiningDetailsComponent implements OnInit {
   deleteValidationButton = false;//监测阶段删除按钮显示
 
   buttonType = false;//点击按钮的类型
+  selectedStageColumns: any[];//选择开采详情菜单列
+  selectedReportColumns: any[];//选择年度监测菜单列
 
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
@@ -96,6 +98,7 @@ export class MiningDetailsComponent implements OnInit {
       {label: '采矿权档案', icon: 'fa fa-fw fa-bar-chart'}
     ];
     this.stageDetailTitle = [
+      { field: 'number', header: '序号' },
       { field: 'lisenceId', header: '证号' },
       { field: 'ownerId', header: '采矿权人' },
       { field: 'address', header: '地址' },
@@ -108,8 +111,10 @@ export class MiningDetailsComponent implements OnInit {
       { field: 'projectArea', header: '矿权范围拐点坐标' },
       { field: 'miningDepth', header: '开采深度' },
       { field: 'comment', header: '备注' },
+      { field: 'operation', header: '操作' }
 
     ];
+     this.selectedStageColumns = this.stageDetailTitle;
     this.monitoringTitle = [
       { field: 'validationYear', header: '监测报告年份' },
       { field: 'resourceUsed', header: '年度动用资源量(千吨)' },
@@ -118,6 +123,7 @@ export class MiningDetailsComponent implements OnInit {
       { field: 'problemFound', header: '存在的主要问题' },
 
     ];
+     this.selectedReportColumns = this.monitoringTitle;
      //获取授权的API资源
      if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
@@ -355,6 +361,10 @@ export class MiningDetailsComponent implements OnInit {
   saveMiningStage(){
     if(!this.miningStage.ownerId){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '矿权人不能为空'});
+      return;
+    }
+    if (!this.stageStartTime || !this.stageEndTime){
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '请选择有效期时间' });
       return;
     }
     if (this.stageStartTime && this.stageEndTime && this.stageStartTime.getTime()>this.stageEndTime.getTime()){

@@ -43,7 +43,7 @@
             </div>
         </ng-template>
     </p-table>
-    <p-paginator #clickPaginator  [hidden]="!apiTotal" [rows]="LIMIT_LOGIN" [totalRecords]="apiTotal"  [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+    <p-paginator #clickPaginator  [hidden]="!apiTotal" [rows]="LIMIT_LOGIN" [totalRecords]="apiTotal"  [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event)"></p-paginator>
 </div>
 
 <!-- 编辑api -->

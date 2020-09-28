@@ -16,18 +16,18 @@
 </div>
   <div style="clear: both;" class="p-table">
       <p-table 
-        [columns]="miningInfoTitle" 
+        [columns]="selectedColumns" 
         [value]="miningInfoValue" 
         [loading]="loading"  
         columnResizeMode="expand"
         [resizableColumns]="true" 
-        [scrollable]="true" 
-        scrollHeight="400px" 
+        [scrollable]="true"
          stateStorage="session" 
          stateKey="statedemo-mining-info" 
          selectionMode="single" 
          [resizableColumns]="true" 
          [reorderableColumns]="true"
+         [style]="{'min-width':'1200px'}"
        >
         <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -40,28 +40,31 @@
                 <button type="button" pButton icon="fa fa-file-excel-o" iconPos="left" label="导出" (click)="exportExcel()" style="margin-right: 0.5em;"
                     class="ui-button-success"></button>
             </div>
+            <!-- 菜单操作 -->
+            <div style="text-align:left">
+                <p-multiSelect [options]="miningInfoTitle" [(ngModel)]="selectedColumns" optionLabel="header" selectedItemsLabel="共{0}列标题"
+                    [style]="{minWidth: '200px'}" defaultLabel="请选择标题列"></p-multiSelect>
+            </div>
         </ng-template>
         <ng-template pTemplate="header" let-columns>
             <tr>
-                <th style="width:8%" pResizableColumn>序号</th>
-                <th *ngFor="let col of columns" pResizableColumn>
+                <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field" [class]="col.field=='operation'?'operation-title':''">
                     {{col.header}}
+                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                 </th>
-                <th style="width:20%" pResizableColumn>操作</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
             <tr>
-                <td style="width:8%">{{rowData.number}}</td>
-                <td *ngFor="let col of columns">
-                    <span  title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
-                    
+                <td *ngFor="let col of columns" [class]="col.field=='operation'?'operation-title':'table-truncation-text'">
+                    <span  *ngIf="col.field !== 'operation'" title=" {{rowData[col.field]}}"> {{rowData[col.field]}}</span>
+                    <div *ngIf="col.field == 'operation'">
+                        <button pButton type="button" class="operation-icon" (click)="goDetails(rowData,'detail')" label="详情"></button>
+                        <button pButton type="button" *ngIf="modifyButton" class="operation-icon" (click)="goDetails(rowData,'modify')" label="编辑"></button>
+                        <button pButton type="button" *ngIf="deleteDisplay" class="operation-icon" (click)="setMining('delete',rowData)" label="删除"></button>
+                    </div>
                 </td>
-                <td style="width:20%">
-                    <button pButton type="button"  class="operation-icon"  (click)="goDetails(rowData,'detail')" label="详情"></button>
-                    <button pButton type="button" *ngIf = "modifyButton" class="operation-icon"  (click)="goDetails(rowData,'modify')" label="编辑"></button>
-                    <button pButton type="button" *ngIf = "deleteDisplay" class="operation-icon"  (click)="setMining('delete',rowData)" label="删除"></button>
-                </td>
+
             </tr>
         </ng-template>
         <ng-template pTemplate="summary">
@@ -70,7 +73,7 @@
                 </div>
         </ng-template>
       </p-table>
-      <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,50,100,500,1000]" (onPageChange)="pageChange($event,'project')"></p-paginator>
+      <p-paginator [hidden]="!projectTotal" [rows]="LIMIT_LOGIN" [totalRecords]="projectTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event,'project')"></p-paginator>
   </div>
 </div>
 
@@ -168,7 +171,7 @@
                             pInputTextarea 
                             [(ngModel)]="miningProject.investigationFinalStage" 
                             name="investigationFinalStage"
-                            maxlength = '500'
+                            maxlength = '1200'
                        ></textarea>
                    </div>    
                </div>
@@ -182,7 +185,7 @@
                             pInputTextarea 
                             [(ngModel)]="miningProject.areaGeologicBackground" 
                             name="areaGeologicBackground"
-                            maxlength = '500'
+                            maxlength = '1200'
                        ></textarea>
                    </div>
                </div>
@@ -196,7 +199,7 @@
                         pInputTextarea 
                         [(ngModel)]="miningProject.geophysicalGeochemical" 
                         name="geophysicalGeochemical"
-                        maxlength = '500'
+                        maxlength = '1200'
                        ></textarea>
                    </div>    
                </div>
@@ -210,7 +213,7 @@
                         pInputTextarea 
                         [(ngModel)]="miningProject.mineralGeologicalStratum" 
                         name="mineralGeologicalStratum"
-                        maxlength = '500'
+                        maxlength = '1200'
                        ></textarea>
                    </div>    
                </div>
@@ -224,7 +227,7 @@
                         pInputTextarea 
                         [(ngModel)]="miningProject.mineralGeologicalStructure" 
                         name="mineralGeologicalStructure"
-                        maxlength = '500'
+                        maxlength = '1200'
                        ></textarea>
                    </div>    
                </div>
@@ -238,7 +241,7 @@
                         pInputTextarea 
                         [(ngModel)]="miningProject.mineralGeologicalMagmatite" 
                         name="mineralGeologicalMagmatite"
-                        maxlength = '500'
+                        maxlength = '1200'
                        ></textarea>
                    </div>    
                </div>
@@ -251,7 +254,7 @@
                     class="form-control" 
                     [(ngModel)]="miningProject.mineralBeltOwner" 
                     name="mineralBeltOwner"
-                    maxlength = '200'
+                    maxlength = '1200'
                    >
                </div>
                <div class="form-group has-feedback">
@@ -264,7 +267,7 @@
                         pInputTextarea 
                         [(ngModel)]="miningProject.mineralBeltGeologic" 
                         name="mineralBeltGeologic"
-                        maxlength = '500'
+                        maxlength = '1200'
                        ></textarea>
                    </div>    
                </div>
@@ -278,7 +281,7 @@
                         pInputTextarea 
                         [(ngModel)]="miningProject.rockAlteration" 
                         name="rockAlteration"
-                        maxlength = '500'
+                        maxlength = '1200'
                        ></textarea>
                    </div>    
                </div>
@@ -292,22 +295,20 @@
                         pInputTextarea 
                         [(ngModel)]="miningProject.mineralCharacteristics" 
                         name="mineralCharacteristics"
-                        maxlength = '500'
+                        maxlength = '1200'
                        ></textarea>
-                       <label class="control-label">登记备案的储量/资源量</label>
+                    
                    </div>
-                   <div>
-                       <textarea 
-                        rows="5" 
-                        cols="30" 
-                        style="width:700px" 
-                        pInputTextarea 
-                        [(ngModel)]="miningProject.majorAchievement" 
-                        name="majorAchievement"
-                        maxlength = '500'
-                       ></textarea>
-                   </div>    
+                       
                </div>
+             <div class="form-group has-feedback">
+                <div>
+                    <label class="control-label">登记备案的储量/资源量</label>
+                    <textarea rows="5" cols="30" style="width:700px" pInputTextarea [(ngModel)]="miningProject.registeredResources" name="registeredResources"
+                        maxlength='50'></textarea>
+                </div>
+             </div>
+           
                <div class="form-group has-feedback">
                    <label class="control-label">矿山资源前景分析</label>
                    <div>
@@ -316,9 +317,9 @@
                         cols="30" 
                         style="width:700px" 
                         pInputTextarea 
-                        [(ngModel)]="miningProject.preliminaryUnderstanding" 
-                        name="preliminaryUnderstanding"
-                        maxlength = '500'
+                        [(ngModel)]="miningProject.mineralFuture" 
+                        name="mineralFuture"
+                        maxlength = '1200'
                        ></textarea>
                    </div>    
                </div>

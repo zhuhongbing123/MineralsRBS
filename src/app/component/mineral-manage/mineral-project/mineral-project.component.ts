@@ -45,6 +45,7 @@ export class MineralProjectComponent implements OnInit {
   addAreaCommon: Subscription;
   mineralOwner:any[];//矿权人
   inputDisabled = false;//弹出框的输入框是否禁止输入
+  selectedColumns: any[];//选择的菜单列
 
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
@@ -89,13 +90,16 @@ export class MineralProjectComponent implements OnInit {
   public setTableValue(){
     
     this.mineralProjectTitle=[
+      { field: 'number', header: '序号' },
       { field: 'projectName', header: '项目名称' },
       { field: 'owner_id', header: '矿权人' },
       { field: 'explorationStartTime', header: '探矿权首立时间' },
       { field: 'miningStartTime', header: '采矿权首立时间' },
       { field: 'explorationArea', header: '探矿权范围' },
-      { field: 'miningArea', header: '采矿权范围' }
+      { field: 'miningArea', header: '采矿权范围' },
+      { field: 'operation', header: '操作' }
     ];
+    this.selectedColumns = this.mineralProjectTitle;
     
     this.loading = true;
     //获取授权的API资源
@@ -204,6 +208,8 @@ export class MineralProjectComponent implements OnInit {
   setMineral(type,value?){
     this.isModify = false;
     this.inputDisabled = false;
+    let textarea = document.getElementsByTagName('textarea');
+   
     if(type=='modify'){
       this.explorationStartTime = value.explorationStartTime?new Date(value.explorationStartTime):'';
       this.miningStartTime = value.miningStartTime?new Date(value.miningStartTime):'';
@@ -223,6 +229,14 @@ export class MineralProjectComponent implements OnInit {
       this.addProjectArea = false;
       this.isModify = true;
       this.inputDisabled = true;
+      //设置文本框文字颜色
+      setTimeout(() => {
+        for (let i = 0; i < textarea.length; i++) {
+          textarea[i].style.background = '#467e9b';
+          textarea[i].style.opacity = '1'; 
+        }
+      });
+      
       return;
     }
     // 搜索

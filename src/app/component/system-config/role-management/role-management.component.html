@@ -50,7 +50,7 @@
                 </div>
             </ng-template>
         </p-table>
-        <p-paginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="rolePageChange($event)"></p-paginator>
+        <p-paginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="rolePageChange($event)"></p-paginator>
     </div>
 </div>
 
@@ -109,7 +109,7 @@
                         </div>
                     </ng-template>
                 </p-table>
-                <p-paginator #clickPaginator [hidden]="!linkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="linkPageChange($event,'link')"></p-paginator>
+                <p-paginator #clickPaginator [hidden]="!linkTotal"  [rows]="LIMIT_LOGIN" [totalRecords]="linkTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="linkPageChange($event,'link')"></p-paginator>
             </div>
         </div>
     </p-dialog>
@@ -186,7 +186,7 @@
                     </div>
                 </ng-template>
             </p-table>
-            <p-paginator #clickAddPaginator [hidden]="!addLinkTotal" [rows]="LIMIT_LOGIN" [totalRecords]="addLinkTotal" [rowsPerPageOptions]="[10,20,30]"
+            <p-paginator #clickAddPaginator [hidden]="!addLinkTotal" [rows]="LIMIT_LOGIN_ADD" [totalRecords]="addLinkTotal" [rowsPerPageOptions]="rowsPerPageOptions"
                 (onPageChange)="linkPageChange($event,'add')"></p-paginator>
         </div>
 

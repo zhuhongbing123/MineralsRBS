@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpUtil } from '../../../common/util/http-util';
 import { MessageService, ConfirmationService, MenuItem } from 'primeng/api';
 import { LoginService } from '../../login/login.service';
 import { RegisterService } from '../../register/register.service';
+import { Paginator } from 'primeng/primeng';
 
 @Component({
   selector: 'app-user-management',
@@ -10,7 +11,8 @@ import { RegisterService } from '../../register/register.service';
   styleUrls: ['./user-management.component.scss']
 })
 export class UserManagementComponent implements OnInit {
-
+  @ViewChild('clickPaginator', { static: true }) paginator: Paginator; 
+  @ViewChild('userPaginator', { static: true }) userPaginator: Paginator; 
   public userTableTitle;//用户列表标题
   public userTableValue;//用户列表数据
   public userTotal;//用户列表总数
@@ -19,7 +21,9 @@ export class UserManagementComponent implements OnInit {
   public userRoleDisplay = false;//用户角色是否显示
   public roleValue;//角色数据
   public roleTitle;//角色标题
-  selectedRole;//已选择的角色
+  selectedRole:any;//已选择的角色
+  selectedValue;
+
   roleTotal;//角色总数
   public LIMIT_LOGIN=10;//列表每页显示数量
   public selectUser;//已选择用户
@@ -37,6 +41,7 @@ export class UserManagementComponent implements OnInit {
   filteredUserName;//输入的用户名
   filteredUser:any[];//搜索框下拉的用户名
   allUserName;//所有用户名字
+  allRoleInfo;//所有角色信息
   loading: boolean;//列表加载动画显示
   userDisplay = false;//用户弹出框
   accountName;//账户名名称
@@ -101,6 +106,7 @@ export class UserManagementComponent implements OnInit {
     } */
     this.getUserValue();
     this.getUserName();
+    
   }
 
   /* 获取用户数据 */
@@ -118,6 +124,7 @@ export class UserManagementComponent implements OnInit {
         }
         this.userTableValue = data;
         this.loading = false;
+          this.getAllRoleInfo();
         }
       }).then(()=>{
         this.getRoleValue();
@@ -130,6 +137,22 @@ export class UserManagementComponent implements OnInit {
     this.httpUtil.get('user/name').then(value=>{
       if (value.meta.code === 6666) {
         this.allUserName = value.data.userNames;
+      }
+    })
+  }
+  /* 获取所有角色信息 */
+  getAllRoleInfo() {
+    this.httpUtil.get('role/1/10000').then(value => {
+      if (value.meta.code === 6666) {
+        this.allRoleInfo = value.data.data.list;
+        let data = value.data.data.list;
+        for (let i in this.userTableValue) {
+          for (let j in data) {
+            if (this.userTableValue[i].roleId == data[j].id) {
+              this.userTableValue[i].role = data[j].name;
+            }
+          }
+        }
       }
     })
   }
@@ -150,13 +173,14 @@ export class UserManagementComponent implements OnInit {
           
       }
       this.roleValue = data;
-      for(let i in  this.userTableValue){
-          for(let j in data){
-            if(this.userTableValue[i].roleId == data[j].id){
-              this.userTableValue[i].role = data[j].name;
-            }
+      if (this.selectUser){
+        for (let i in this.roleValue) {
+          if (this.roleValue[i].id === this.selectUser.roleId) {
+            this.selectedRole = this.roleValue[i];
           }
+        }
       }
+      
       }
     });
   }
@@ -202,9 +226,13 @@ export class UserManagementComponent implements OnInit {
       return;
     }
     if(type=='modify'){
-      this.userName = value.userName;
+      
+      this.userName = value.username;
       //this.accountName = value.userName;
+      this.newPassword = '';
+      this.comfirmPassword = '';
       this.modifyPasswordDisplay = true;
+      
       return;
     }
     /* 删除用户 */
@@ -250,8 +278,17 @@ export class UserManagementComponent implements OnInit {
       });
     }else{
       this.userTitle = '用户角色管理('+value.username+')';
+      this.paginator.changePage(0);
       this.userRoleDisplay = true;
-      this.selectedRole = '';
+      this.selectedRole = {};
+      //默认选中
+      for (let i in this.roleValue){
+        if (this.roleValue[i].id === value.roleId){
+          this.selectedRole = this.roleValue[i];
+        }
+      }
+
+      
     }
     
 
@@ -267,6 +304,9 @@ export class UserManagementComponent implements OnInit {
           newRoleId:this.selectedRole.id.toString()
         }).then(value=>{
           if (value.meta.code === 6666) {
+            this.pageSize = 10;
+            this.pageNumber = 1;
+            this.userPaginator.changePage(0);
             this.getUserValue();
             this.userRoleDisplay = false;
             this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '修改角色成功'});
@@ -279,6 +319,9 @@ export class UserManagementComponent implements OnInit {
         roleId:this.selectedRole.id.toString()
       }).then(value=>{
         if (value.meta.code === 6666) {
+          this.pageSize = 10;
+          this.pageNumber = 1;
+          this.userPaginator.changePage(0);
           this.getUserValue();
           this.userRoleDisplay = false;
           this.messageService.add({key: 'tc', severity:'success', summary: '信息', detail: '添加角色成功'});
@@ -366,7 +409,7 @@ export class UserManagementComponent implements OnInit {
           const tokenKey = data.data.tokenKey;
           const userKey = data.data.userKey;
           getToken$.unsubscribe();
-            const register$ = this.registerService.register(url,this.accountName, this.userName, this.password, tokenKey, userKey).subscribe(
+          const register$ = this.registerService.register(url, this.userName, this.userName, this.password, tokenKey, userKey).subscribe(
               data2=> {
                 if(data2.meta.code === 6666){
                   this.messageService.add({key: 'tc', severity:'success', summary: '提示', detail: '密码重置成功'});

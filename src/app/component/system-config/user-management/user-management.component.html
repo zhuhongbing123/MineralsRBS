@@ -54,13 +54,13 @@
             </ng-template>
         </p-table>
     </div>    
-  <p-paginator [hidden]="!userTotal" [rows]="LIMIT_LOGIN" [totalRecords]="userTotal"  [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'user')"></p-paginator>
+  <p-paginator #userPaginator [hidden]="!userTotal" [rows]="LIMIT_LOGIN" [totalRecords]="userTotal"  [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event,'user')"></p-paginator>
 </div>
 
 <!-- 角色操作弹出框 -->
 <div class="dialog-class">
         <p-dialog header="{{userTitle}}" [(visible)]="userRoleDisplay" 
-        [modal]="true" [responsive]="true" [style]="{width: '800px'}">
+        [modal]="true" [responsive]="true" [style]="{width: '800px','top':'50px !important','position':'absolute'}">
             <div class="p-table">
                 <p-table 
                     [columns]="roleTitle" 
@@ -96,7 +96,7 @@
                     </ng-template>
                 </p-table>
            
-                <p-paginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal"  [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event,'role')"></p-paginator> 
+                <p-paginator #clickPaginator [hidden]="!roleTotal" [rows]="LIMIT_LOGIN" [totalRecords]="roleTotal"  [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event,'role')"></p-paginator> 
             </div>
                 <p-footer>
                         <button type="button" pButton (click)="saveRole()" label="保存"></button>
@@ -184,7 +184,7 @@
             </form>
             <p-footer>
                 <button type="button" pButton  (click)="saveOwner('modify')" label="保存"></button>
-                <button type="button" pButton  (click)="userDisplay=false" label="取消" class="ui-button-secondary"></button>
+                <button type="button" pButton  (click)="modifyPasswordDisplay=false" label="取消" class="ui-button-secondary"></button>
              </p-footer>   
         </p-dialog>
 </div>                

@@ -53,6 +53,8 @@ export class ExplorationProject {
   "remarks": string; //存在的问题以及下一步工作
   "rockAlteration": string; //围岩及蚀变
   "id":number;//主键ID
+  'registeredResources': string;//登记备案的储量/资源量
+  'mineralFuture': string;//矿山前景分析
 }
 
 /*  探矿权勘查阶段详情 */

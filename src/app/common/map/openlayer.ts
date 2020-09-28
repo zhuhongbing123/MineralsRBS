@@ -614,9 +614,7 @@ export class Openlayer {
         this.basic.option = points;
         geojsonObject.features[0].geometry.coordinates[0]= this.group(points,2);
         
-        var source = new VectorSource({
-            features: (new GeoJSON()).readFeatures(geojsonObject)
-        });
+        var source = new VectorSource();
           
         var layer = new VectorLayer({
             source: source,

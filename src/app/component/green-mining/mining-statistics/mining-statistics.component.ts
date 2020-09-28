@@ -25,6 +25,7 @@ export class MiningStatisticsComponent implements OnInit {
   addButton = false;//新增按钮是否显示
   putButton = false;//修改按钮是否显示
   deleteButton = false;//删除按钮是否显示
+  statisticsTitle: any;
   constructor(private httpUtil: HttpUtil,
               private confirmationService: ConfirmationService,
               private messageService: MessageService,) { }
@@ -120,12 +121,14 @@ export class MiningStatisticsComponent implements OnInit {
       this.miningStatisticsInfo = new MiningStatistics();
       this.setStatisticsDisplay = true;
       this.modifyStatistics = false;
+      this.statisticsTitle = '新增矿山统计';
       return;
     }
     if (type == 'modify'){
       this.miningStatisticsInfo = value;
       this.setStatisticsDisplay = true;
       this.modifyStatistics = true;
+      this.statisticsTitle = '修改矿山统计';
       return;
     }
     if (type == 'delete') {
@@ -185,7 +188,7 @@ export class MiningStatisticsComponent implements OnInit {
     })
   }
 
-  pageChange(event, type) {
+  pageChange(event) {
     this.startPage = event.page + 1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
     this.getMiningStatistics();

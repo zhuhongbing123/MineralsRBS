@@ -210,7 +210,7 @@ export class OutdoorComponent implements OnInit {
   }
 
   /* 获取所有项目区域列表 */
-  getMieralLocation(){
+    getMieralLocation(){
     this.httpUtil.get('mineral-project/all').then(value=>{
       if (value.meta.code === 6666) {
         let data = value.data.mineralProjects;
@@ -665,6 +665,7 @@ export class OutdoorComponent implements OnInit {
 
   /* 更新项目区域信息 */
   saveLocationMineral(type){
+    this.dropdownDisplay = false;
     if(type=='cancel'){
       this.mineralInfoDisplay = false;
       this.selectedDraw = '';
@@ -727,6 +728,40 @@ export class OutdoorComponent implements OnInit {
       this.getMapLocationLabel();
     }else{
       this.getMineralLocation();
+    }
+  }
+//显示当前列表所有区域或者标注
+  showArea(type){
+    this.twoMap.forEach(outdoorMap => {
+      outdoorMap.removeInteraction();
+      outdoorMap.removeLayer();//清除所有区域
+    });
+    //显示所有项目区域
+    if(type=='project'){
+      this.getMieralLocation();
+    }
+    //显示所有区域
+    if (type == 'area') {
+      this.httpUtil.get('mineral-area/all').then(value => {
+        if (value.meta.code === 6666) {
+          let data = value.data.mineralAreas;
+
+          this.twoMap.forEach(outdoorMap => {
+            for (let i in data) {
+              if (data[i].areaCoordinates) {
+                data[i].areaCoordinates = JSON.parse(data[i].areaCoordinates);
+              }
+            }
+            outdoorMap.initializeArea(data);
+            outdoorMap.oldAreaValue.push(data);
+          })
+        }
+
+      })
+    }
+    //显示所有标注
+    if (type == 'location') {
+      this.getMapLocationLabelAll();
     }
   }
 }

@@ -114,6 +114,9 @@ body {
     }
     
 }
+/* body .ui-dialog{
+  top: 83px !important;
+} */
 /* 文本框样式 */
 .textarea-style{
   .ui-widget, body .ui-widget .ui-widget,
@@ -299,4 +302,15 @@ body .ui-table .ui-table-tbody > tr.ui-state-highlight{
 body .ui-dialog .ui-dialog-titlebar{
   background: #4a789f!important;
   color: #fff!important;
+}
+/* 表格截断文字 */
+
+.table-truncation-text{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operation-title{
+    width: 250px;
 }

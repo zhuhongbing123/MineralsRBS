@@ -19,7 +19,6 @@
         [value]="explorationValue"  
         [loading]="loading"
         [scrollable]="true" 
-        scrollHeight="400px" 
         [resizableColumns]="true"  
         columnResizeMode="expand"
         [style]="{'min-width':'1200px'}"
@@ -31,11 +30,11 @@
         </ng-template>
         <ng-template pTemplate="header" let-columns>
             <tr>
-                <th style="width:8%" pResizableColumn>序号</th>
-                <th *ngFor="let col of columns" pResizableColumn>
+                <th style="width:8%">序号</th>
+                <th *ngFor="let col of columns" >
                     {{col.header}}
                 </th>   
-                <th style="width:15%" pResizableColumn>操作</th>
+                <th style="width:15%">操作</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -57,7 +56,7 @@
                 </div>
         </ng-template>
       </p-table>
-      <p-paginator  [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30]" (onPageChange)="pageChange($event)"></p-paginator>
+      <p-paginator  [hidden]="!reportTotal" [rows]="LIMIT_LOGIN" [totalRecords]="reportTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event)"></p-paginator>
   </div>
 </div>
 <div class="dialog-class">

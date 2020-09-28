@@ -43,6 +43,7 @@ export class MiningInfoComponent implements OnInit {
   explorationStartTime;//探矿权首立时间
   modifyButton = false;//修改按钮
   addAreaCommon: Subscription;
+  selectedColumns: any[];//选择菜单列
 
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
@@ -69,9 +70,11 @@ export class MiningInfoComponent implements OnInit {
   public setTableValue(){
     
     this.miningInfoTitle=[
+      { field: 'number', header: '序号' },
       { field: 'projectName', header: '矿山名称' },
       { field: 'lisenceId', header: '证号' },
       { field: 'owner_id', header: '采矿权人' },
+      { field: 'miningStartTime', header: '采矿权首立时间' },
       { field: 'address', header: '地址' },
       { field: 'economyType', header: '经济类型' },
       { field: 'miningMineralType', header: '开采矿种' },
@@ -81,8 +84,10 @@ export class MiningInfoComponent implements OnInit {
       { field: 'validityDate', header: '有效期' },
       { field: 'projectArea', header: '矿区范围拐点坐标' },
       { field: 'miningDepth', header: '开采深度' },
-      { field: 'comment', header: '备注' }
+      { field: 'comment', header: '备注' },
+      { field: 'operation', header: '操作' }
     ];
+    this.selectedColumns = this.miningInfoTitle;
     this.loading = true;
     //获取授权的API资源
     if(!sessionStorage.getItem('api')){
@@ -133,7 +138,6 @@ export class MiningInfoComponent implements OnInit {
               data[i]['economyType'] = data[i].latestMiningStage.economyType;
               data[i]['miningMethod'] = data[i].latestMiningStage.miningMethod;
             data[i]['miningDepth'] = data[i].latestMiningStage.miningDepth;
-            data[i]['miningArea'] = data[i].latestMiningStage.miningArea;
             data[i]['comment'] = data[i].latestMiningStage.comment; 
             
           } 

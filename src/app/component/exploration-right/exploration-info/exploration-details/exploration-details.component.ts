@@ -40,7 +40,7 @@ export class ExplorationDetailsComponent implements OnInit {
   explorationStage: ExplorationStage = new ExplorationStage();//勘查阶段单行数据
   explorationTitle;//弹出框标题
   buttonType = false;//点击跳转按钮的类型
-
+  selectedColumns: any[];//选择的菜单列
 
   modifyButton = false;//编辑按钮显示
   addStageButton = false;//勘查阶段新增按钮显示
@@ -85,6 +85,7 @@ export class ExplorationDetailsComponent implements OnInit {
       {label: '探矿权档案', icon: 'fa fa-fw fa-bar-chart'}
     ];
     this.explorationDetailTitle = [
+      { field: 'number', header: '序号' },
       { field: 'mineralName', header: '矿业权名称' },
       { field: 'ownerId', header: '矿权人' },
       { field: 'expiryDate', header: '有效期' },
@@ -96,8 +97,9 @@ export class ExplorationDetailsComponent implements OnInit {
       { field: 'investigationStage', header: '勘查阶段' },
       { field: 'investigationWorkload', header: '勘查工作量' },
       { field: 'investigationInvestment', header: '投入金额(万元)' },
-
+      { field: 'operation', header: '操作' },
     ];
+    this.selectedColumns = this.explorationDetailTitle;
     //获取授权的API资源
     if(!sessionStorage.getItem('api')){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '请重新登录'});
@@ -283,6 +285,14 @@ modifyProject(){
 saveExplorationStage(){
     if(!this.explorationStage.ownerId){
       this.messageService.add({key: 'tc', severity:'warn', summary: '警告', detail: '矿权人不能为空'});
+      return;
+    }
+    if (!this.stageStartTime || !this.stageEndTime) {
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '请选择有效期时间' });
+      return;
+    }
+    if (this.stageStartTime && this.stageEndTime && this.stageStartTime.getTime() > this.stageEndTime.getTime()) {
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: '警告', detail: '开始时间不能晚于结束时间' });
       return;
     }
     let stageInfo = {

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { RouterModule } from '@angular/router';
 
-import { CheckboxModule, InputTextModule, ButtonModule, DialogModule, SidebarModule, TabMenuModule, PaginatorModule, CalendarModule, InputTextareaModule, DropdownModule, FileUploadModule, TreeModule, AutoCompleteModule } from 'primeng/primeng';
+import { CheckboxModule, InputTextModule, ButtonModule, DialogModule, SidebarModule, TabMenuModule, PaginatorModule, CalendarModule, InputTextareaModule, DropdownModule, FileUploadModule, TreeModule, AutoCompleteModule, MultiSelectModule } from 'primeng/primeng';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from "primeng/table";
 import { CarService } from '../../demo/service/carservice';
@@ -34,7 +34,8 @@ import { MiningDetailsComponent } from './mining-info/mining-details/mining-deta
     FileUploadModule,
     ExplorationRightModule,
     TreeModule,
-    AutoCompleteModule
+    AutoCompleteModule,
+    MultiSelectModule
   ],
   providers: [CarService],
   declarations: [MiningInfoComponent, MiningFileComponent, MiningDetailsComponent],

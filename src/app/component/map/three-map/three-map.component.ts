@@ -74,15 +74,15 @@ export class ThreeMapComponent implements OnInit{
     //加载JSON模型
     var loaderss = new THREE.ObjectLoader();
     let that = this;
-    loaderss.load("./assets/json/test/scene.json", function (obj) {
-      obj.position.x = 140;
-      obj.position.y = 920;
-      obj.position.z = 100;
-      obj.scale.x = 20.0;
-      obj.scale.y = 20.0;
-      obj.scale.z = 20.0;
-      that.scene.add(obj);
-    });
+    // loaderss.load("./assets/json/test/scene.json", function (obj) {
+    //   obj.position.x = 140;
+    //   obj.position.y = 920;
+    //   obj.position.z = 100;
+    //   obj.scale.x = 20.0;
+    //   obj.scale.y = 20.0;
+    //   obj.scale.z = 20.0;
+    //   that.scene.add(obj);
+    // });
     
 
     var skyBoxGeometry = new THREE.BoxGeometry(5, 20, 32);  
@@ -102,17 +102,17 @@ export class ThreeMapComponent implements OnInit{
 
 
     var people = new THREE.ObjectLoader();
-    people.load("./assets/json/test/people.json", function (obj) {
-      obj.position.x = 520;
-      obj.position.y = 920;
-      obj.position.z = -1000;
-      obj.scale.x = 20.0;
-      obj.scale.y = 20.0;
-      obj.scale.z = 20.0;
-      that.rollOverMesh = obj;
-      that.scene.add(obj);
-      that.start();
-    });
+    // people.load("./assets/json/test/people.json", function (obj) {
+    //   obj.position.x = 520;
+    //   obj.position.y = 920;
+    //   obj.position.z = -1000;
+    //   obj.scale.x = 20.0;
+    //   obj.scale.y = 20.0;
+    //   obj.scale.z = 20.0;
+    //   that.rollOverMesh = obj;
+    //   that.scene.add(obj);
+    //   that.start();
+    // });
     var rollOverGeo = new THREE.BoxBufferGeometry(50, 50, 50);
     this.rollOverMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, opacity: 0.5, transparent: true });
     this.rollOverMesh = new THREE.Mesh(rollOverGeo, this.rollOverMaterial);

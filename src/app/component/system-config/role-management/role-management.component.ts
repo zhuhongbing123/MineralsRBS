@@ -15,10 +15,15 @@ export class RoleManagementComponent implements OnInit {
   msgs: Message[] = [];
   startPage = 1;//列表开始的页数
   limit = 10;//列表每页的行数
+  rowsPerPageOptions = [10, 20, 30];
+  addLimit = 10;//添加列表每页行数
+
+
   public roleTitle: any;// 角色列表标题
   public roleValue: any;// 角色列表数据
   public roleTotal;//登录日志列表总数
   public LIMIT_LOGIN = 10;//登录日志列表每页显示数量
+  public LIMIT_LOGIN_ADD = 10;//登录日志列表每页显示数量
   public roleLink;//角色关联模块
   public selectedLinkModule;//已选择的角色关联模块
   public selectedRole;//已选择的角色
@@ -253,6 +258,7 @@ export class RoleManagementComponent implements OnInit {
         url = 'role/api/-/' + this.selectedRole.id + '/' + this.selectTeamId + '/';
       }
       this.filteredAPIName = '';
+      this.addLimit = rows;
     } else if (type == 'link') {
       url = this.addLinkUrl + this.selectedRole.id;
     }
@@ -463,12 +469,13 @@ export class RoleManagementComponent implements OnInit {
 
     this.getLinkUrl();
     if (type == 'add') {
-      this.httpUtil.get(this.addLinkUrl + '-/' + this.selectedRole.id + '/1/10').then(value => {
+    
+      this.httpUtil.get(this.addLinkUrl + '-/' + this.selectedRole.id + '/1/' + this.addLimit).then(value => {
 
         if (value.meta.code === 6666) {
           let data = value.data.data.list;
           this.addLinkTotal = value.data.data.total;
-
+          
           for (let i = 0; i < data.length; i++) {
             data[i].number = (this.startPage - 1) * this.limit + i + 1;
             if (data[i].status == 1) {
@@ -482,6 +489,7 @@ export class RoleManagementComponent implements OnInit {
           }
           this.addLinkValue = data;
           this.selectedAddLink = '';
+         // this.LIMIT_LOGIN_ADD = 20;
           this.selectApiClassify = 0;
           this.addLinkDisplay = true;
         }
