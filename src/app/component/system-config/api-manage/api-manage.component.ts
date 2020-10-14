@@ -51,6 +51,7 @@ export class ApiManageComponent implements OnInit {
   filteredAPI:any[];//搜索API下拉框值
   allAPIName;//所有API名称
   loading: boolean;//列表加载动画显示
+  showLoading = true;//页面加载中
   constructor(private httpUtil: HttpUtil,
               private messageService:MessageService,
               private confirmationService: ConfirmationService,
@@ -170,6 +171,7 @@ export class ApiManageComponent implements OnInit {
           }
         }
         this.apiTableValue = data;
+        this.showLoading = false;
         this.loading = false;
       }
     })
@@ -207,6 +209,7 @@ export class ApiManageComponent implements OnInit {
           }
         }
         this.apiTableValue = data;
+        this.showLoading = false;
       }
     })
   }
@@ -214,6 +217,7 @@ export class ApiManageComponent implements OnInit {
   pageChange(event){
     this.currentPage = event.page+1;
     this.pageSize = event.rows;
+    this.showLoading = true;
     if(this.filteredAPIName){
       this.getFilteredApi();
     }else{

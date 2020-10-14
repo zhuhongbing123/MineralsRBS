@@ -60,6 +60,7 @@ export class MiningDetailsComponent implements OnInit {
   buttonType = false;//点击按钮的类型
   selectedStageColumns: any[];//选择开采详情菜单列
   selectedReportColumns: any[];//选择年度监测菜单列
+  showLoading = true;//页面加载中
 
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
@@ -187,6 +188,7 @@ export class MiningDetailsComponent implements OnInit {
               }
           }
         }
+        this.showLoading = false;
         this.stageDetailValue = data;
       }
     })
@@ -208,6 +210,7 @@ export class MiningDetailsComponent implements OnInit {
             }
           }
           this.monitoringValue = data;
+          this.showLoading = false;
       }
     })
   }
@@ -489,6 +492,7 @@ saveMiningProject(type){
   pageChange(event,type){
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
+    this.showLoading = true;
     switch(type){
       case 'stage':
         this.getStageInfo()

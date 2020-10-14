@@ -18,7 +18,6 @@
   <p-table 
     [columns]="selectedColumns" 
     [value]="mineralProjectValue"  
-    [loading]="loading"
     columnResizeMode="expand"
     [style]="{'min-width':'1200px'}"
     [resizableColumns]="true" 
@@ -379,3 +378,4 @@
   </p-dialog>
  
 </div>
+<ngx-loading [show]="showLoading" [config]="{ backdropBorderRadius: '16px' }"></ngx-loading>

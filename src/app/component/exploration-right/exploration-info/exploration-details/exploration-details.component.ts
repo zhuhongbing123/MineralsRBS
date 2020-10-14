@@ -46,7 +46,7 @@ export class ExplorationDetailsComponent implements OnInit {
   addStageButton = false;//勘查阶段新增按钮显示
   modifyStageButton = false;//勘查阶段修改按钮显示
   deleteStageButton = false;//勘查阶段删除按钮显示
-
+  showLoading = true;//页面加载
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
@@ -151,6 +151,7 @@ export class ExplorationDetailsComponent implements OnInit {
           data[i]['mineralName'] = this.explorationProject.projectName;
         }
         this.explorationDetailValue = data;
+        this.showLoading = false;
       }
     })
   }
@@ -340,6 +341,7 @@ saveExplorationStage(){
   }
 
   pageChange(event){
+    this.showLoading = true;
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
     this.getStageInfo();

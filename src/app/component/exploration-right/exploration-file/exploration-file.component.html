@@ -17,7 +17,6 @@
       <p-table 
         [columns]="explorationInfoTitle" 
         [value]="explorationValue"  
-        [loading]="loading"
         [scrollable]="true" 
         [resizableColumns]="true"  
         columnResizeMode="expand"
@@ -77,3 +76,4 @@
 </div>    
 
 
+<ngx-loading [show]="showLoading" [config]="{ backdropBorderRadius: '16px' }"></ngx-loading>

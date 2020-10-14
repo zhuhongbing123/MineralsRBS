@@ -19,7 +19,7 @@ import { DynamicDialogModule } from 'primeng/components/dynamicdialog/dynamicdia
 import { ElModule } from 'element-angular';
 import { Map2dService } from '../../common/map/map2-d/map2-d.service';
 import { MultiSelectModule } from 'primeng/multiselect';
-
+import { NgxLoadingModule } from 'ngx-loading';
 @NgModule({
   imports: [
     CommonModule,
@@ -45,7 +45,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
     SpinnerModule,
     ElModule.forRoot(),
     TooltipModule,
-    MultiSelectModule
+    MultiSelectModule,
+    NgxLoadingModule
   ],
   providers: [CarService,ExplorationInfoService,DialogService,Map2dService],
   declarations: [

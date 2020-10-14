@@ -10,7 +10,7 @@
         <button pButton type="button" label="查询" (click)="setRole('filtered')"></button>
     </div>
     <div style="clear: both;">
-        <p-table [columns]="roleTitle" [value]="roleValue" [loading]="loading" stateStorage="session" stateKey="statedemo-session"
+        <p-table [columns]="roleTitle" [value]="roleValue" stateStorage="session" stateKey="statedemo-session"
             selectionMode="single" [resizableColumns]="true" [reorderableColumns]="true">
             <ng-template pTemplate="header" let-columns>
                 <tr>
@@ -197,3 +197,4 @@
     </p-dialog>
 
 </div>
+<ngx-loading [show]="showLoading" [config]="{ backdropBorderRadius: '16px' }"></ngx-loading>

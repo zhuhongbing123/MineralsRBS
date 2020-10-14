@@ -46,7 +46,7 @@ export class MineralProjectComponent implements OnInit {
   mineralOwner:any[];//矿权人
   inputDisabled = false;//弹出框的输入框是否禁止输入
   selectedColumns: any[];//选择的菜单列
-
+  showLoading = true;//页面加载动画
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
@@ -151,6 +151,7 @@ export class MineralProjectComponent implements OnInit {
         }
         
         this.mineralProjectValue = data;
+        this.showLoading = false;
         this.loading = false;
       }
     }); 
@@ -316,6 +317,7 @@ export class MineralProjectComponent implements OnInit {
   pageChange(event){
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
+    this.showLoading = true;
     if(this.isClickSearch){
       this.getFilteredProject();
     }else{

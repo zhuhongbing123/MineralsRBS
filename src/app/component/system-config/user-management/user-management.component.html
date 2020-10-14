@@ -17,7 +17,6 @@
         <p-table 
             [columns]="userTableTitle" 
             [value]="userTableValue" 
-            [loading]="loading"
             [style]="{'min-width':'1200px'}"
         
         >
@@ -188,4 +187,4 @@
              </p-footer>   
         </p-dialog>
 </div>                
-    
+<ngx-loading [show]="showLoading" [config]="{ backdropBorderRadius: '16px' }"></ngx-loading>

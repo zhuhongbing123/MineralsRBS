@@ -32,7 +32,7 @@
                 
         </div>
         <div style="clear: both">
-            <p-table [columns]="operationLogTitle" [value]="operationLogValue"  [loading]="loading" >
+            <p-table [columns]="operationLogTitle" [value]="operationLogValue" >
                     <ng-template pTemplate="header" let-columns>
                         <tr>
                             <th style="width:8%">序号</th>
@@ -61,3 +61,4 @@
         <p-paginator [hidden]="!operationLogTotal" [rows]="LIMIT_LOGIN" [totalRecords]="operationLogTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event)"></p-paginator>
 </div>
 
+<ngx-loading [show]="showLoading" [config]="{ backdropBorderRadius: '16px' }"></ngx-loading>

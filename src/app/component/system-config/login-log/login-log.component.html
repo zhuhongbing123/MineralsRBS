@@ -1,6 +1,6 @@
 <p>系统配置 > 登录日志</p>
 <div class="p-table">
-    <p-table [columns]="loginLogTitle" [value]="loginLogValue"  [loading]="loading">
+    <p-table [columns]="loginLogTitle" [value]="loginLogValue" >
     <ng-template pTemplate="header" let-columns>
         <tr>
             <th style="width:8%">序号</th>
@@ -29,3 +29,4 @@
     </p-table>
     <p-paginator [hidden]="!loginLogTotal" [rows]="LIMIT_LOGIN" [totalRecords]="loginLogTotal" [rowsPerPageOptions]="[10,20,30,50,100]" (onPageChange)="pageChange($event)"></p-paginator>
 </div>
+<ngx-loading [show]="showLoading" [config]="{ backdropBorderRadius: '16px' }"></ngx-loading>

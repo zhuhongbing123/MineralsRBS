@@ -12,7 +12,6 @@
     <p-table 
         [columns]="apiTableTitle" 
         [value]="apiTableValue" 
-        [loading]="loading"
         [style]="{'min-width':'1200px'}"
     >
       <ng-template pTemplate="header" let-columns>
@@ -115,3 +114,4 @@
                 </p-footer>
         </p-dialog>
 </div>
+<ngx-loading [show]="showLoading" [config]="{ backdropBorderRadius: '16px' }"></ngx-loading>

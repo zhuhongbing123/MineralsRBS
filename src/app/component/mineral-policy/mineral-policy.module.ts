@@ -11,7 +11,7 @@ import { MineralPolicyRoutes } from '../routers/mineral-policy.route';
 import { PolicyFileComponent } from './policy-file/policy-file.component';
 import { ExplorationRightModule } from '../exploration-right/exploration-right.module';
 import { PolicyReportComponent } from './policy-report/policy-report.component';
-
+import { NgxLoadingModule } from 'ngx-loading';
 
 
 
@@ -34,7 +34,8 @@ import { PolicyReportComponent } from './policy-report/policy-report.component';
     FileUploadModule,
     TreeModule,
     AutoCompleteModule,
-    ExplorationRightModule
+    ExplorationRightModule,
+    NgxLoadingModule
   ],
   providers: [CarService],
   declarations: [PolicyFileComponent, PolicyReportComponent],

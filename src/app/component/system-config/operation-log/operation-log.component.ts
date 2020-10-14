@@ -25,6 +25,7 @@ export class OperationLogComponent implements OnInit {
   loading: boolean;//列表加载动画显示
   searchDisplay = false;//查询按钮显示
   searchNameDisplay = true;//用户名搜索框是否显示
+  showLoading = true;//页面加载中
   constructor(private httpUtil: HttpUtil,
               private loginService: LoginService,
               private messageService:MessageService) { }
@@ -121,12 +122,14 @@ export class OperationLogComponent implements OnInit {
     }
     this.operationLogValue = data;
     this.loading  = false;
+    this.showLoading = false;
   }
 
   /* 表格切换页码 */
   pageChange(event){
     this.pageNumber = event.page+1;
     this.pageSize = event.rows;
+    this.showLoading = true;
     if(this.filteredUserName){
       this.searchLog();
     }else{

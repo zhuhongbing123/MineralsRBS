@@ -53,6 +53,7 @@ export class UserManagementComponent implements OnInit {
   newPassword;//新密码
   modifyPasswordDisplay = false;//修改密码弹出框
   loginUserName;
+  showLoading = true;//页面加载中
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
@@ -124,6 +125,7 @@ export class UserManagementComponent implements OnInit {
         }
         this.userTableValue = data;
         this.loading = false;
+          this.showLoading = false;
           this.getAllRoleInfo();
         }
       }).then(()=>{
@@ -335,6 +337,7 @@ export class UserManagementComponent implements OnInit {
   pageChange(event,type){
     this.pageNumber = event.page+1;
     this.pageSize = event.rows;
+    this.showLoading = true;
       if(this.filteredUserName){
         this.getFilteredUser();
       }

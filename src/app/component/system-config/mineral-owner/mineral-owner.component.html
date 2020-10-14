@@ -10,7 +10,7 @@
         <button pButton  type="button" label="查询" (click)="setOwner('filtered')"></button>
     </div>
     <div style="clear:both">
-        <p-table [columns]="mineralOwnerTitle" [value]="mineralOwnerValue"  [loading]="loading">
+        <p-table [columns]="mineralOwnerTitle" [value]="mineralOwnerValue" >
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th style="width:8%">序号</th>
@@ -59,3 +59,4 @@
     </p-dialog>
 </div>                
 
+<ngx-loading [show]="showLoading" [config]="{ backdropBorderRadius: '16px' }"></ngx-loading>

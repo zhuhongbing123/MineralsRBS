@@ -16,7 +16,7 @@ import { SystemConfigRoutes } from '../routers/system-config.route';
 import { ApiManageComponent } from './api-manage/api-manage.component';
 import { MenuManagementComponent } from './menu-management/menu-management.component';
 import { MineralOwnerComponent } from './mineral-owner/mineral-owner.component';
-
+import { NgxLoadingModule } from 'ngx-loading';
 
 @NgModule({
   imports: [
@@ -36,7 +36,8 @@ import { MineralOwnerComponent } from './mineral-owner/mineral-owner.component';
     SidebarModule,
     AutoCompleteModule,
     CalendarModule,
-    SplitButtonModule
+    SplitButtonModule,
+    NgxLoadingModule
     
   ],
   providers: [SystemConfigService],

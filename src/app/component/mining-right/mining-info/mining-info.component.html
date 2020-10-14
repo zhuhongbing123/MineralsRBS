@@ -18,7 +18,6 @@
       <p-table 
         [columns]="selectedColumns" 
         [value]="miningInfoValue" 
-        [loading]="loading"  
         columnResizeMode="expand"
         [resizableColumns]="true" 
         [scrollable]="true"
@@ -345,3 +344,4 @@
            </p-footer>
        </p-dialog>
    </div>
+<ngx-loading [show]="showLoading" [config]="{ backdropBorderRadius: '16px' }"></ngx-loading>

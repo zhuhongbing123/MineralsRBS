@@ -15,6 +15,7 @@ export class LoginLogComponent implements OnInit {
   page: number = 1;//当前页码
   rows: number = 10;//分页总数
   loading: boolean;//列表加载动画显示
+  showLoading = true;//页面加载中
   constructor(private httpUtil: HttpUtil) { }
 
   ngOnInit() {
@@ -61,12 +62,14 @@ export class LoginLogComponent implements OnInit {
     }
     this.loginLogValue = data;
     this.loading = false;
+    this.showLoading = false;
   }
 
   /* 表格切换页码 */
   pageChange(event){
     this.page = event.page+1;
     this.rows = event.rows;
+    this.showLoading = true;
     this.getLoginLog();
   }
 }

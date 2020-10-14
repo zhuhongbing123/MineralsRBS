@@ -44,6 +44,7 @@ export class MiningInfoComponent implements OnInit {
   modifyButton = false;//修改按钮
   addAreaCommon: Subscription;
   selectedColumns: any[];//选择菜单列
+  showLoading = true;//页面加载中
 
   constructor(private httpUtil: HttpUtil,
     private messageService: MessageService,
@@ -152,6 +153,7 @@ export class MiningInfoComponent implements OnInit {
         }
         
         this.miningInfoValue = data;
+        this.showLoading = false;
         this.loading = false;
       }
     });
@@ -292,6 +294,7 @@ export class MiningInfoComponent implements OnInit {
   pageChange(event,type){
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
+    this.showLoading = true;
     if(this.isClickSearch){
       this.getSearchProject()
     }else{

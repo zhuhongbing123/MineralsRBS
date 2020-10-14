@@ -26,6 +26,8 @@ export class MiningStatisticsComponent implements OnInit {
   putButton = false;//修改按钮是否显示
   deleteButton = false;//删除按钮是否显示
   statisticsTitle: any;
+  showLoading = true;//页面加载中
+
   constructor(private httpUtil: HttpUtil,
               private confirmationService: ConfirmationService,
               private messageService: MessageService,) { }
@@ -81,6 +83,7 @@ export class MiningStatisticsComponent implements OnInit {
           
         }
         this.miningStatisticsValue = data;
+        this.showLoading = false;
       }
     })
   }
@@ -191,6 +194,7 @@ export class MiningStatisticsComponent implements OnInit {
   pageChange(event) {
     this.startPage = event.page + 1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
+    this.showLoading = true;
     this.getMiningStatistics();
 
 

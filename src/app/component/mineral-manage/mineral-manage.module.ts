@@ -12,7 +12,7 @@ import { DynamicDialogModule } from 'primeng/components/dynamicdialog/dynamicdia
 import { ElModule  } from 'element-angular';
 import { ProjectMapComponent } from './project-map/project-map.component'
 import { MineralManageService } from './mineral-manage.service';
-
+import { NgxLoadingModule } from 'ngx-loading';
 @NgModule({
     imports: [
       CommonModule,
@@ -30,7 +30,8 @@ import { MineralManageService } from './mineral-manage.service';
       ColorPickerModule,
       SpinnerModule,
       ElModule.forRoot(),
-      MultiSelectModule
+      MultiSelectModule,
+      NgxLoadingModule
     ],
     declarations:[MineralProjectComponent, ProjectMapComponent],
     providers:[Map2dService,DialogService,MineralManageService],

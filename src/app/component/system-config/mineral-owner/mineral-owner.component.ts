@@ -31,7 +31,7 @@ export class MineralOwnerComponent implements OnInit {
   allOwnerName: any[];//所有矿权人名字
   filteredOwnerName:string;//搜索矿权人名字
   loading: boolean;//列表加载动画显示
-
+  showLoading = true;//页面加载动画
   constructor(private httpUtil: HttpUtil,
               private confirmationService: ConfirmationService,
               private messageService: MessageService,
@@ -89,6 +89,7 @@ export class MineralOwnerComponent implements OnInit {
           this.mineralOwnerValue = data;
           this.ownerTotal = value.data.mineralOwners.total;
           this.loading = false;
+          this.showLoading = false;
       }
     })
   }
@@ -206,6 +207,7 @@ export class MineralOwnerComponent implements OnInit {
    pageChange(event){
     this.startPage = event.page+1;
     this.limit = event.rows;
+     this.showLoading = true;
     if(this.filteredOwnerName){
       this.getFilteredOwner();
     }else{

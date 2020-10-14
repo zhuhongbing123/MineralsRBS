@@ -53,7 +53,7 @@ export class ExplorationInfoComponent implements OnInit {
   isClickSearch = false;//是否点击了搜索
   loading: boolean;//列表加载动画显示
   modifyButton = false;//修改按钮
-
+  showLoading = true;//页面加载
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
@@ -150,6 +150,7 @@ export class ExplorationInfoComponent implements OnInit {
         
         this.explorationInfoValue = data;
         this.loading = false;
+        this.showLoading = false;
       }
     });
     
@@ -229,6 +230,7 @@ export class ExplorationInfoComponent implements OnInit {
         }
         
         this.explorationInfoValue = data;
+        this.showLoading = false;
       }
     })
   }
@@ -303,6 +305,7 @@ export class ExplorationInfoComponent implements OnInit {
   pageChange(event,type){
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
+    this.showLoading = true;
     if(this.isClickSearch){
       this.getSearchProject();
     }else{

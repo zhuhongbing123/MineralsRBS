@@ -66,6 +66,8 @@ export class RoleManagementComponent implements OnInit {
   filteredRoleName: string;//搜索的角色名
   allRoleName;//所有角色名
 
+  showLoading = true;//页面加载中
+
   apiClassify = [{
     label: '全部',
     value: 0
@@ -166,6 +168,7 @@ export class RoleManagementComponent implements OnInit {
           }
         }
         this.roleValue = data;
+        this.showLoading = false;
         this.loading = false;
       }
     })
@@ -198,6 +201,7 @@ export class RoleManagementComponent implements OnInit {
           }
         }
         this.roleValue = data;
+        this.showLoading = false;
         this.loading = false;
       }
     })
@@ -232,6 +236,7 @@ export class RoleManagementComponent implements OnInit {
   rolePageChange(event) {
     this.startPage = event.page + 1;
     this.limit = event.rows;
+    this.showLoading = true;
     if (this.filteredRoleName) {
       this.loading = true;
       this.getFilteredRole();

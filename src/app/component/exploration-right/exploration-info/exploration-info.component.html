@@ -19,8 +19,7 @@
   <div style="clear: both;" class="p-table">
         
       <p-table [columns]="selectedColumns" 
-               [value]="explorationInfoValue" 
-               [loading]="loading"  
+               [value]="explorationInfoValue"  
                [resizableColumns]="true" 
                 columnResizeMode="expand"
                [scrollable]="true" 
@@ -298,3 +297,4 @@
         </p-footer>
     </p-dialog>
 </div>
+<ngx-loading [show]="showLoading" [config]="{ backdropBorderRadius: '16px' }"></ngx-loading>

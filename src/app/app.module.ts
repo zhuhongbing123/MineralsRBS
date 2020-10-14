@@ -17,6 +17,7 @@ import { RegisterModule } from './component/register/register.module';
 import { HttpInterceptorProviders } from './component/interceptor/http-interceptor-providers';
 
 import { ElModule } from 'element-angular';
+import { NgxLoadingModule } from 'ngx-loading';
 
 @NgModule({
     imports: [
@@ -29,7 +30,8 @@ import { ElModule } from 'element-angular';
     LoginModule,
     MenuSelectModule,
     RegisterModule,
-    ElModule.forRoot()
+    ElModule.forRoot(),
+    NgxLoadingModule.forRoot({})
         
     ],
     declarations: [

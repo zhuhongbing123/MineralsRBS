@@ -12,7 +12,7 @@ import { MiningRightRoutes } from '../routers/mining-right.route';
 import { MiningFileComponent } from './mining-file/mining-file.component';
 import { ExplorationRightModule } from '../exploration-right/exploration-right.module';
 import { MiningDetailsComponent } from './mining-info/mining-details/mining-details.component';
-
+import { NgxLoadingModule } from 'ngx-loading';
 
 
 @NgModule({
@@ -35,7 +35,8 @@ import { MiningDetailsComponent } from './mining-info/mining-details/mining-deta
     ExplorationRightModule,
     TreeModule,
     AutoCompleteModule,
-    MultiSelectModule
+    MultiSelectModule,
+    NgxLoadingModule
   ],
   providers: [CarService],
   declarations: [MiningInfoComponent, MiningFileComponent, MiningDetailsComponent],

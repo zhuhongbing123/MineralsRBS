@@ -88,6 +88,7 @@ export class ReportFileComponent implements OnInit {
   }];
   selectClassifyID = 0;//已选择分类ID
   excelReport = false;//是否是Excel报告
+  showLoading = false;//页面加载中
 
   constructor(private explorationInfoService:ExplorationInfoService,
               private httpUtil: HttpUtil,
@@ -111,7 +112,7 @@ export class ReportFileComponent implements OnInit {
             value: this.reportCategory[i].id
           })
         }
-        
+        this.showLoading = true;
         this.getReportClassify();
       }else{
         this.reportDetailDisplay = false;
@@ -231,6 +232,7 @@ export class ReportFileComponent implements OnInit {
     if(this.type=='policy'){
       this.reportDetailDisplay = true;
       this.policyReportDisplay = true;
+      this.showLoading = true;
       this.getReportCategory();
       return;
     }
@@ -261,6 +263,7 @@ export class ReportFileComponent implements OnInit {
           for(let i=0;i<data.length;i++){
             data[i].number = (this.startPage-1)*this.limit+i +1;
           }
+          this.showLoading = false;
           this.reportClassifyValue = data;
       }
     })
@@ -321,6 +324,7 @@ export class ReportFileComponent implements OnInit {
               data[i].number = (this.startPage-1)*this.limit+i +1;
             }
             this.reportClassifyValue = data;
+            this.showLoading = false;
         }
       })
     })
@@ -1035,6 +1039,7 @@ export class ReportFileComponent implements OnInit {
   pageChange(event){
     this.startPage = event.page+1;//列表开始的页数
     this.limit = event.rows;//列表每页的行数
+    this.showLoading = true;
     if(this.type=='policy'){
       if(this.selectClassifyID!=0){
         return;

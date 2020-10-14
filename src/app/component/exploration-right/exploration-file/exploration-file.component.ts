@@ -28,7 +28,7 @@ export class ExplorationFileComponent implements OnInit {
   modifyButton = false;//修改按钮显示
   deleteButton = false;//删除按钮显示
   loading: boolean;//列表加载动画显示
-
+  showLoading  =true;//页面加载动画
   constructor(private httpUtil: HttpUtil,
               private messageService: MessageService,
               private confirmationService: ConfirmationService,
@@ -99,6 +99,7 @@ export class ExplorationFileComponent implements OnInit {
           } 
           
           this.explorationValue = data;
+          this.showLoading = false;
           this.loading = false;
       }
     })
@@ -186,6 +187,7 @@ export class ExplorationFileComponent implements OnInit {
   pageChange(event){
     this.startPage = event.page+1;
     this.limit= event.rows;
+    this.showLoading = true;
     this.getReportCategory();
   }
 
